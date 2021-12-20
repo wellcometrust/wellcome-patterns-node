@@ -5,7 +5,7 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import next from 'next';
 import Prismic from '@prismicio/client';
-import apmErrorMiddleware from '@weco/common/services/apm/errorMiddleware';
+import { apmErrorMiddleware } from '@weco/common/services/apm/errorMiddleware';
 import { init as initServerData } from '@weco/common/server-data';
 import bodyParser from 'koa-bodyparser';
 import handleNewsletterSignup from './routeHandlers/handleNewsletterSignup';

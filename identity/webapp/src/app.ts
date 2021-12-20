@@ -8,7 +8,7 @@ import json from 'koa-json';
 import logger from 'koa-logger';
 import Router from '@koa/router';
 import next from 'next';
-import apmErrorMiddleware from '@weco/common/services/apm/errorMiddleware';
+import { apmErrorMiddleware } from '@weco/common/services/apm/errorMiddleware';
 import { init as initServerData } from '@weco/common/server-data';
 
 /* eslint-enable @typescript-eslint/no-var-requires, import/first */

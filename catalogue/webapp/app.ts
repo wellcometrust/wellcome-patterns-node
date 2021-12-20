@@ -12,7 +12,7 @@ import {
   handleAllRoute,
   timers as middlewareTimers,
 } from '@weco/common/koa-middleware/withCachedValues';
-import apmErrorMiddleware from '@weco/common/services/apm/errorMiddleware';
+import { apmErrorMiddleware } from '@weco/common/services/apm/errorMiddleware';
 import { init as initServerData } from '@weco/common/server-data';
 
 const dev = process.env.NODE_ENV !== 'production';
