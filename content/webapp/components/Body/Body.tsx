@@ -10,7 +10,7 @@ import { Link } from '@weco/common/model/link';
 import {
   defaultSerializer,
   dropCapSerializer,
-} from '@weco/common/services/prismic/html-serializers';
+} from '../HTMLSerializers/HTMLSerializers';
 import { prismicPageIds } from '@weco/common/services/prismic/hardcoded-id';
 import { CaptionedImage } from '@weco/common/views/components/Images/Images';
 import SpacingComponent from '@weco/common/views/components/SpacingComponent/SpacingComponent';

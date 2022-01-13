@@ -14,7 +14,7 @@ import Space from '@weco/common/views/components/styled/Space';
 import { staticBooks } from '../content/static-books';
 import { prismicPageIds } from '@weco/common/services/prismic/hardcoded-id';
 import FeaturedText from '@weco/common/views/components/FeaturedText/FeaturedText';
-import { defaultSerializer } from '@weco/common/services/prismic/html-serializers';
+import { defaultSerializer } from '../components/HTMLSerializers/HTMLSerializers';
 import {
   getPage,
   getPageFeaturedText,

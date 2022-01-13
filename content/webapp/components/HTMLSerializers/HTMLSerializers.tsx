@@ -1,5 +1,5 @@
 import PrismicDOM from 'prismic-dom';
-import linkResolver from './link-resolver';
+import linkResolver from '@weco/common/services/prismic/link-resolver';
 import { Fragment, ReactElement } from 'react';
 import { HTMLSerializer } from 'prismic-reactjs';
 import { dasherize } from '@weco/common/utils/grammar';

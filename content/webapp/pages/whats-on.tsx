@@ -50,7 +50,7 @@ import {
   prismicPageIds,
 } from '@weco/common/services/prismic/hardcoded-id';
 import FeaturedText from '@weco/common/views/components/FeaturedText/FeaturedText';
-import { defaultSerializer } from '@weco/common/services/prismic/html-serializers';
+import { defaultSerializer } from '../components/HTMLSerializers/HTMLSerializers';
 import { FeaturedText as FeaturedTextType } from '@weco/common/model/text';
 import { SectionPageHeader } from '@weco/common/views/components/styled/SectionPageHeader';
 import { convertJsonToDates } from './event';
