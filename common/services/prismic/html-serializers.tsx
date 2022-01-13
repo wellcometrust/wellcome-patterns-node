@@ -1,26 +1,18 @@
-// @flow
 import PrismicDOM from 'prismic-dom';
 import linkResolver from './link-resolver';
-import { Fragment, type Element } from 'react';
+import { Fragment, ReactElement } from 'react';
+import { HTMLSerializer } from 'prismic-reactjs';
 import { dasherize } from '@weco/common/utils/grammar';
 const { Elements } = PrismicDOM.RichText;
 
-export type HtmlSerializer = (
-  type: string,
-  element: Object, // There are so many types here
-  content: string,
-  children: Element<any>[],
-  i: number
-) => ?Element<any>;
-
-export const dropCapSerializer: HtmlSerializer = (
+export const dropCapSerializer: HTMLSerializer<ReactElement> = (
   type,
   element,
   content,
   children,
-  i
+  key
 ) => {
-  if (type === Elements.paragraph && i === 0 && children[0] !== null) {
+  if (type === Elements.paragraph && key === '0' && children[0] !== null) {
     const firstChild = children[0];
     const firstCharacters =
       firstChild.props &&
@@ -28,83 +20,80 @@ export const dropCapSerializer: HtmlSerializer = (
       firstChild.props.children[0];
 
     if (typeof firstCharacters !== 'string') {
-      return <p key={i}>{children}</p>;
+      return <p key={key}>{children}</p>;
     }
 
     const firstLetter = firstCharacters.charAt(0);
     const cappedFirstLetter = (
-      <span key={i} className="drop-cap">
+      <span key={key} className="drop-cap">
         {firstLetter}
       </span>
     );
     const newfirstCharacters = [cappedFirstLetter, firstCharacters.slice(1)];
     const childrenWithDropCap = [newfirstCharacters, ...children.slice(1)];
 
-    return <p key={i}>{childrenWithDropCap}</p>;
+    return <p key={key}>{childrenWithDropCap}</p>;
   }
-  return defaultSerializer(type, element, content, children, i);
+
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  return defaultSerializer(type, element, content, children, key);
 };
 
-export const defaultSerializer: HtmlSerializer = (
+export const defaultSerializer: HTMLSerializer<ReactElement> = (
   type,
   element,
   content,
   children,
-  i
+  key
 ) => {
   switch (type) {
     case Elements.heading1:
-      return <h1 key={i}>{children}</h1>;
+      return <h1 key={key}>{children}</h1>;
     case Elements.heading2:
       return (
-        <h2 key={i} id={dasherize(element.text)}>
+        <h2 key={key} id={dasherize(element.text)}>
           {children}
         </h2>
       );
     case Elements.heading3:
-      return <h3 key={i}>{children}</h3>;
+      return <h3 key={key}>{children}</h3>;
     case Elements.heading4:
-      return <h4 key={i}>{children}</h4>;
+      return <h4 key={key}>{children}</h4>;
     case Elements.heading5:
-      return <h5 key={i}>{children}</h5>;
+      return <h5 key={key}>{children}</h5>;
     case Elements.heading6:
-      return <h6 key={i}>{children}</h6>;
+      return <h6 key={key}>{children}</h6>;
     case Elements.paragraph:
-      return <p key={i}>{children}</p>;
+      return <p key={key}>{children}</p>;
     case Elements.preformatted:
-      return <pre key={i}>{children}</pre>;
+      return <pre key={key}>{children}</pre>;
     case Elements.strong:
-      return <strong key={i}>{children}</strong>;
+      return <strong key={key}>{children}</strong>;
     case Elements.em:
-      return <em key={i}>{children}</em>;
+      return <em key={key}>{children}</em>;
     case Elements.listItem:
-      return <li key={i}>{children}</li>;
+      return <li key={key}>{children}</li>;
     case Elements.oListItem:
-      return <li key={i}>{children}</li>;
+      return <li key={key}>{children}</li>;
     case Elements.list:
-      return <ul key={i}>{children}</ul>;
+      return <ul key={key}>{children}</ul>;
     case Elements.oList:
-      return <ol key={i}>{children}</ol>;
+      return <ol key={key}>{children}</ol>;
     case Elements.image:
       const url = element.linkTo
         ? PrismicDOM.Link.url(element.linkTo, linkResolver)
-        : null;
+        : undefined;
       const linkTarget =
         element.linkTo && element.linkTo.target
           ? element.linkTo.target
           : undefined;
       const linkRel = linkTarget ? 'noopener' : undefined;
       const wrapperClassList = [element.label || '', 'block-img'];
-      const img = (
-        <img
-          src={element.url}
-          alt={element.alt || ''}
-          copyright={element.copyright || ''}
-        />
-      );
+
+      const img = <img src={element.url} alt={element.alt || ''} />;
 
       return (
-        <p key={i} className={wrapperClassList.join(' ')}>
+        <p key={key} className={wrapperClassList.join(' ')}>
           {url ? (
             <a target={linkTarget} rel={linkRel} href={url}>
               {img}
@@ -117,7 +106,7 @@ export const defaultSerializer: HtmlSerializer = (
     case Elements.embed:
       return (
         <div
-          key={i}
+          key={key}
           data-oembed={element.oembed.embed_url}
           data-oembed-type={element.oembed.type}
           data-oembed-provider={element.oembed.provider_name}
@@ -146,7 +135,7 @@ export const defaultSerializer: HtmlSerializer = (
 
       if (hashLink) {
         return (
-          <a key={i} target={target} rel={rel} href={hashLink}>
+          <a key={key} target={target} rel={rel} href={hashLink}>
             {children}
           </a>
         );
@@ -155,7 +144,7 @@ export const defaultSerializer: HtmlSerializer = (
       if (isDocument) {
         return (
           <a
-            key={i}
+            key={key}
             target={target}
             className="no-margin plain-link font-green flex-inline flex--h-baseline"
             href={linkUrl}
@@ -213,7 +202,7 @@ export const defaultSerializer: HtmlSerializer = (
         );
       } else {
         return (
-          <a key={i} target={target} href={linkUrl}>
+          <a key={key} target={target} href={linkUrl}>
             {children}
           </a>
         );
@@ -221,13 +210,13 @@ export const defaultSerializer: HtmlSerializer = (
     case Elements.label:
       const labelClass = element.data.label || undefined;
       return (
-        <span key={i} className={labelClass}>
+        <span key={key} className={labelClass}>
           {children}
         </span>
       );
     case Elements.span:
       return content ? (
-        <Fragment key={i}>
+        <Fragment key={key}>
           {content
             ? content.split('\n').reduce((acc, p) => {
                 if (acc.length === 0) {
@@ -240,8 +229,8 @@ export const defaultSerializer: HtmlSerializer = (
               }, [])
             : null}
         </Fragment>
-      ) : null;
+      ) : (<></>);
     default:
-      return null;
+      return (<></>);
   }
 };

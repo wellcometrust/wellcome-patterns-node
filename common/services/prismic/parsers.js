@@ -19,7 +19,6 @@ import type { ImagePromo } from '../../model/image-promo';
 import type { Card } from '../../model/card';
 import type { GenericContentFields } from '../../model/generic-content-fields';
 import type { LabelField } from '../../model/label-field';
-import type { HtmlSerializer } from './html-serializers';
 // $FlowFixMe (tsx)
 import { type BodyType } from '../../views/components/Body/Body';
 import { licenseTypeArray } from '../../model/license';
@@ -41,6 +40,8 @@ import { links } from '../../views/components/Header/Header';
 import { MediaObjectType } from '../../model/media-object';
 import type { Guide } from '../../model/guides';
 import type { PrismicDocument } from './types';
+import type { ReactElement } from 'react';
+import type { HTMLSerializer } from 'prismic-reactjs';
 
 const placeHolderImage = ({
   contentUrl: 'https://via.placeholder.com/1600x900?text=%20',
@@ -69,7 +70,7 @@ export function asText(maybeContent: ?HTMLString): ?string {
 
 export function asHtml(
   maybeContent: ?HTMLString,
-  htmlSerializer?: HtmlSerializer
+  htmlSerializer?: HTMLSerializer<ReactElement>
 ) {
   // Prismic can send us empty html elements which can lead to unwanted UI in templates.
   // Check that `asText` wouldn't return an empty string.

@@ -1,11 +1,11 @@
-import { HtmlSerializer } from '../../../services/prismic/html-serializers';
 import { HTMLString } from '../../../services/prismic/types';
-import { RichText, RichTextBlock } from 'prismic-reactjs';
+import { HTMLSerializer, RichText, RichTextBlock } from 'prismic-reactjs';
 import linkResolver from '../../../services/prismic/link-resolver';
+import { ReactElement } from 'react';
 
 type Props = {
   html: HTMLString;
-  htmlSerializer?: HtmlSerializer;
+  htmlSerializer?: HTMLSerializer<ReactElement | undefined>;
 };
 
 const PrismicHtmlBlock = ({ html, htmlSerializer }: Props) => (

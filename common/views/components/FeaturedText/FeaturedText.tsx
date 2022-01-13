@@ -1,11 +1,12 @@
 import PrismicHtmlBlock from '../PrismicHtmlBlock/PrismicHtmlBlock';
+import { HTMLSerializer } from 'prismic-reactjs';
 import { HTMLString } from '../../../services/prismic/types';
-import { HtmlSerializer } from '../../../services/prismic/html-serializers';
 import { font, classNames } from '../../../utils/classnames';
+import { ReactElement } from 'react';
 
 type Props = {
   html: HTMLString;
-  htmlSerializer?: HtmlSerializer;
+  htmlSerializer?: HTMLSerializer<ReactElement>;
 };
 
 const FeaturedText = ({ html, htmlSerializer }: Props) => (
