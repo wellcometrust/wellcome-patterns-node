@@ -1,13 +1,9 @@
-// @flow
-// We use comments types here as we use this in non-babeled places
-/*::
-type Doc = {|
-  id: string,
-  type: string
-|}
-*/
+type LinkResolverDoc = {
+  id: string;
+  type: string;
+};
 
-function linkResolver(doc /* :Doc */) /* :string */ {
+export function linkResolver(doc: LinkResolverDoc): string {
   switch (doc.type) {
     case 'articles':
       return `/articles/${doc.id}`;
@@ -38,4 +34,4 @@ function linkResolver(doc /* :Doc */) /* :string */ {
   }
 }
 
-module.exports = linkResolver;
+export default linkResolver;
