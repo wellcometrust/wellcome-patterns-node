@@ -34,11 +34,11 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     const client = createClient(context);
-    const articlesQuery = await fetchBooks(client, {
+    const booksQuery = await fetchBooks(client, {
       page: parsedPage,
       pageSize: 21,
     });
-    const books = transformQuery(articlesQuery, transformBook);
+    const books = transformQuery(booksQuery, transformBook);
 
     const serverData = await getServerData(context);
     if (books) {
