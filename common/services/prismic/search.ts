@@ -1,21 +1,20 @@
-// @flow
 import searchQueryParser from 'search-query-parser';
 import { getMultiContent } from './multi-content';
 
-export type StructuredSearchQuery = {|
-  types: string[],
-  type: string[],
-  ids: string[],
-  id: string[],
-  tags: string[],
-  tag: string[],
-  pageSize: number,
-  orderings: string[],
+export type StructuredSearchQuery = {
+  types: string[];
+  type: string[];
+  ids: string[];
+  id: string[];
+  tags: string[];
+  tag: string[];
+  pageSize: number;
+  orderings: string[];
   // content type specific
-  'article-series': string[],
-|};
+  'article-series': string[];
+};
 
-export async function search(req: ?Request, stringQuery: string) {
+export async function search(req: Request | undefined, stringQuery: string) {
   const query = parseQuery(stringQuery);
   return getMultiContent(req, query);
 }
@@ -49,7 +48,7 @@ export function parseQuery(query: string): StructuredSearchQuery {
       return acc;
     },
     {}
-  );
+  ) as StructuredSearchQuery;
 
   return {
     types: arrayedStructuredQuery.types || [],

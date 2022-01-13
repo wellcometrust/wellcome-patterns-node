@@ -18,7 +18,7 @@ class AsyncSearchResults extends Component<Props, State> {
   };
 
   async componentDidMount() {
-    const searchResponse = await search(null, this.props.query);
+    const searchResponse = await search(undefined, this.props.query);
     this.setState({ items: searchResponse.results });
   }
   render() {
