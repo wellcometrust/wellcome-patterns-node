@@ -1,11 +1,11 @@
-import { ImageType } from '@weco/common/model/image';
-import { Format } from '@weco/common/model/format';
-import type { UiEvent } from '@weco/common/model/events';
-import type { Article } from '@weco/common/model/articles';
-import type { Season } from '@weco/common/model/seasons';
-import type { Page, ParentPage } from '@weco/common/model/pages';
-import type { ArticleSeries } from '@weco/common/model/article-series';
-import linkResolver from '@weco/common/services/prismic/link-resolver';
+import { ImageType } from './image';
+import { Format } from './format';
+import { UiEvent } from './events';
+import { Article } from './articles';
+import { Season } from './seasons';
+import { Page, ParentPage } from './pages';
+import { ArticleSeries } from './article-series';
+import linkResolver from '../services/prismic/link-resolver';
 
 export type Card = {
   type: 'card';
