@@ -51,7 +51,7 @@ const ArticleCard: FunctionComponent<Props> = ({
   const isPodcast = format?.id === ArticleFormatIds.Podcast;
 
   const labels = [
-    format?.data.title ? prismicH.asText(format.data.title) : undefined,
+    format?.title,
     isSerial ? 'Serial' : undefined,
   ]
     .filter(isNotUndefined)
