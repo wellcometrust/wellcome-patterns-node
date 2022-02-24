@@ -134,6 +134,13 @@ export function transformRichTextField(
   return field && field.length > 0 ? (field as HTMLString) : undefined;
 }
 
+export function asHtml(field?: RichTextField): string | undefined {
+  // Prismic can send us empty html elements which can lead to unwanted UI in templates.
+  // Check that `asText` wouldn't return an empty string.
+  const isEmpty = !field || (asText(field) || '').trim() === '';
+  return isEmpty ? undefined : prismicH.asHTML(field).trim();
+}
+
 // Prismic return `[ { type: 'paragraph', text: '', spans: [] } ]` when you have
 // inserted text, then removed it, so we need to do this check.
 export function isStructuredText(field: RichTextField): boolean {
