@@ -3,7 +3,6 @@ import { RichText } from 'prismic-dom';
 // $FlowFixMe (tsx)
 import { HTMLString, PrismicFragment } from './types';
 import flattenDeep from 'lodash.flattendeep';
-import type { Format } from '../../model/format';
 import type { Link } from '../../model/link';
 import type {
   BackgroundTexture,
@@ -11,7 +10,6 @@ import type {
 } from '../../model/background-texture';
 import type { LabelField } from '../../model/label-field';
 import { dasherize } from '../../utils/grammar';
-import linkResolver from './link-resolver';
 
 export function asText(maybeContent: ?HTMLString): ?string {
   return maybeContent && RichText.asText(maybeContent).trim();
