@@ -59,7 +59,7 @@ const StoryPromo: FunctionComponent<Props> = ({
   const isSerial = Boolean(seriesWithSchedule);
 
   const labels = [
-    format?.data.title ? prismicH.asText(format.data.title) : undefined,
+    format?.title,
     isSerial ? 'Serial' : undefined,
   ]
     .filter(isNotUndefined)
