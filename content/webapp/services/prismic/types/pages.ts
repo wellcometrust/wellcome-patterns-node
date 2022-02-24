@@ -23,13 +23,16 @@ type PageFormat = PrismicDocument<
   'page-formats'
 >;
 
+export type WithPageFormat = {
+  format: RelationField<
+    'page-formats',
+    'en-gb',
+    InferDataInterface<PageFormat>
+  >;
+};
+
 export type PagePrismicDocument = PrismicDocument<
   {
-    format: RelationField<
-      'page-formats',
-      'en-gb',
-      InferDataInterface<PageFormat>
-    >;
     datePublished: TimestampField;
     isOnline: BooleanField;
     availableOnline: BooleanField;
@@ -37,6 +40,7 @@ export type PagePrismicDocument = PrismicDocument<
   } & WithContributors &
     WithExhibitionParents &
     WithSeasons &
+    WithPageFormat &
     CommonPrismicFields,
   typeof typeEnum
 >;

@@ -17,13 +17,12 @@ import { isNotUndefined } from '@weco/common/utils/array';
 import { GroupField, Query, RelationField } from '@prismicio/types';
 import {
   asText,
-  parseFormat,
   parseLabelType,
   parseSingleLevelGroup,
   parseTitle,
 } from '@weco/common/services/prismic/parsers';
 import { isPast } from '@weco/common/utils/dates';
-import { transformGenericFields, transformTimestamp } from '.';
+import { transformFormat, transformGenericFields, transformTimestamp } from '.';
 import { HTMLString } from '@weco/common/services/prismic/types';
 import { transformSeason } from './seasons';
 import { transformEventSeries } from './event-series';
@@ -235,7 +234,7 @@ export function transformEvent(
         : undefined,
     bookingType: transformEventBookingType(document),
     cost: data.cost || undefined,
-    format: data.format && parseFormat(data.format),
+    format: transformFormat(document),
     interpretations,
     policies: Array.isArray(data.policies)
       ? transformEventPolicyLabels(data.policies, 'policy')

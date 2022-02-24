@@ -2,12 +2,11 @@ import { FeaturedText } from '@weco/common/model/text';
 import { Page } from '../../../types/pages';
 import { PagePrismicDocument } from '../types/pages';
 import {
-  parseFormat,
   parseOnThisPage,
   parseSingleLevelGroup,
 } from '@weco/common/services/prismic/parsers';
 import { links as headerLinks } from '@weco/common/views/components/Header/Header';
-import { transformGenericFields, transformTimestamp } from '.';
+import { transformFormat, transformGenericFields, transformTimestamp } from '.';
 import { transformSeason } from './seasons';
 
 export function transformPage(document: PagePrismicDocument): Page {
@@ -33,7 +32,7 @@ export function transformPage(document: PagePrismicDocument): Page {
   const promo = genericFields.promo;
   return {
     type: 'pages',
-    format: data.format && parseFormat(data.format),
+    format: transformFormat(document),
     ...genericFields,
     seasons,
     parentPages,

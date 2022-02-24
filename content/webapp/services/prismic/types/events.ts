@@ -103,13 +103,16 @@ const teamFetchLinks: FetchLinks<Team> = [
   'teams.url',
 ];
 
+export type WithEventFormat = {
+  format: RelationField<
+    'event-formats',
+    'en-gb',
+    InferDataInterface<EventFormat>
+  >;
+};
+
 export type EventPrismicDocument = PrismicDocument<
   {
-    format: RelationField<
-      'event-formats',
-      'en-gb',
-      InferDataInterface<EventFormat>
-    >;
     locations: GroupField<{
       location: RelationField<
         'place',
@@ -176,6 +179,7 @@ export type EventPrismicDocument = PrismicDocument<
   } & WithContributors &
     WithEventSeries &
     WithExhibitionParents &
+    WithEventFormat &
     WithSeasons &
     CommonPrismicFields,
   typeof typeEnum

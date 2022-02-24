@@ -21,17 +21,21 @@ type Label = {
   description: RichTextField;
 };
 const typeEnum = 'card';
+
+export type WithCardFormat = {
+  format: 
+    | RelationField<
+        'article-formats',
+        'en-gb',
+        InferDataInterface<ArticleFormat>
+      >
+    | RelationField<'event-formats', 'en-gb', InferDataInterface<EventFormat>>
+    | RelationField<'labels', 'en-gb', InferDataInterface<Label>>;
+};
+
 export type CardPrismicDocument = PrismicDocument<
   {
     title: RichTextField;
-    format:
-      | RelationField<
-          'article-formats',
-          'en-gb',
-          InferDataInterface<ArticleFormat>
-        >
-      | RelationField<'event-formats', 'en-gb', InferDataInterface<EventFormat>>
-      | RelationField<'labels', 'en-gb', InferDataInterface<Label>>;
     description: RichTextField;
     image: Image;
     link: LinkField;
@@ -39,6 +43,7 @@ export type CardPrismicDocument = PrismicDocument<
   } & WithContributors &
     WithExhibitionParents &
     WithSeasons &
+    WithCardFormat &
     CommonPrismicFields,
   typeof typeEnum
 >;

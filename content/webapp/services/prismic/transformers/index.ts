@@ -32,9 +32,9 @@ import { transformEvent } from './events';
 import { transformSeason } from './seasons';
 import { transformCard } from './card';
 import { MultiContentPrismicDocument } from '../types/multi-content';
-import { GuidePrismicDocument } from '../types/guides';
+import { GuidePrismicDocument, WithGuideFormat } from '../types/guides';
 import { SeasonPrismicDocument } from '../types/seasons';
-import { CardPrismicDocument } from '../types/card';
+import { CardPrismicDocument, WithCardFormat } from '../types/card';
 import {
   getWeight,
   transformContactSlice,
@@ -49,9 +49,11 @@ import {
 } from './body';
 import { transformImage, transformImagePromo } from './images';
 import { Tasl } from '@weco/common/model/tasl';
-
 import { LicenseType, licenseTypeArray } from '@weco/common/model/license';
 import { HTMLString } from '@weco/common/services/prismic/types';
+import { WithPageFormat } from '../types/pages';
+import { WithEventFormat } from '../types/events';
+import { Format } from '@weco/common/model/format';
 
 type Meta = {
   title: string;
@@ -110,11 +112,15 @@ export function transformSeries(document: PrismicDocument<WithSeries>) {
     .filter(isFilledLinkToDocumentWithData);
 }
 
-export function transformFormat(document: PrismicDocument<WithArticleFormat>) {
+export function transformFormat(document: { data: WithArticleFormat | WithCardFormat | WithEventFormat | WithGuideFormat | WithPageFormat }) {
   const { format } = document.data;
 
   if (isFilledLinkToDocumentWithData(format) && format.data) {
-    return format;
+    return {
+      id: format.id,
+      title: parseTitle(format.data.title),
+      description: asHtml(format.data.description),
+    };
   }
 }
 

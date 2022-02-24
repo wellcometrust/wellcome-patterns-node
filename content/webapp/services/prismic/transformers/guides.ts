@@ -5,10 +5,10 @@ import {
   GuideFormatPrismicDocument,
 } from '../types/guides';
 import {
-  parseFormat,
+  parseTitle,
   parseOnThisPage,
 } from '@weco/common/services/prismic/parsers';
-import { transformGenericFields, transformTimestamp } from '.';
+import { asHtml, transformFormat, transformGenericFields, transformTimestamp } from '.';
 import { links as headerLinks } from '@weco/common/views/components/Header/Header';
 
 export function transformGuide(document: GuidePrismicDocument): Guide {
@@ -23,7 +23,7 @@ export function transformGuide(document: GuidePrismicDocument): Guide {
   const promo = genericFields.promo;
   return {
     type: 'guides',
-    format: data.format && parseFormat(data.format),
+    format: transformFormat(document),
     ...genericFields,
     onThisPage: data.body ? parseOnThisPage(data.body) : [],
     showOnThisPage: data.showOnThisPage || false,
@@ -37,7 +37,11 @@ export function transformGuide(document: GuidePrismicDocument): Guide {
 export function transformGuideFormat(
   document: GuideFormatPrismicDocument
 ): GuideFormat {
-  const format: DeprecatedFormat = parseFormat(document);
+  const format: DeprecatedFormat = {
+    id: document.id,
+    title: parseTitle(document.data.title),
+    description: asHtml(document.data.description),
+  };
 
   return {
     ...format,

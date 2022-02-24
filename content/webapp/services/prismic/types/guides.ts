@@ -23,19 +23,23 @@ export type GuideFormatPrismicDocument = PrismicDocument<
   'guide-formats'
 >;
 
+export type WithGuideFormat = {
+  format: RelationField<
+    'guide-formats',
+    'en-gb',
+    InferDataInterface<GuideFormatPrismicDocument>
+  >;
+};
+
 export type GuidePrismicDocument = PrismicDocument<
   {
-    format: RelationField<
-      'guide-formats',
-      'en-gb',
-      InferDataInterface<GuideFormatPrismicDocument>
-    >;
     datePublished: TimestampField;
     availableOnline: BooleanField;
     showOnThisPage: BooleanField;
   } & WithContributors &
     WithExhibitionParents &
     WithSeasons &
+    WithGuideFormat &
     CommonPrismicFields,
   typeof typeEnum
 >;
