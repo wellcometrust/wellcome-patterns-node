@@ -128,9 +128,7 @@ export function transformTimestamp(field: TimestampField): Date | undefined {
 }
 
 // Prismic often returns empty RichText fields as `[]`, this filters them out
-export function transformRichTextField(
-  field: RichTextField
-): HTMLString | undefined {
+export function asHtmlString(field: RichTextField): HTMLString | undefined {
   return field && field.length > 0 ? (field as HTMLString) : undefined;
 }
 

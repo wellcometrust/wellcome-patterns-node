@@ -19,7 +19,7 @@ import {
 } from '@weco/common/services/prismic/parsers';
 import { link } from './vendored-helpers';
 import { parseResourceTypeList } from '@weco/common/services/prismic/exhibitions';
-import { asHtml, transformGenericFields, transformRichTextField, transformTimestamp } from '.';
+import { asHtml, transformGenericFields, asHtmlString, transformTimestamp } from '.';
 import { transformSeason } from './seasons';
 import { transformPlace } from './places';
 import { transformImagePromo, transformPromoToCaptionedImage } from './images';
@@ -74,8 +74,8 @@ export function transformExhibition(
   const start = transformTimestamp(data.start)!;
   const end = data.end ? transformTimestamp(data.end) : undefined;
   const statusOverride = asText(data.statusOverride);
-  const bslInfo = transformRichTextField(data.bslInfo);
-  const audioDescriptionInfo = transformRichTextField(data.audioDescriptionInfo);
+  const bslInfo = asHtmlString(data.bslInfo);
+  const audioDescriptionInfo = asHtmlString(data.audioDescriptionInfo);
 
   const promoCrop = '16:9';
   const promoImage =

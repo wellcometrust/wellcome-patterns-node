@@ -30,7 +30,7 @@ import {
 import { TeamPrismicDocument } from '../types/teams';
 import { transformCaptionedImage, transformImage } from './images';
 import { CaptionedImage } from '@weco/common/model/captioned-image';
-import { transformLink, transformRichTextField, transformStructuredText, transformTaslFromString } from '.';
+import { transformLink, asHtmlString, transformStructuredText, transformTaslFromString } from '.';
 import { LinkField, RelationField, RichTextField } from '@prismicio/types';
 
 export type Weight = 'default' | 'featured' | 'standalone' | 'supporting';
@@ -192,7 +192,7 @@ export function transformGifVideoSlice(
         type: 'gifVideo',
         weight: getWeight(slice.slice_label),
         value: {
-          caption: transformRichTextField(slice.primary.caption),
+          caption: asHtmlString(slice.primary.caption),
           videoUrl: slice.primary.video.url,
           playbackRate,
           tasl: transformTaslFromString(slice.primary.tasl),

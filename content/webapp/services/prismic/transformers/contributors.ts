@@ -9,7 +9,7 @@ import { Contributor } from '../../../types/contributors';
 import { isNotUndefined, isString } from '@weco/common/utils/array';
 import {
   transformKeyTextField,
-  transformRichTextField,
+  asHtmlString,
   transformRichTextFieldToString,
 } from '.';
 
@@ -31,7 +31,7 @@ export function transformContributorAgent(
   if (isFilledLinkToDocumentWithData(agent)) {
     const commonFields = {
       id: agent.id,
-      description: transformRichTextField(agent.data.description),
+      description: asHtmlString(agent.data.description),
       image: agent.data.image || defaultContributorImage,
       sameAs: (agent.data.sameAs ?? [])
         .map(sameAs => {
@@ -87,7 +87,7 @@ export function transformContributors(
           }
         : undefined;
 
-      const description = transformRichTextField(contributor.description);
+      const description = asHtmlString(contributor.description);
 
       return agent
         ? {

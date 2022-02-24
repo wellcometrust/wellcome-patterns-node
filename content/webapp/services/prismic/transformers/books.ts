@@ -3,7 +3,7 @@ import { BookPrismicDocument } from '../types/books';
 import {
   transformGenericFields,
   transformKeyTextField,
-  transformRichTextField,
+  asHtmlString,
   transformRichTextFieldToString,
   transformTimestamp,
 } from '.';
@@ -37,8 +37,8 @@ export function transformBook(document: BookPrismicDocument): Book {
     isbn: transformKeyTextField(data.isbn),
     reviews: data.reviews?.map(review => {
       return {
-        text: review.text && transformRichTextField(review.text) || [],
-        citation: review.citation && transformRichTextField(review.citation) || [],
+        text: review.text && asHtmlString(review.text) || [],
+        citation: review.citation && asHtmlString(review.citation) || [],
       };
     }),
     datePublished: data.datePublished ? transformTimestamp(data.datePublished) : undefined,
