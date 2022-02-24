@@ -125,7 +125,7 @@ export function transformFormat(document: { data: WithArticleFormat | WithCardFo
 }
 
 // This is to avoid introducing nulls into our codebase
-export function transformKeyTextField(field: KeyTextField) {
+export function transformKeyTextField(field: KeyTextField): string | undefined {
   return field ?? undefined;
 }
 

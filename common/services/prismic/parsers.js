@@ -4,10 +4,6 @@ import { RichText } from 'prismic-dom';
 import { HTMLString, PrismicFragment } from './types';
 import flattenDeep from 'lodash.flattendeep';
 import type { Link } from '../../model/link';
-import type {
-  BackgroundTexture,
-  PrismicBackgroundTexture,
-} from '../../model/background-texture';
 import type { LabelField } from '../../model/label-field';
 import { dasherize } from '../../utils/grammar';
 
@@ -18,15 +14,6 @@ export function asText(maybeContent: ?HTMLString): ?string {
 export function parseTitle(title: HTMLString): string {
   // We always need a title - blunt validation, but validation none the less
   return asText(title) || '';
-}
-
-export function parseBackgroundTexture(
-  backgroundTexture: PrismicBackgroundTexture
-): BackgroundTexture {
-return {
-    image: backgroundTexture.image.url,
-    name: backgroundTexture.name,
-  };
 }
 
 export function parseLabelType(fragment: PrismicFragment): LabelField {
@@ -52,7 +39,7 @@ export function parseSingleLevelGroup(
 
 // If a link is non-existant, it can either be returned as `null`, or as an
 // empty link object, which is why we use this
-export function isDocumentLink(fragment: ?PrismicFragment): boolean {
+function isDocumentLink(fragment: ?PrismicFragment): boolean {
   return Boolean(fragment && fragment.isBroken === false && fragment.data);
 }
 
