@@ -3,7 +3,6 @@ import {
   KeyTextField,
   RichTextField,
   GroupField,
-  LinkField,
 } from '@prismicio/types';
 import { Image } from '.';
 
@@ -43,7 +42,7 @@ export type Organisation = PrismicDocument<
     description: RichTextField;
     image: Image;
     sameAs: GroupField<{
-      link: LinkField;
+      link: KeyTextField;
       title: KeyTextField;
     }>;
   },

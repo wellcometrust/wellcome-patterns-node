@@ -12,6 +12,8 @@ import {
   FilledLinkToWebField,
   NumberField,
   LinkField,
+  LinkType,
+  EmptyLinkField,
 } from '@prismicio/types';
 import { ArticleFormat } from './article-format';
 import { ExhibitionFormat } from './exhibition-format';
@@ -181,6 +183,11 @@ export const exhibitionsFetchLinks: FetchLinks<ExhibitionPrismicDocument> = [
   'exhibitions.shortTitle',
 ];
 
+type Contributor =
+  | EmptyLinkField<LinkType.Document>
+  | FilledLinkToDocumentField<'people', 'en-gb', InferDataInterface<Person>>
+  | FilledLinkToDocumentField<'organisations', 'en-gb', InferDataInterface<Organisation>>;
+
 export type WithContributors = {
   contributorsTitle: RichTextField;
   contributors: GroupField<{
@@ -189,11 +196,7 @@ export type WithContributors = {
       'en-gb',
       InferDataInterface<EditorialContributorRole>
     >;
-    contributor: RelationField<
-      'people' | 'organisations',
-      'en-gb',
-      InferDataInterface<Person | Organisation>
-    >;
+    contributor: Contributor;
     description: RichTextField;
   }>;
 };
@@ -239,4 +242,16 @@ export function isFilledLinkToMediaField(
   field: LinkField
 ): field is FilledLinkToWebField {
   return link(field) && field.link_type === 'Media' && 'url' in field;
+}
+
+export function isFilledLinkToPersonField(
+  field: Contributor
+): field is FilledLinkToDocumentField<'people', 'en-gb', InferDataInterface<Person>> & { data: Person } {
+  return isFilledLinkToDocumentWithData(field) && field.type === 'people';
+}
+
+export function isFilledLinkToOrganisationField(
+  field: Contributor
+): field is FilledLinkToDocumentField<'organisations', 'en-gb', InferDataInterface<Organisation>> & { data: Organisation }  {
+  return isFilledLinkToDocumentWithData(field) && field.type === 'organisations';
 }
