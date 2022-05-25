@@ -1,6 +1,6 @@
 steps:
   - label: "build e2e test image"
-    command: ./playwright/get_playwright_image.sh
+    command: ./.buildkite/scripts/get_cached_image.sh playwright playwright
     plugins:
       - wellcomecollection/aws-assume-role#v0.2.2:
           role: "arn:aws:iam::130871440101:role/experience-ci"
