@@ -1,7 +1,7 @@
 import title from './parts/title';
 import promo from './parts/promo';
 import timestamp from './parts/timestamp';
-import link from './parts/link';
+import link, { documentLink } from './parts/link';
 import list from './parts/list';
 import structuredText from './parts/structured-text';
 import embed from './parts/embed';
@@ -17,11 +17,8 @@ function reservationBlock(prefix?: string) {
   return {
     [prefix ? `${prefix}TicketSalesStart` : 'ticketSalesStart']:
       timestamp('Ticket sales start'),
-    [prefix ? `${prefix}BookingEnquiryTeam` : 'bookingEnquiryTeam']: link(
-      'Booking enquiry team',
-      'document',
-      ['teams']
-    ),
+    [prefix ? `${prefix}BookingEnquiryTeam` : 'bookingEnquiryTeam']:
+      documentLink({ label: 'Booking enquiry team', linkMask: 'teams' }),
     [prefix ? `${prefix}EventbriteEvent` : 'eventbriteEvent']:
       embed('Eventbrite event'),
     // This is what it was labelled on the UI,
@@ -36,7 +33,7 @@ function reservationBlock(prefix?: string) {
     [prefix ? `${prefix}BookingInformation` : 'bookingInformation']:
       structuredText({ label: 'Extra information' }),
     [prefix ? `${prefix}Policies` : 'policies']: list('Policies', {
-      policy: link('Policy', 'document', ['event-policies']),
+      policy: documentLink({ label: 'Policy', linkMask: 'event-policies' }),
     }),
     [prefix ? `${prefix}HasEarlyRegistration` : 'hasEarlyRegistration']:
       booleanDeprecated('Early registration'),
@@ -52,9 +49,9 @@ const events: CustomType = {
   json: {
     Event: {
       title,
-      format: link('Format', 'document', ['event-formats']),
+      format: documentLink({ label: 'Format', linkMask: 'event-formats' }),
       locations: list('Locations', {
-        location: link('Location', 'document', ['places']),
+        location: documentLink({ label: 'Location', linkMask: 'places' }),
       }),
       isOnline: boolean('Happens Online?', false),
       availableOnline: boolean('Available Online?', false),
@@ -69,26 +66,28 @@ const events: CustomType = {
     Access: {
       isRelaxedPerformance: booleanDeprecated('Relaxed'),
       interpretations: list('Interpretations', {
-        interpretationType: link('Interpretation', 'document', [
-          'interpretation-types',
-        ]),
+        interpretationType: documentLink({
+          label: 'Interpretation',
+          linkMask: 'interpretation-types',
+        }),
         isPrimary: booleanDeprecated('Primary interprtation'),
         extraInformation: structuredText({ label: 'Extra information' }),
       }),
       audiences: list('Audiences', {
-        audience: link('Audience', 'document', ['audiences']),
+        audience: documentLink({ label: 'Audience', linkMask: 'audiences' }),
       }),
     },
     Reservation: reservationBlock(),
     'Online reservation': reservationBlock('online'),
     Schedule: {
       schedule: list('Events', {
-        event: link('Event', 'document', ['events']),
+        event: documentLink({ label: 'Event', linkMask: 'events' }),
         isNotLinked: booleanDeprecated('Suppress link to event'),
       }),
-      backgroundTexture: link('Background texture', 'document', [
-        'background-textures',
-      ]),
+      backgroundTexture: documentLink({
+        label: 'Background texture',
+        linkMask: 'background-textures',
+      }),
     },
     Contributors: contributorsWithTitle(),
     Promo: {
@@ -102,14 +101,22 @@ const events: CustomType = {
     },
     'Content relationships': {
       series: list('Event series', {
-        series: link('Series', 'document', ['event-series']),
+        series: documentLink({ label: 'Series', linkMask: 'event-series' }),
       }),
       seasons: list('Seasons', {
-        season: link('Season', 'document', ['seasons'], 'Select a Season'),
+        season: documentLink({
+          label: 'Season',
+          linkMask: 'seasons',
+          placeholder: 'Select a Season',
+        }),
       }),
       parents: list('Parents', {
         order: number('Order'),
-        parent: link('Parent', 'document', ['exhibitions'], 'Select a parent'),
+        parent: documentLink({
+          label: 'Parent',
+          linkMask: 'exhibitions',
+          placeholder: 'Select a parent',
+        }),
       }),
     },
   },

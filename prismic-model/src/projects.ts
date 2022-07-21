@@ -3,7 +3,7 @@ import body from './parts/body';
 import promo from './parts/promo';
 import structuredText from './parts/structured-text';
 import contributorsWithTitle from './parts/contributorsWithTitle';
-import link from './parts/link';
+import { documentLink } from './parts/link';
 import list from './parts/list';
 import timestamp from './parts/timestamp';
 import { CustomType } from './types/CustomType';
@@ -16,7 +16,7 @@ const projects: CustomType = {
   json: {
     Project: {
       title,
-      format: link('Format', 'document', ['project-formats']),
+      format: documentLink({ label: 'Format', linkMask: 'project-formats' }),
       start: timestamp('Start date'),
       end: timestamp('End date'),
       body,
@@ -27,7 +27,11 @@ const projects: CustomType = {
     },
     'Content relationships': {
       seasons: list('Seasons', {
-        season: link('Season', 'document', ['seasons'], 'Select a Season'),
+        season: documentLink({
+          label: 'Season',
+          linkMask: 'seasons',
+          placeholder: 'Select a Season',
+        }),
       }),
     },
     Metadata: {

@@ -1,7 +1,7 @@
 import title from './parts/title';
 import structuredText from './parts/structured-text';
 import body from './parts/body';
-import link from './parts/link';
+import link, { documentLink } from './parts/link';
 import text from './parts/text';
 import list from './parts/list';
 import promo from './parts/promo';
@@ -46,11 +46,19 @@ const books: CustomType = {
     },
     'Content relationships': {
       seasons: list('Seasons', {
-        season: link('Season', 'document', ['seasons'], 'Select a Season'),
+        season: documentLink({
+          label: 'Season',
+          linkMask: 'seasons',
+          placeholder: 'Select a Season',
+        }),
       }),
       parents: list('Parents', {
         order: number('Order'),
-        parent: link('Parent', 'document', ['exhibitions'], 'Select a parent'),
+        parent: documentLink({
+          label: 'Parent',
+          linkMask: 'exhibitions',
+          placeholder: 'Select a parent',
+        }),
       }),
     },
   },

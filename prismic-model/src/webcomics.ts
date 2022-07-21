@@ -1,6 +1,6 @@
 import title from './parts/title';
 import list from './parts/list';
-import link from './parts/link';
+import { documentLink } from './parts/link';
 import promo from './parts/promo';
 import articleBody from './parts/article-body';
 import contributorsWithTitle from './parts/contributorsWithTitle';
@@ -15,7 +15,7 @@ const webcomics: CustomType = {
   json: {
     Webcomic: {
       title,
-      format: link('Format', 'document', ['article-formats']),
+      format: documentLink({ label: 'Format', linkMask: 'article-formats' }),
       image: {
         type: 'Image',
         config: {
@@ -36,7 +36,7 @@ const webcomics: CustomType = {
     },
     'Content relationships': {
       series: list('Series', {
-        series: link('Series', 'document', ['webcomic-series']),
+        series: documentLink({ label: 'Series', linkMask: 'webcomic-series' }),
       }),
     },
     Overrides: {

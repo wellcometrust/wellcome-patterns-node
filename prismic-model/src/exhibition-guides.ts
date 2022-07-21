@@ -1,6 +1,6 @@
 import { CustomType } from './types/CustomType';
 import title from './parts/title';
-import link from './parts/link';
+import link, { documentLink } from './parts/link';
 import list from './parts/list';
 import image from './parts/image';
 import structuredText from './parts/structured-text';
@@ -15,9 +15,10 @@ const exhibitionGuides: CustomType = {
   json: {
     Guide: {
       title,
-      'related-exhibition': link('Related Exhibition', 'document', [
-        'exhibitions',
-      ]),
+      'related-exhibition': documentLink({
+        label: 'Related Exhibition',
+        linkMask: 'exhibitions',
+      }),
     },
     // We are providing a repeatable list of guide components which could be:
     // A gallery section, a subsection, or a stop within those sections

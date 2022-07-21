@@ -1,4 +1,4 @@
-import link from './parts/link';
+import { documentLink } from './parts/link';
 import list from './parts/list';
 import { CustomType } from './types/CustomType';
 
@@ -9,7 +9,9 @@ const featuredBooks: CustomType = {
   status: true,
   json: {
     'Featured books': {
-      books: list('books', { book: link('book', 'document', ['books']) }),
+      books: list('books', {
+        book: documentLink({ label: 'book', linkMask: 'books' }),
+      }),
     },
   },
 };
