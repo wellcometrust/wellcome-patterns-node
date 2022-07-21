@@ -1,11 +1,18 @@
-type SingleOrMulti = 'single' | 'multi';
-export default function structuredText(
-  label: string,
-  singleOrMulti: SingleOrMulti = 'multi',
-  extraHtmlTypes: string[] = [],
-  placeholder?: string,
-  overrideDefaultHtmlTypes?: string[]
-) {
+type StructuredTextProps = {
+  label: string;
+  singleOrMulti?: 'single' | 'multi';
+  extraHtmlTypes?: string[];
+  placeholder?: string;
+  overrideDefaultHtmlTypes?: string[];
+};
+
+export default function structuredText({
+  label,
+  singleOrMulti = 'multi',
+  extraHtmlTypes = [],
+  placeholder,
+  overrideDefaultHtmlTypes,
+}: StructuredTextProps) {
   return {
     type: 'StructuredText',
     config: {

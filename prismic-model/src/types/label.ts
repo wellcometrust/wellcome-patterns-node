@@ -5,7 +5,7 @@ export default function label(label: string) {
   return {
     [label]: {
       title,
-      description: structuredText('Description'),
+      description: structuredText({ label: 'Description' }),
     },
   };
 }

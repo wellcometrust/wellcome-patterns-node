@@ -14,14 +14,17 @@ const webcomicSeries: CustomType = {
   json: {
     '[Deprecated] Webcomic series': {
       title: title,
-      description: structuredText('Description'),
+      description: structuredText({ label: 'Description' }),
     },
     Contributors: contributorsWithTitle(),
     Promo: {
       promo,
     },
     Metadata: {
-      metadataDescription: structuredText('Metadata description', 'single'),
+      metadataDescription: structuredText({
+        label: 'Metadata description',
+        singleOrMulti: 'single',
+      }),
     },
   },
 };

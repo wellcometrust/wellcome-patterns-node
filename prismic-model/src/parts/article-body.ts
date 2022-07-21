@@ -218,7 +218,7 @@ export default {
       discussion: slice('Discussion', {
         nonRepeat: {
           title: heading('Title', 2),
-          text: structuredText('Text'),
+          text: structuredText({ label: 'Text' }),
         },
       }),
       tagList: slice('Tag List', {

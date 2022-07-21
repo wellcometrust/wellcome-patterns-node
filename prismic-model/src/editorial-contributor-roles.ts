@@ -9,7 +9,11 @@ const editorialContributorRoles: CustomType = {
   status: true,
   json: {
     Contributor: {
-      title: structuredText('Title', 'single', ['heading1']),
+      title: structuredText({
+        label: 'Title',
+        singleOrMulti: 'single',
+        extraHtmlTypes: ['heading1'],
+      }),
       describedBy: text('Word to describe output of the role'),
     },
   },

@@ -17,7 +17,10 @@ const card: CustomType = {
         'article-formats',
         'labels',
       ]),
-      description: structuredText('Description', 'single'),
+      description: structuredText({
+        label: 'Description',
+        singleOrMulti: 'single',
+      }),
       image: image('Image'),
       link: link('Link'),
     },

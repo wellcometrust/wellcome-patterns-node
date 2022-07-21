@@ -4,7 +4,7 @@ import image from './image';
 
 const mediaObject = {
   title,
-  text: structuredText('Text', 'multi'),
+  text: structuredText({ label: 'Text', singleOrMulti: 'multi' }),
   image: image('Image'),
 };
 

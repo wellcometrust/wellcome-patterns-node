@@ -10,7 +10,10 @@ const audiences: CustomType = {
   json: {
     Audience: {
       title,
-      description: structuredText('Description', 'single'),
+      description: structuredText({
+        label: 'Description',
+        singleOrMulti: 'single',
+      }),
     },
   },
 };

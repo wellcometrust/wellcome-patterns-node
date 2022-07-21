@@ -10,7 +10,12 @@ const globalAlert: CustomType = {
   status: true,
   json: {
     'Global alert': {
-      text: structuredText('text', 'multi', ['heading2'], 'text'),
+      text: structuredText({
+        label: 'text',
+        singleOrMulti: 'multi',
+        extraHtmlTypes: ['heading2'],
+        placeholder: 'text',
+      }),
       isShown: select('Display', ['hide', 'show'], 'hide', 'Show or hide'),
       routeRegex: text(
         'Write a pipe-separated (|) list of page paths here if you only want the alert to display on certain pages. Leave empty if you want the alert to appear on all pages.',

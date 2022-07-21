@@ -26,12 +26,18 @@ const exhibitions: CustomType = {
       start: timestamp('Start date'),
       end: timestamp('End date'),
       isPermanent: booleanDeprecated('Is permanent?'),
-      statusOverride: structuredText('Status override', 'single'),
-      bslInfo: structuredText('BSL information', 'single'),
-      audioDescriptionInfo: structuredText(
-        'Audio description information',
-        'single'
-      ),
+      statusOverride: structuredText({
+        label: 'Status override',
+        singleOrMulti: 'single',
+      }),
+      bslInfo: structuredText({
+        label: 'BSL information',
+        singleOrMulti: 'single',
+      }),
+      audioDescriptionInfo: structuredText({
+        label: 'Audio description information',
+        singleOrMulti: 'single',
+      }),
       place,
     },
     'In this exhibition': {
@@ -57,7 +63,10 @@ const exhibitions: CustomType = {
       promo,
     },
     Metadata: {
-      metadataDescription: structuredText('Metadata description', 'single'),
+      metadataDescription: structuredText({
+        label: 'Metadata description',
+        singleOrMulti: 'single',
+      }),
     },
     'Content relationships': {
       seasons: list('Seasons', {

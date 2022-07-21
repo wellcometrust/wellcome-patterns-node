@@ -8,8 +8,12 @@ const teams = {
   status: true,
   json: {
     Team: {
-      title: structuredText('Title', 'single', ['heading1']),
-      subtitle: structuredText('Subtitle', 'single'),
+      title: structuredText({
+        label: 'Title',
+        singleOrMulti: 'single',
+        extraHtmlTypes: ['heading1'],
+      }),
+      subtitle: structuredText({ label: 'Subtitle', singleOrMulti: 'single' }),
       email: text('Email'),
       phone: text('Phone'),
       url: text('URL'),

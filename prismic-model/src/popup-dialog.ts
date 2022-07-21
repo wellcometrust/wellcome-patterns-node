@@ -13,7 +13,10 @@ const popupDialog: CustomType = {
     'Popup dialog': {
       openButtonText: text('Open button text'),
       title: text('Title inside the open dialog'),
-      text: structuredText('Text inside the open dialog', 'single'),
+      text: structuredText({
+        label: 'Text inside the open dialog',
+        singleOrMulti: 'single',
+      }),
       linkText: text('CTA inside the open dialog button text'),
       link: link('CTA inside the open dialog button link', 'web'),
       isShown: boolean('Is shown?', false),

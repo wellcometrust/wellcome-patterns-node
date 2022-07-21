@@ -24,7 +24,10 @@ const eventSeries: CustomType = {
       promo,
     },
     Metadata: {
-      metadataDescription: structuredText('Metadata description', 'single'),
+      metadataDescription: structuredText({
+        label: 'Metadata description',
+        singleOrMulti: 'single',
+      }),
     },
   },
 };

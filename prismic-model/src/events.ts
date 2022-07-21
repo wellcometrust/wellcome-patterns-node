@@ -34,7 +34,7 @@ function reservationBlock(prefix?: string) {
       'web'
     ),
     [prefix ? `${prefix}BookingInformation` : 'bookingInformation']:
-      structuredText('Extra information'),
+      structuredText({ label: 'Extra information' }),
     [prefix ? `${prefix}Policies` : 'policies']: list('Policies', {
       policy: link('Policy', 'document', ['event-policies']),
     }),
@@ -73,7 +73,7 @@ const events: CustomType = {
           'interpretation-types',
         ]),
         isPrimary: booleanDeprecated('Primary interprtation'),
-        extraInformation: structuredText('Extra information'),
+        extraInformation: structuredText({ label: 'Extra information' }),
       }),
       audiences: list('Audiences', {
         audience: link('Audience', 'document', ['audiences']),
@@ -95,7 +95,10 @@ const events: CustomType = {
       promo,
     },
     Metadata: {
-      metadataDescription: structuredText('Metadata description', 'single'),
+      metadataDescription: structuredText({
+        label: 'Metadata description',
+        singleOrMulti: 'single',
+      }),
     },
     'Content relationships': {
       series: list('Event series', {

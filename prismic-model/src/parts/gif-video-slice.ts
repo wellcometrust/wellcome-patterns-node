@@ -9,7 +9,7 @@ export default function () {
     type: 'Slice',
     fieldset: 'Gif video',
     'non-repeat': {
-      caption: structuredText('Caption', 'single'),
+      caption: structuredText({ label: 'Caption', singleOrMulti: 'single' }),
       tasl: text(
         'TASL',
         'title|author|sourceName|sourceLink|license|copyrightHolder|copyrightLink'

@@ -16,7 +16,7 @@ const places: CustomType = {
       geolocation: geolocation(),
       level: number('Level'),
       capacity: number('Capacity'),
-      locationInformation: structuredText('Location information'),
+      locationInformation: structuredText({ label: 'Location information' }),
       body,
     },
   },

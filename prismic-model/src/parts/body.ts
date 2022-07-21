@@ -63,11 +63,11 @@ export default {
     choices: {
       text: slice('Text', {
         nonRepeat: {
-          text: structuredText('Text', 'multi', [
-            'heading2',
-            'heading3',
-            'list-item',
-          ]),
+          text: structuredText({
+            label: 'Text',
+            singleOrMulti: 'multi',
+            extraHtmlTypes: ['heading2', 'heading3', 'list-item'],
+          }),
         },
       }),
       // These should probably be called captionedImage etc, but legacy says no
@@ -77,20 +77,29 @@ export default {
       iframe: iframeSlice(),
       quote: slice('Quote', {
         nonRepeat: {
-          text: structuredText('Quote'),
-          citation: structuredText('Citation', 'single'),
+          text: structuredText({ label: 'Quote' }),
+          citation: structuredText({
+            label: 'Citation',
+            singleOrMulti: 'single',
+          }),
         },
       }),
       standfirst: slice('Standfirst', {
         nonRepeat: {
-          text: structuredText('Standfirst', 'single'),
+          text: structuredText({
+            label: 'Standfirst',
+            singleOrMulti: 'single',
+          }),
         },
       }),
       table: table(),
       embed: slice('Embed', {
         nonRepeat: {
           embed: embed('Embed (Youtube, Vimeo etc)'),
-          caption: structuredText('Caption', 'single'),
+          caption: structuredText({
+            label: 'Caption',
+            singleOrMulti: 'single',
+          }),
         },
       }),
       map: slice('Map', {
@@ -118,7 +127,7 @@ export default {
       discussion: slice('Discussion', {
         nonRepeat: {
           title: heading('Title', 2),
-          text: structuredText('Text'),
+          text: structuredText({ label: 'Text' }),
         },
       }),
       tagList: slice('Tag List', {
@@ -133,7 +142,11 @@ export default {
       infoBlock: slice('Info block', {
         nonRepeat: {
           title: heading('Title', 2),
-          text: structuredText('Text', 'multi', ['heading3', 'list-item']),
+          text: structuredText({
+            label: 'Text',
+            singleOrMulti: 'multi',
+            extraHtmlTypes: ['heading3', 'list-item'],
+          }),
           link: link('Button link', 'web'),
           linkText: text('Button text'),
         },
@@ -141,7 +154,11 @@ export default {
       titledTextList: slice('Titled text list', {
         repeat: {
           title: heading('Title', 3),
-          text: structuredText('Text', 'multi', ['heading4', 'list-item']),
+          text: structuredText({
+            label: 'Text',
+            singleOrMulti: 'multi',
+            extraHtmlTypes: ['heading4', 'list-item'],
+          }),
           link: link('Link'),
           label: link('tag', 'document', ['labels']),
         },

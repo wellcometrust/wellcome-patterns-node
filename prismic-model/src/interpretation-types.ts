@@ -12,14 +12,16 @@ const interpretationTypes: CustomType = {
       title,
       // TODO: This should be a Key text field
       // see: https://prismic.io/docs/core-concepts/key-text
-      abbreviation: structuredText('Abbreviation', 'single', [], undefined, [
-        'paragraph',
-      ]),
-      description: structuredText('Message'),
-      primaryDescription: structuredText(
-        'Message if primary interpretation',
-        'multi'
-      ),
+      abbreviation: structuredText({
+        label: 'Abbreviation',
+        singleOrMulti: 'single',
+        overrideDefaultHtmlTypes: ['paragraph'],
+      }),
+      description: structuredText({ label: 'Message' }),
+      primaryDescription: structuredText({
+        label: 'Message if primary interpretation',
+        singleOrMulti: 'multi',
+      }),
     },
   },
 };
