@@ -50,4 +50,8 @@ export function documentLink({
   return link(label, 'document', linkMask, placeholder);
 }
 
+export function mediaLink({ label }: { label: string }) {
+  return link(label, 'media');
+}
+
 export default link;
