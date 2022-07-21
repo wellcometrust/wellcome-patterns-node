@@ -2,7 +2,7 @@ import timestamp from './parts/timestamp';
 import number from './parts/number';
 import select from './parts/select';
 import image from './parts/image';
-import link from './parts/link';
+import { webLink } from './parts/link';
 import structuredText from './parts/structured-text';
 import { CustomType } from './types/CustomType';
 
@@ -21,7 +21,7 @@ const collectionVenue: CustomType = {
       },
       order: number('Order'),
       image: image('Image'),
-      link: link('Link', 'web', [], 'Enter url'),
+      link: webLink({ label: 'Link', placeholder: 'Enter url' }),
       linkText: structuredText({ label: 'Linktext', singleOrMulti: 'single' }),
     },
     'Regular opening times': {

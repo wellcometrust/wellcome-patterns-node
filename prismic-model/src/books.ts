@@ -1,7 +1,7 @@
 import title from './parts/title';
 import structuredText from './parts/structured-text';
 import body from './parts/body';
-import link, { documentLink } from './parts/link';
+import { documentLink, webLink } from './parts/link';
 import text from './parts/text';
 import list from './parts/list';
 import promo from './parts/promo';
@@ -20,7 +20,7 @@ const books: CustomType = {
       title,
       subtitle: structuredText({ label: 'Subtitle', singleOrMulti: 'single' }),
       body: body,
-      orderLink: link('Order link', 'web'),
+      orderLink: webLink({ label: 'Order link' }),
       price: text('Price'),
       format: text('Format'),
       extent: text('Extent'),

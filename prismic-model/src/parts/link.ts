@@ -28,6 +28,16 @@ function link(
   };
 }
 
+export function webLink({
+  label,
+  placeholder,
+}: {
+  label: string;
+  placeholder?: string;
+}) {
+  return link(label, 'web', [], placeholder);
+}
+
 export function documentLink({
   label,
   linkMask,
