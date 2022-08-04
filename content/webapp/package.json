@@ -17,6 +17,7 @@
     "@types/styled-components": "^5.1.15",
     "@types/supertest": "^2.0.11",
     "@weco/common": "1.0.0",
+    "cookies-next": "^2.1.1",
     "google-maps": "^3.3.0",
     "jest": "^27.3.1",
     "koa": "^2.5.0",

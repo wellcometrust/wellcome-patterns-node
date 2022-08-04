@@ -1,3 +1,4 @@
+import { setCookie, getCookie, getCookies } from 'cookies-next';
 import {
   ExhibitionGuide,
   ExhibitionGuideComponent,
@@ -6,7 +7,7 @@ import { createClient } from '../services/prismic/fetch';
 import { fetchExhibitionGuide } from '../services/prismic/fetch/exhibition-guides';
 import { transformExhibitionGuide } from '../services/prismic/transformers/exhibition-guides';
 import PageLayout from '@weco/common/views/components/PageLayout/PageLayout';
-import { FC } from 'react';
+import { FC, SyntheticEvent } from 'react';
 import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { exhibitionGuideLd } from '../services/prismic/transformers/json-ld';
@@ -54,13 +55,27 @@ type Props = {
   exhibitionGuide: ExhibitionGuide;
   jsonLd: JsonLdObj;
   type?: GuideType;
+  onClick: (event: SyntheticEvent<HTMLAnchorElement>) => void;
 };
 
 export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
   async context => {
     const serverData = await getServerData(context);
+    const { req, res } = context;
     const { id, type } = context.query;
-
+    // We can choose to use cookies at GetServerSideProps
+    // const options = { res, req, maxAge: 7200 };
+    // setCookies('test', 'this is a great test value', {
+    //   req,
+    //   res,
+    //   maxAge: 60 * 6 * 24,
+    // });
+    getCookie('testCookie', { req, res });
+    getCookies({ req, res });
+    console.log(
+      getCookie('test server', { req, res }),
+      'testing testing testing'
+    );
     if (
       !looksLikePrismicId(id) ||
       !serverData.toggles.exhibitionGuides ||
@@ -98,6 +113,10 @@ type StopsProps = {
 };
 
 const Stops: FC<StopsProps> = ({ stops, type }) => {
+  // Setting cookie instead at point of initial choice between 4 guide types
+  // getCookie('testCookie');
+  // const userPreferenceCookie = getCookie('testCookie');
+  // console.log(userPreferenceCookie, 'this is a preference cookie');
   return (
     <ul className="plain-list no-margin no-padding">
       {stops.map((stop, index) => {
@@ -168,6 +187,18 @@ const ExhibitionGuidesPage: FC<Props> = props => {
   const pathname = `guides/exhibitions/${exhibitionGuide.id}${
     type ? `/${type}` : ''
   }`;
+  const clickHandler = () => {
+    // clickHandler for onClick of one of 4 guide types
+    // TODO this still is not best approach for anchor links and doesn't work
+    // TODO logic to load future qr codes in the correct type based on this cookie
+    setCookie('testCookie', 'test');
+    getCookie('testCookie');
+    const userPreferenceCookie = getCookie('testCookie');
+    console.log(
+      userPreferenceCookie,
+      'this is a preference cookie from click handler'
+    );
+  };
   return (
     <PageLayout
       title={exhibitionGuide.title || ''}
@@ -194,7 +225,10 @@ const ExhibitionGuidesPage: FC<Props> = props => {
             className="flex flex--wrap"
             style={{ gap: '10px' }}
           >
-            <TypeLink href={`/${pathname}/audio-without-descriptions`}>
+            <TypeLink
+              href={`/${pathname}/audio-without-descriptions`}
+              onClick={clickHandler()}
+            >
               <h2 className="h2">Listen, without audio descriptions</h2>
               <p>Find out more about the exhibition with short audio tracks.</p>
             </TypeLink>

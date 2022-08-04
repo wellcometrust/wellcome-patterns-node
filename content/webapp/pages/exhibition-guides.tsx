@@ -28,6 +28,8 @@ type Props = {
 
 export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
   async context => {
+    console.log(context, 'what is the context');
+
     const serverData = await getServerData(context);
     const page = getPage(context.query);
 
