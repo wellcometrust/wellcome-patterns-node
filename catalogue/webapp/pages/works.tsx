@@ -28,7 +28,8 @@ import {
 import SearchContext from '@weco/common/views/components/SearchContext/SearchContext';
 import { worksFilters } from '@weco/common/services/catalogue/filters';
 import { getServerData } from '@weco/common/server-data';
-import { CatalogueResultsList, Work } from '@weco/common/model/catalogue';
+import { Work } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../model/catalogue';
 
 type Props = {
   works: CatalogueResultsList<Work>;

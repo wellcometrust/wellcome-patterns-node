@@ -1,7 +1,8 @@
 import { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import WorksSearchResult from '../WorksSearchResult/WorksSearchResult';
-import { CatalogueResultsList, Work } from '@weco/common/model/catalogue';
+import { Work } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../../model/catalogue';
 
 type Props = {
   works: CatalogueResultsList<Work>;

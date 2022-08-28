@@ -320,7 +320,7 @@ export type ImageAggregations = {
   type: 'Aggregations';
 };
 
-type ConceptAggregations = null;
+export type ConceptAggregations = null;
 
 export type HasWorkAggregations = {
   aggregations?: WorkAggregations;
@@ -328,23 +328,4 @@ export type HasWorkAggregations = {
 
 export type HasImageAggregations = {
   aggregations?: ImageAggregations;
-};
-
-export type ResultType = Work | Image | Concept;
-
-export type CatalogueResultsList<Result extends ResultType> = {
-  type: 'ResultList';
-  totalResults: number;
-  totalPages: number;
-  results: Result[];
-  pageSize: number;
-  prevPage: string | null;
-  nextPage: string | null;
-  aggregations?: Result extends Work
-    ? WorkAggregations
-    : Result extends Image
-    ? ImageAggregations
-    : Result extends Concept
-    ? ConceptAggregations
-    : null;
 };

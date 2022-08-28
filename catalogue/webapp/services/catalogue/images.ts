@@ -1,8 +1,5 @@
-import {
-  CatalogueApiError,
-  CatalogueResultsList,
-  Image,
-} from '@weco/common/model/catalogue';
+import { CatalogueApiError, Image } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../../model/catalogue';
 import { CatalogueImagesApiProps } from '@weco/common/services/catalogue/api';
 import {
   rootUris,

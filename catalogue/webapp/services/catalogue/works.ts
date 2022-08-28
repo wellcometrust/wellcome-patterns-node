@@ -1,10 +1,10 @@
 import {
   CatalogueApiError,
   CatalogueApiRedirect,
-  CatalogueResultsList,
   ItemsList,
   Work,
 } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../../model/catalogue';
 import { IIIFCanvas } from '../../model/iiif';
 import { CatalogueWorksApiProps } from '@weco/common/services/catalogue/api';
 import {

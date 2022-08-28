@@ -1,8 +1,5 @@
-import {
-  CatalogueApiError,
-  CatalogueResultsList,
-  Concept,
-} from '@weco/common/model/catalogue';
+import { CatalogueApiError, Concept } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../../model/catalogue';
 import { CatalogueConceptsApiProps } from '@weco/common/services/catalogue/api';
 import { Toggles } from '@weco/toggles';
 import {

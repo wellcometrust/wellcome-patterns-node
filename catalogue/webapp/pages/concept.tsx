@@ -1,10 +1,10 @@
 import { GetServerSideProps, NextPage } from 'next';
 import {
-  CatalogueResultsList,
   Concept as ConceptType,
   Image as ImageType,
   Work as WorkType,
 } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../model/catalogue';
 import { removeUndefinedProps } from '@weco/common/utils/json';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
 import { getServerData } from '@weco/common/server-data';

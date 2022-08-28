@@ -1,12 +1,9 @@
 import fetch, { Response } from 'node-fetch';
 import { HttpsAgent as Agent } from 'agentkeepalive';
-import {
-  CatalogueApiError,
-  CatalogueResultsList,
-  ResultType,
-} from '@weco/common/model/catalogue';
+import { CatalogueApiError } from '@weco/common/model/catalogue';
 import { Toggles } from '@weco/toggles';
 import { propsToQuery } from '@weco/common/utils/routes';
+import { CatalogueResultsList, ResultType } from 'model/catalogue';
 
 export const rootUris = {
   prod: 'https://api.wellcomecollection.org/catalogue',

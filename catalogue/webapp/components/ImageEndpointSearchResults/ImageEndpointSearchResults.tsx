@@ -1,7 +1,8 @@
 import { FunctionComponent, useState } from 'react';
 import ExpandedImage from '../ExpandedImage/ExpandedImage';
 import ImageCard from '../ImageCard/ImageCard';
-import { Image, CatalogueResultsList } from '@weco/common/model/catalogue';
+import { Image } from '@weco/common/model/catalogue';
+import { CatalogueResultsList } from '../../model/catalogue';
 import Modal from '@weco/common/views/components/Modal/Modal';
 
 type Props = {
