@@ -322,6 +322,14 @@ export type ImageAggregations = {
 
 type ConceptAggregations = null;
 
+export type HasWorkAggregations = {
+  aggregations?: WorkAggregations;
+};
+
+export type HasImageAggregations = {
+  aggregations?: ImageAggregations;
+};
+
 export type ResultType = Work | Image | Concept;
 
 export type CatalogueResultsList<Result extends ResultType> = {

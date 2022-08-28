@@ -1,5 +1,10 @@
 import { palette } from '../../views/components/PaletteColorPicker/PaletteColorPicker';
-import { WorkAggregations, ImageAggregations } from '../../model/catalogue';
+import {
+  WorkAggregations,
+  ImageAggregations,
+  HasWorkAggregations,
+  HasImageAggregations,
+} from '../../model/catalogue';
 import { quoteVal } from '../../utils/csv';
 import { toHtmlId } from '../../utils/string';
 import { ImagesProps } from '../../views/components/ImagesLink/ImagesLink';
@@ -72,17 +77,9 @@ function filterOptionsWithNonAggregates(
     .filter(option => showEmptyBuckets || option.count > 0 || option.selected);
 }
 
-type HasWorkAggregations = {
-  aggregations?: WorkAggregations;
-};
-
 type WorksFilterProps = {
   works: HasWorkAggregations;
   props: WorksProps;
-};
-
-type HasImageAggregations = {
-  aggregations?: ImageAggregations;
 };
 
 type ImagesFilterProps = {

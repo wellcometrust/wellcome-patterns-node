@@ -1,13 +1,6 @@
-import { CatalogueResultsList, Work } from '../../../model/catalogue';
+import { HasWorkAggregations } from '../../../model/catalogue';
 
-const aggregations: CatalogueResultsList<Work> = {
-  type: 'ResultList',
-  pageSize: 10,
-  totalPages: 13771,
-  totalResults: 137701,
-  nextPage: null,
-  prevPage: null,
-  results: [],
+const aggregations: HasWorkAggregations = {
   aggregations: {
     workType: {
       buckets: [

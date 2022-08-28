@@ -1,13 +1,6 @@
-import { CatalogueResultsList, Image } from '../../../model/catalogue';
+import { HasImageAggregations } from '../../../model/catalogue';
 
-const aggregations: CatalogueResultsList<Image> = {
-  type: 'ResultList',
-  pageSize: 10,
-  totalPages: 0,
-  totalResults: 0,
-  results: [],
-  nextPage: null,
-  prevPage: null,
+const aggregations: HasImageAggregations = {
   aggregations: {
     license: {
       buckets: [
