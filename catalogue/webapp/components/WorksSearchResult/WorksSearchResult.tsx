@@ -1,13 +1,7 @@
 import { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { Work } from '@weco/common/model/catalogue';
 import { classNames, font } from '@weco/common/utils/classnames';
 import LinkLabels from '@weco/common/views/components/LinkLabels/LinkLabels';
-import {
-  getArchiveLabels,
-  getProductionDates,
-  getCardLabels,
-} from '../../utils/works';
 import { trackEvent } from '@weco/common/utils/ga';
 import IIIFImage from '../IIIFImage/IIIFImage';
 import { convertIiifImageUri } from '@weco/common/utils/convert-image-uri';
@@ -17,9 +11,10 @@ import Space, {
 import WorkTitle from '../WorkTitle/WorkTitle';
 import WorkLink from '@weco/common/views/components/WorkLink/WorkLink';
 import LabelsList from '@weco/common/views/components/LabelsList/LabelsList';
+import { WorkBasic } from '../../model/catalogue';
 
 type Props = {
-  work: Work;
+  work: WorkBasic;
   resultPosition: number;
 };
 
@@ -75,13 +70,12 @@ const WorkSearchResult: FunctionComponent<Props> = ({
   work,
   resultPosition,
 }: Props) => {
-  const productionDates = getProductionDates(work);
-  const archiveLabels = getArchiveLabels(work);
-  const cardLabels = getCardLabels(work);
-
-  const primaryContributorLabel = work.contributors.find(
-    contributor => contributor.primary
-  )?.agent.label;
+  const {
+    productionDates,
+    archiveLabels,
+    cardLabels,
+    primaryContributorLabel,
+  } = work;
 
   return (
     <Wrapper>

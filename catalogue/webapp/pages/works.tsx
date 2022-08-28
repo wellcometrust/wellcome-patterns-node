@@ -28,11 +28,14 @@ import {
 import SearchContext from '@weco/common/views/components/SearchContext/SearchContext';
 import { worksFilters } from '@weco/common/services/catalogue/filters';
 import { getServerData } from '@weco/common/server-data';
-import { Work } from '@weco/common/model/catalogue';
-import { CatalogueResultsList } from '../model/catalogue';
+import {
+  CatalogueResultsList,
+  transformWorkToWorkBasic,
+  WorkBasic,
+} from '../model/catalogue';
 
 type Props = {
-  works: CatalogueResultsList<Work>;
+  works: CatalogueResultsList<WorkBasic>;
   worksRouteProps: WorksRouteProps;
 } & WithPageview;
 
@@ -292,9 +295,14 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       return appError(context, works.httpStatus, works.description);
     }
 
+    const basicWorks = {
+      ...works,
+      results: works.results.map(transformWorkToWorkBasic),
+    };
+
     return {
       props: removeUndefinedProps({
-        works,
+        works: basicWorks,
         worksRouteProps: props,
         serverData,
         pageview: {

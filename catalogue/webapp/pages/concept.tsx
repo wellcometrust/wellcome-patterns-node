@@ -4,7 +4,11 @@ import {
   Image as ImageType,
   Work as WorkType,
 } from '@weco/common/model/catalogue';
-import { CatalogueResultsList } from '../model/catalogue';
+import {
+  CatalogueResultsList,
+  transformWorkToWorkBasic,
+  WorkBasic,
+} from '../model/catalogue';
 import { removeUndefinedProps } from '@weco/common/utils/json';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
 import { getServerData } from '@weco/common/server-data';
@@ -19,12 +23,14 @@ import WorksSearchResults from '../components/WorksSearchResults/WorksSearchResu
 type Props = {
   conceptResponse: ConceptType;
   works: CatalogueResultsList<WorkType> | undefined;
+  basicWorks: CatalogueResultsList<WorkBasic> | undefined;
   images: CatalogueResultsList<ImageType> | undefined;
 };
 
 export const ConceptPage: NextPage<Props> = ({
   conceptResponse,
   works,
+  basicWorks,
   images,
 }) => {
   const conceptsJson = JSON.stringify(conceptResponse);
@@ -84,12 +90,12 @@ export const ConceptPage: NextPage<Props> = ({
           <h2>Matching works</h2>
         </p>
 
-        {works && works.totalResults ? (
+        {basicWorks && basicWorks.totalResults ? (
           <>
-            <WorksSearchResults works={works} />
+            <WorksSearchResults works={basicWorks} />
             <p>
               <a href={`/works?subjects.label=${conceptResponse.label}`}>
-                see all matching works ({works.totalResults}) &rarr;
+                see all matching works ({basicWorks.totalResults}) &rarr;
               </a>
             </p>
           </>
@@ -174,12 +180,18 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     const works = worksResponse.type === 'Error' ? undefined : worksResponse;
+    const basicWorks = works && {
+      ...works,
+      results: works?.results.map(transformWorkToWorkBasic),
+    };
+
     const images = imagesResponse.type === 'Error' ? undefined : imagesResponse;
 
     return {
       props: removeUndefinedProps({
         conceptResponse,
         works,
+        basicWorks,
         images,
         serverData,
       }),
