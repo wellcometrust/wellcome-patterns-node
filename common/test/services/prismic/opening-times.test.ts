@@ -620,10 +620,10 @@ describe('opening-times', () => {
 
   describe("getTodaysVenueHours: returns the venue's opening times for the current day", () => {
     it('returns the regular opening hours, if there are no exceptional opening times for the day.', () => {
-      const spyOnLondon = jest.spyOn(formatDateUtils, 'london');
+      const spyOnToday = jest.spyOn(dateUtils, 'today');
       // set Day as Wednesday, so we have something consistent to test against
-      spyOnLondon.mockImplementation(() => {
-        return moment.tz('2022-01-19', 'Europe/London');
+      spyOnToday.mockImplementation(() => {
+        return new Date('2022-01-19');
       });
 
       const result = getTodaysVenueHours(libraryVenue!);
@@ -637,10 +637,10 @@ describe('opening-times', () => {
     });
 
     it('returns the exceptional times if there are some for the day.', () => {
-      const spyOnLondon = jest.spyOn(formatDateUtils, 'london');
+      const spyOnToday = jest.spyOn(dateUtils, 'today');
       // set Day to a date we have exceptional opening times for
-      spyOnLondon.mockImplementation(() => {
-        return moment.tz('2023-01-01', 'Europe/London');
+      spyOnToday.mockImplementation(() => {
+        return new Date('2023-01-01');
       });
 
       const result = getTodaysVenueHours(libraryVenue!);

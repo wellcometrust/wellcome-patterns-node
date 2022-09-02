@@ -247,12 +247,12 @@ export function getVenueById(venues: Venue[], id: string): Venue | undefined {
 export function getTodaysVenueHours(
   venue: Venue
 ): ExceptionalOpeningHoursDay | OpeningHoursDay | undefined {
-  const todaysDate = london();
+  const todaysDate = today();
   const todayString = formatDay(todaysDate);
   const exceptionalOpeningHours =
     venue.openingHours.exceptional &&
     venue.openingHours.exceptional.find(i =>
-      isSameDay(todaysDate.toDate(), i.overrideDate)
+      isSameDay(todaysDate, i.overrideDate)
     );
   const regularOpeningHours =
     venue.openingHours.regular &&
