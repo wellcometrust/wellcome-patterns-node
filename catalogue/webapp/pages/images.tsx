@@ -13,7 +13,6 @@ import ImageEndpointSearchResults from '../components/ImageEndpointSearchResults
 import { getImages } from '../services/catalogue/images';
 import SearchTabs from '@weco/common/views/components/SearchTabs/SearchTabs';
 import SearchNoResults from '../components/SearchNoResults/SearchNoResults';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import SearchTitle from '../components/SearchTitle/SearchTitle';
 import {
   appError,
@@ -267,7 +266,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         serverData,
         images,
         imagesRouteProps: params,
@@ -279,7 +278,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
               }
             : {},
         },
-      }),
+      },
     };
   };
 

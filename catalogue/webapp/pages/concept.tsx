@@ -3,7 +3,6 @@ import { GetServerSideProps, NextPage } from 'next';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
 
 // Helpers/Utils
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { looksLikeCanonicalId } from 'services/catalogue';
 import { getConcept } from 'services/catalogue/concepts';
@@ -317,13 +316,13 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const images = imagesResponse.type === 'Error' ? undefined : imagesResponse;
 
     return {
-      props: removeUndefinedProps({
+      props: {
         conceptResponse,
         worksAbout,
         worksBy,
         images,
         serverData,
-      }),
+      },
     };
   };
 

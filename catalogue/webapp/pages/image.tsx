@@ -12,7 +12,6 @@ import Layout12 from '@weco/common/views/components/Layout12/Layout12';
 import BetaMessage from '@weco/common/views/components/BetaMessage/BetaMessage';
 import Space from '@weco/common/views/components/styled/Space';
 import IIIFViewer from '../components/IIIFViewer/IIIFViewer';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getWork } from '../services/catalogue/works';
 import { getImage } from '../services/catalogue/images';
 import { getServerData } from '@weco/common/server-data';
@@ -148,7 +147,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         image,
         sourceWork: work,
         pageview: {
@@ -156,7 +155,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           properties: {},
         },
         serverData,
-      }),
+      },
     };
   };
 

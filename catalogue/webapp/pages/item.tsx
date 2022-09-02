@@ -32,7 +32,6 @@ import Modal from '@weco/common/views/components/Modal/Modal';
 import ButtonSolid from '@weco/common/views/components/ButtonSolid/ButtonSolid';
 import { font } from '@weco/common/utils/classnames';
 import { trackEvent } from '@weco/common/utils/ga';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import {
   appError,
   AppErrorProps,
@@ -461,7 +460,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
         : undefined;
 
       return {
-        props: removeUndefinedProps({
+        props: {
           manifest,
           manifestIndex,
           pageSize,
@@ -476,13 +475,13 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           iiifImageLocation,
           pageview,
           serverData,
-        }),
+        },
       };
     }
 
     if (iiifImageLocation) {
       return {
-        props: removeUndefinedProps({
+        props: {
           pageSize,
           pageIndex,
           canvasIndex,
@@ -491,7 +490,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           iiifImageLocation,
           pageview,
           serverData,
-        }),
+        },
       };
     }
 

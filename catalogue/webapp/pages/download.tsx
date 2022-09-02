@@ -22,7 +22,6 @@ import SpacingComponent from '@weco/common/views/components/SpacingComponent/Spa
 import SpacingSection from '@weco/common/views/components/SpacingSection/SpacingSection';
 import Space from '@weco/common/views/components/styled/Space';
 import WorkDetailsText from '../components/WorkDetailsText/WorkDetailsText';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { GetServerSideProps, NextPage } from 'next';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
 import { getServerData } from '@weco/common/server-data';
@@ -212,12 +211,12 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         workId,
         sierraId,
         manifest,
         work,
-      }),
+      },
     };
   };
 

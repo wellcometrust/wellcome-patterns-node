@@ -12,7 +12,6 @@ import cookies from 'next-cookies';
 import WorksSearchResults from '../components/WorksSearchResults/WorksSearchResults';
 import SearchTabs from '@weco/common/views/components/SearchTabs/SearchTabs';
 import SearchNoResults from '../components/SearchNoResults/SearchNoResults';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import SearchTitle from '../components/SearchTitle/SearchTitle';
 import { GetServerSideProps, NextPage } from 'next';
 import {
@@ -292,7 +291,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         works,
         worksRouteProps: props,
         serverData,
@@ -300,7 +299,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           name: 'works',
           properties: works ? { totalResults: works.totalResults } : {},
         },
-      }),
+      },
     };
   };
 

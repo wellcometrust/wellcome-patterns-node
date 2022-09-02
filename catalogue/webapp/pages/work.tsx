@@ -1,6 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Work as WorkType } from '@weco/common/model/catalogue';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import {
   appError,
   AppErrorProps,
@@ -56,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         workResponse,
         serverData,
         pageview: {
@@ -71,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
             ),
           },
         },
-      }),
+      },
     };
   };
 

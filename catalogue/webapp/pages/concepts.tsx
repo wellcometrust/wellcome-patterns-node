@@ -3,7 +3,6 @@ import {
   Concept as ConceptType,
   CatalogueResultsList,
 } from '@weco/common/model/catalogue';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
 import { getServerData } from '@weco/common/server-data';
 import { getConcepts } from 'services/catalogue/concepts';
@@ -68,10 +67,10 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         concepts,
         serverData,
-      }),
+      },
     };
   };
 
