@@ -9,7 +9,15 @@ import {
   ExceptionalOpeningHoursDay,
 } from '../../model/opening-hours';
 import { isNotUndefined } from '../../utils/array';
-import { dayBefore, isSameDay } from '../../utils/dates';
+import {
+  addDays,
+  dayBefore,
+  endOfDay,
+  isSameDay,
+  now,
+  startOfDay,
+  today,
+} from '../../utils/dates';
 
 export function exceptionalOpeningDates(venues: Venue[]): OverrideDate[] {
   return venues
@@ -219,8 +227,8 @@ export function groupConsecutiveExceptionalDays(
 export function getUpcomingExceptionalPeriods(
   exceptionalPeriods: ExceptionalOpeningHoursDay[][]
 ): ExceptionalOpeningHoursDay[][] {
-  const startOfToday = london().startOf('day').toDate();
-  const upcomingUntil = london().add(28, 'day').endOf('day').toDate();
+  const startOfToday = startOfDay(today());
+  const upcomingUntil = endOfDay(addDays(today(), 28));
 
   const nextUpcomingPeriods = exceptionalPeriods.filter(period => {
     const upcomingPeriod = period.find(

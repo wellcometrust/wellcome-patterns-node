@@ -1,6 +1,16 @@
 import { DateTypes, london } from './format-date';
 import { DateRange } from '../model/date-range';
 
+// Returns the current time.  This is a standalone function so it can be
+// patched/mocked in tests.
+export function now(): Date {
+  return new Date();
+}
+
+export function today(): Date {
+  return now();
+}
+
 export function getEarliestFutureDateRange(
   dateRanges: DateRange[],
   fromDate: Date | undefined = new Date()
@@ -17,13 +27,11 @@ export function getEarliestFutureDateRange(
 }
 
 export function isPast(date: Date): boolean {
-  const now = new Date();
-  return date < now;
+  return date < now();
 }
 
 export function isFuture(date: Date): boolean {
-  const now = new Date();
-  return date > now;
+  return now() < date;
 }
 
 export function isSameMonth(date1: Date, date2: Date): boolean {

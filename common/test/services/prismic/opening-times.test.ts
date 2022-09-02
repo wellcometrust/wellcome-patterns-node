@@ -13,9 +13,10 @@ import {
 } from '../../../services/prismic/opening-times';
 import { venues } from '../../../test/fixtures/components/venues';
 import { ExceptionalOpeningHoursDay } from '../../../model/opening-hours';
-import * as dateUtils from '../../../utils/format-date';
+import * as formatDateUtils from '../../../utils/format-date';
+import * as dateUtils from '../../../utils/dates';
 import moment from 'moment';
-const { london } = dateUtils;
+const { london } = formatDateUtils;
 
 const venuesWithoutExceptionalDates = venues.map(venue => {
   return {
@@ -559,20 +560,21 @@ describe('opening-times', () => {
     ];
 
     it('returns an empty array if no exceptional periods have days that occur in the next 28 days', () => {
-      const spyOnLondon = jest.spyOn(dateUtils, 'london');
+      const spyOnToday = jest.spyOn(dateUtils, 'today');
       // set specific date, so we have something consistent to test against
-      spyOnLondon.mockImplementation(() => {
-        return moment.tz('2021-11-30', 'Europe/London');
+      spyOnToday.mockImplementation(() => {
+        return new Date('2021-11-30');
       });
+
       const result = getUpcomingExceptionalPeriods(exceptionalPeriods);
       expect(result).toEqual([]);
     });
 
     it('returns exceptional periods that have days that occur in the next 28 days', () => {
-      const spyOnLondon = jest.spyOn(dateUtils, 'london');
+      const spyOnToday = jest.spyOn(dateUtils, 'today');
       // set specific date, so we have something consistent to test against
-      spyOnLondon.mockImplementation(() => {
-        return moment.tz('2021-12-10', 'Europe/London');
+      spyOnToday.mockImplementation(() => {
+        return new Date('2021-12-10');
       });
       const result = getUpcomingExceptionalPeriods(exceptionalPeriods);
       expect(result).toEqual([
@@ -618,7 +620,7 @@ describe('opening-times', () => {
 
   describe("getTodaysVenueHours: returns the venue's opening times for the current day", () => {
     it('returns the regular opening hours, if there are no exceptional opening times for the day.', () => {
-      const spyOnLondon = jest.spyOn(dateUtils, 'london');
+      const spyOnLondon = jest.spyOn(formatDateUtils, 'london');
       // set Day as Wednesday, so we have something consistent to test against
       spyOnLondon.mockImplementation(() => {
         return moment.tz('2022-01-19', 'Europe/London');
@@ -635,7 +637,7 @@ describe('opening-times', () => {
     });
 
     it('returns the exceptional times if there are some for the day.', () => {
-      const spyOnLondon = jest.spyOn(dateUtils, 'london');
+      const spyOnLondon = jest.spyOn(formatDateUtils, 'london');
       // set Day to a date we have exceptional opening times for
       spyOnLondon.mockImplementation(() => {
         return moment.tz('2023-01-01', 'Europe/London');
