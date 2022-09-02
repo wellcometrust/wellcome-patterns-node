@@ -16,7 +16,6 @@ import { createClient } from '../services/prismic/fetch';
 import { fetchEvents } from '../services/prismic/fetch/events';
 import { getPage } from '../utils/query-params';
 import {
-  fixEventDatesInJson,
   transformEvent,
   transformEventToEventBasic,
 } from '../services/prismic/transformers/events';
@@ -81,13 +80,12 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
 
 const EventsPage: FC<Props> = props => {
   const { events, title, period, jsonLd } = props;
-  const convertedEvents = events.results.map(fixEventDatesInJson);
   const convertedPaginatedResults = {
     ...events,
     results:
       period !== 'past'
-        ? orderEventsByNextAvailableDate(convertedEvents)
-        : convertedEvents,
+        ? orderEventsByNextAvailableDate(events.results)
+        : events.results,
   };
   const firstEvent = events.results[0];
   return (

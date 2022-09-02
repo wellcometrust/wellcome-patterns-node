@@ -31,14 +31,10 @@ import {
   transformBookToBookBasic,
 } from '../services/prismic/transformers/books';
 import {
-  fixEventDatesInJson,
   transformEvent,
   transformEventToEventBasic,
 } from '../services/prismic/transformers/events';
-import {
-  fixExhibitionDatesInJson,
-  transformExhibitionsQuery,
-} from '../services/prismic/transformers/exhibitions';
+import { transformExhibitionsQuery } from '../services/prismic/transformers/exhibitions';
 import { transformPage } from '../services/prismic/transformers/pages';
 import { transformProject } from '../services/prismic/transformers/projects';
 import { transformSeries } from '../services/prismic/transformers/series';
@@ -102,12 +98,10 @@ const SeasonPage = ({
       end={season.end}
     />
   );
-  const parsedEvents = events.map(fixEventDatesInJson);
-  const parsedExhibitions = exhibitions.map(fixExhibitionDatesInJson);
 
   const allItems = [
-    ...parsedExhibitions,
-    ...parsedEvents,
+    ...exhibitions,
+    ...events,
     ...articles,
     ...pages,
     ...series,

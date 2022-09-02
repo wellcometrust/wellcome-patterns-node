@@ -13,10 +13,7 @@ import {
   pastExhibitionsStrapline,
 } from '@weco/common/data/microcopy';
 import { fetchExhibitions } from '../services/prismic/fetch/exhibitions';
-import {
-  fixExhibitionDatesInJson,
-  transformExhibitionsQuery,
-} from '../services/prismic/transformers/exhibitions';
+import { transformExhibitionsQuery } from '../services/prismic/transformers/exhibitions';
 import { createClient } from '../services/prismic/fetch';
 import { ExhibitionBasic } from '../types/exhibitions';
 import { JsonLdObj } from '@weco/common/views/components/JsonLd/JsonLd';
@@ -74,11 +71,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
   };
 
 const ExhibitionsPage: FC<Props> = props => {
-  const { exhibitions: jsonExhibitions, period, title, jsonLd } = props;
-  const exhibitions = {
-    ...jsonExhibitions,
-    results: jsonExhibitions.results.map(fixExhibitionDatesInJson),
-  };
+  const { exhibitions, period, title, jsonLd } = props;
   const firstExhibition = exhibitions[0];
 
   const partitionedExhibitionItems = exhibitions.results.reduce(

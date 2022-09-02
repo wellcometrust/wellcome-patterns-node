@@ -3,7 +3,6 @@ import {
   getExceptionalVenueDays,
   groupConsecutiveExceptionalDays,
 } from '@weco/common/services/prismic/opening-times';
-import { fixVenueDatesInJson } from '@weco/common/services/prismic/transformers/collection-venues';
 import {
   collectionVenueId,
   getNameFromCollectionVenue,
@@ -16,9 +15,7 @@ type Props = {
 };
 
 const VenueClosedPeriods: FunctionComponent<Props> = ({ venue }) => {
-  const exceptionalVenueDays = venue
-    ? getExceptionalVenueDays(fixVenueDatesInJson(venue))
-    : [];
+  const exceptionalVenueDays = venue ? getExceptionalVenueDays(venue) : [];
   const onlyClosedDays = exceptionalVenueDays.filter(day => day.isClosed);
   const groupedConsectiveClosedDays =
     groupConsecutiveExceptionalDays(onlyClosedDays);

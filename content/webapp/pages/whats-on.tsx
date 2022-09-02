@@ -64,16 +64,12 @@ import { createClient } from '../services/prismic/fetch';
 import { fetchEvents } from '../services/prismic/fetch/events';
 import { transformQuery } from '../services/prismic/transformers/paginated-results';
 import {
-  fixEventDatesInJson,
   transformEvent,
   transformEventToEventBasic,
 } from '../services/prismic/transformers/events';
 import { pageDescriptions } from '@weco/common/data/microcopy';
 import { fetchExhibitions } from '../services/prismic/fetch/exhibitions';
-import {
-  fixExhibitionDatesInJson,
-  transformExhibitionsQuery,
-} from '../services/prismic/transformers/exhibitions';
+import { transformExhibitionsQuery } from '../services/prismic/transformers/exhibitions';
 import { FacilityPromo as FacilityPromoType } from '../types/facility-promo';
 import { getNextWeekendDateRange } from '@weco/common/utils/dates';
 
@@ -391,12 +387,10 @@ const WhatsOnPage: FunctionComponent<Props> = props => {
     eatShopPromos,
     featuredText,
     jsonLd,
+    events,
+    availableOnlineEvents,
+    exhibitions,
   } = props;
-
-  const events = props.events.map(fixEventDatesInJson);
-  const availableOnlineEvents =
-    props.availableOnlineEvents.map(fixEventDatesInJson);
-  const exhibitions = props.exhibitions.map(fixExhibitionDatesInJson);
 
   const firstExhibition = exhibitions[0];
 

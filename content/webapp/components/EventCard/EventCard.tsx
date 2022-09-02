@@ -6,7 +6,6 @@ import StatusIndicator from '@weco/common/views/components/StatusIndicator/Statu
 import EventDateRange from '../EventDateRange/EventDateRange';
 import { classNames, font } from '@weco/common/utils/classnames';
 import { getCrop } from '@weco/common/model/image';
-import { fixEventDatesInJson } from '../../services/prismic/transformers/events';
 import Space from '@weco/common/views/components/styled/Space';
 import WatchLabel from '@weco/common/views/components/WatchLabel/WatchLabel';
 
@@ -15,8 +14,7 @@ type Props = {
   xOfY: { x: number; y: number };
 };
 
-const EventCard: FC<Props> = ({ event: jsonEvent, xOfY }) => {
-  const event = fixEventDatesInJson(jsonEvent);
+const EventCard: FC<Props> = ({ event, xOfY }) => {
   const DateRangeComponent = event.isPast ? undefined : (
     <EventDateRange event={event} />
   );

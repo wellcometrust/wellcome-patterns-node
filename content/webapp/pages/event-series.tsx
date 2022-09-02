@@ -22,7 +22,6 @@ import { isNotUndefined } from '@weco/common/utils/array';
 import { transformEventSeries } from '../services/prismic/transformers/event-series';
 import { transformQuery } from '../services/prismic/transformers/paginated-results';
 import {
-  fixEventDatesInJson,
   transformEvent,
   transformEventToEventBasic,
 } from '../services/prismic/transformers/events';
@@ -107,14 +106,9 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
 const EventSeriesPage: FC<Props> = ({
   series,
   jsonLd,
-  pastEvents: pastJsonEvents,
-  upcomingEvents: upcomingJsonEvents,
+  pastEvents,
+  upcomingEvents,
 }) => {
-  // events are passed down through getServerSideProps as JSON, so we nuparse them before moving forward
-  // This could probably be done at the time of use, instead of globally...
-  const pastEvents = pastJsonEvents.map(fixEventDatesInJson);
-  const upcomingEvents = upcomingJsonEvents.map(fixEventDatesInJson);
-
   const breadcrumbs = {
     items: [
       {

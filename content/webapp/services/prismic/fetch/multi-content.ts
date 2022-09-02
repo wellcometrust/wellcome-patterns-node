@@ -22,7 +22,6 @@ import {
   articlesFields,
 } from '@weco/common/services/prismic/fetch-links';
 import { PaginatedResults } from '@weco/common/services/prismic/types';
-import { fixEventDatesInJson } from '../transformers/events';
 import { MultiContent } from '../../../types/multi-content';
 
 export const fetchMultiContent = async (
@@ -103,22 +102,6 @@ export const fetchMultiContentClientSide = async (
   const response = await fetch(url);
 
   if (response.ok) {
-    const json: PaginatedResults<MultiContent> = await response.json();
-
-    return {
-      ...json,
-
-      // Because get the events as JSON through the API, their dates will be strings
-      // instead of JavaScript Date values.  Convert them to Date values so they don't
-      // explode when we try to use them in components.
-      results: json.results.map(doc => {
-        switch (doc.type) {
-          case 'events':
-            return fixEventDatesInJson(doc);
-          default:
-            return doc;
-        }
-      }),
-    };
+    return response.json();
   }
 };
