@@ -70,7 +70,6 @@ import {
 import { pageDescriptions } from '@weco/common/data/microcopy';
 import { fetchExhibitions } from '../services/prismic/fetch/exhibitions';
 import { transformExhibitionsQuery } from '../services/prismic/transformers/exhibitions';
-import { FacilityPromo as FacilityPromoType } from '../types/facility-promo';
 import { getNextWeekendDateRange } from '@weco/common/utils/dates';
 
 const segmentedControlItems = [
@@ -97,8 +96,6 @@ export type Props = {
   availableOnlineEvents: EventBasic[];
   period: string;
   dateRange: { start: Date; end?: Date };
-  tryTheseTooPromos: FacilityPromoType[];
-  eatShopPromos: FacilityPromoType[];
   featuredText: FeaturedTextType;
   jsonLd: JsonLdObj[];
 };
@@ -366,9 +363,6 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           events,
           availableOnlineEvents,
           dateRange,
-          tryTheseTooPromos: [readingRoomPromo],
-          eatShopPromos: [cafePromo],
-          cafePromo,
           jsonLd,
           featuredText: featuredText!,
           serverData,
@@ -382,15 +376,16 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
 const WhatsOnPage: FunctionComponent<Props> = props => {
   const {
     period,
-    dateRange,
-    tryTheseTooPromos,
-    eatShopPromos,
-    featuredText,
-    jsonLd,
+    exhibitions,
     events,
     availableOnlineEvents,
-    exhibitions,
+    dateRange,
+    jsonLd,
+    featuredText,
   } = props;
+
+  const tryTheseTooPromos = [readingRoomPromo];
+  const eatShopPromos = [cafePromo];
 
   const firstExhibition = exhibitions[0];
 
