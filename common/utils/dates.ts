@@ -47,13 +47,6 @@ export function isDayPast(date: Date): boolean {
   }
 }
 
-// Returns the day before the current date
-export function dayBefore(date: Date): Date {
-  const prevDay = new Date(date);
-  prevDay.setDate(date.getDate() - 1);
-  return prevDay;
-}
-
 export function getNextWeekendDateRange(date: DateTypes): DateRange {
   const today = london(date);
   const todayInteger = today.day(); // day() return Sun as 0, Sat as 6
@@ -66,4 +59,29 @@ export function getNextWeekendDateRange(date: DateTypes): DateRange {
     start: start.startOf('day').toDate(),
     end: end.endOf('day').toDate(),
   };
+}
+
+// Returns the day before the current date
+export function dayBefore(date: Date): Date {
+  const prevDay = new Date(date);
+  prevDay.setDate(date.getDate() - 1);
+  return prevDay;
+}
+
+export function startOfDay(d: Date): Date {
+  const res = new Date(d);
+  res.setUTCHours(0, 0, 0, 0);
+  return res;
+}
+
+export function endOfDay(d: Date): Date {
+  const res = new Date(d);
+  res.setUTCHours(23, 59, 59, 999);
+  return res;
+}
+
+export function addDays(d: Date, days: number): Date {
+  const res = new Date(d);
+  res.setDate(res.getDate() + days);
+  return res;
 }

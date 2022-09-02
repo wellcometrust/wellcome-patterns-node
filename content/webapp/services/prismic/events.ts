@@ -1,10 +1,13 @@
 import { Moment } from 'moment';
 import { london, formatDayDate } from '@weco/common/utils/format-date';
 import {
+  addDays,
+  endOfDay,
   getNextWeekendDateRange,
   isDayPast,
   isFuture,
   isPast,
+  startOfDay,
 } from '@weco/common/utils/dates';
 import { Event, EventBasic, HasTimes } from '../../types/events';
 import { isNotUndefined } from '@weco/common/utils/array';
@@ -42,24 +45,6 @@ function filterEventsByTimeRange(
       );
     });
   });
-}
-
-function startOfDay(d: Date): Date {
-  const res = new Date(d);
-  res.setUTCHours(0, 0, 0, 0);
-  return res;
-}
-
-function endOfDay(d: Date): Date {
-  const res = new Date(d);
-  res.setUTCHours(23, 59, 59, 999);
-  return res;
-}
-
-function addDays(d: Date, days: number): Date {
-  const res = new Date(d);
-  res.setDate(res.getDate() + days);
-  return res;
 }
 
 export function filterEventsForNext7Days(events: EventBasic[]): EventBasic[] {
