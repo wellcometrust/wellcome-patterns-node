@@ -17,8 +17,6 @@ import { transformExhibitionsQuery } from '../services/prismic/transformers/exhi
 import { createClient } from '../services/prismic/fetch';
 import { ExhibitionBasic } from '../types/exhibitions';
 import { JsonLdObj } from '@weco/common/views/components/JsonLd/JsonLd';
-
-import { london } from '@weco/common/utils/format-date';
 import Layout12 from '@weco/common/views/components/Layout12/Layout12';
 import Space from '@weco/common/views/components/styled/Space';
 import CardGrid from '../components/CardGrid/CardGrid';
@@ -27,6 +25,7 @@ import PageHeader from '@weco/common/views/components/PageHeader/PageHeader';
 import PrismicHtmlBlock from '@weco/common/views/components/PrismicHtmlBlock/PrismicHtmlBlock';
 import { headerBackgroundLs } from '@weco/common/utils/backgrounds';
 import Pagination from '@weco/common/views/components/Pagination/Pagination';
+import { isFuture } from '@weco/common/utils/dates';
 
 type Props = {
   exhibitions: PaginatedResults<ExhibitionBasic>;
@@ -76,7 +75,7 @@ const ExhibitionsPage: FC<Props> = props => {
 
   const partitionedExhibitionItems = exhibitions.results.reduce(
     (acc, result) => {
-      if (london(result.end).isSameOrAfter(london())) {
+      if (result.end && isFuture(result.end)) {
         acc.currentAndUpcoming.push(result);
       } else {
         acc.past.push({
