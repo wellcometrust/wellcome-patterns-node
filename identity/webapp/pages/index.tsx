@@ -43,7 +43,6 @@ import StackingTable from '@weco/common/views/components/StackingTable/StackingT
 import HTMLDate from '@weco/common/views/components/HTMLDate/HTMLDate';
 import { useUser } from '@weco/common/views/components/UserProvider/UserProvider';
 import { getServerData } from '@weco/common/server-data';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { SimplifiedServerData } from '@weco/common/server-data/types';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
 import { useRouter } from 'next/router';
@@ -186,9 +185,9 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       }
 
       return {
-        props: removeUndefinedProps({
+        props: {
           serverData,
-        }),
+        },
       };
     },
   });

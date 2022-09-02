@@ -24,7 +24,6 @@ import ButtonSolid, {
 } from '@weco/common/views/components/ButtonSolid/ButtonSolid';
 import { getServerData } from '@weco/common/server-data';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { SimplifiedServerData } from '@weco/common/server-data/types';
 import { RegistrationInputs, decodeToken } from '../src/utility/jwt-codec';
 import { stringFromStringOrStringArray } from '@weco/common/utils/array';
@@ -76,12 +75,12 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     }
 
     return {
-      props: removeUndefinedProps({
+      props: {
         serverData,
         sessionToken,
         auth0State,
         email,
-      }),
+      },
     };
   };
 
