@@ -14,7 +14,6 @@ import {
   dayBefore,
   endOfDay,
   isSameDay,
-  now,
   startOfDay,
   today,
 } from '../../utils/dates';
