@@ -12,7 +12,7 @@ import {
   filterEventsForToday,
   filterEventsForWeekend,
 } from '../services/prismic/events';
-import { london, formatDay, formatDate } from '@weco/common/utils/format-date';
+import { formatDay, formatDate } from '@weco/common/utils/format-date';
 import { clock } from '@weco/common/icons';
 import {
   getTodaysVenueHours,
@@ -70,7 +70,11 @@ import {
 import { pageDescriptions } from '@weco/common/data/microcopy';
 import { fetchExhibitions } from '../services/prismic/fetch/exhibitions';
 import { transformExhibitionsQuery } from '../services/prismic/transformers/exhibitions';
-import { getNextWeekendDateRange } from '@weco/common/utils/dates';
+import {
+  endOfDay,
+  getNextWeekendDateRange,
+  today,
+} from '@weco/common/utils/dates';
 
 const segmentedControlItems = [
   {
@@ -101,18 +105,18 @@ export type Props = {
 };
 
 export function getRangeForPeriod(period: Period): { start: Date; end?: Date } {
-  const todaysDate = london();
+  const todaysDate = today();
 
   switch (period) {
     case 'today':
       return {
-        start: todaysDate.startOf('day').toDate(),
-        end: todaysDate.endOf('day').toDate(),
+        start: startOfDay(todaysDate),
+        end: endOfDay(todaysDate),
       };
     case 'this-weekend':
       return getNextWeekendDateRange(todaysDate);
     default:
-      return { start: todaysDate.startOf('day').toDate() };
+      return { start: startOfDay(todaysDate) };
   }
 }
 
