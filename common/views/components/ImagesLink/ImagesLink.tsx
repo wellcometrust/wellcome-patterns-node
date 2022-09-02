@@ -71,7 +71,7 @@ function toLink(
     },
     as: {
       pathname,
-      query: query,
+      query,
     },
   };
 }
