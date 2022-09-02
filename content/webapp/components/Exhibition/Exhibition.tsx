@@ -236,16 +236,10 @@ const Exhibition: FC<Props> = ({ exhibition, jsonLd, pages }) => {
     ],
   };
 
-  // TODO: Do we need to re-cast to Date here?  We've sometimes seen issues
-  // caused by JSON serialisation, but that should be handled elsewhere by
-  // the fixExhibitionDatesInJson helper.
   const DateInfo = exhibition.end ? (
-    <DateRange
-      start={new Date(exhibition.start)}
-      end={new Date(exhibition.end)}
-    />
+    <DateRange start={exhibition.start} end={exhibition.end} />
   ) : (
-    <HTMLDate date={new Date(exhibition.start)} />
+    <HTMLDate date={exhibition.start} />
   );
 
   // This is for content that we don't have the crops for in Prismic

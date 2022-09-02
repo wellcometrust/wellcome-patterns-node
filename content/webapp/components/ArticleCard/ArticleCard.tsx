@@ -87,7 +87,7 @@ const ArticleCard: FunctionComponent<Props> = ({
       postTitleChildren={
         isPodcast ? (
           <Space v={{ size: 's', properties: ['margin-top'] }}>
-            <WatchLabel text={<HTMLDate date={new Date(publicationDate)} />} />
+            <WatchLabel text={<HTMLDate date={publicationDate} />} />
           </Space>
         ) : undefined
       }

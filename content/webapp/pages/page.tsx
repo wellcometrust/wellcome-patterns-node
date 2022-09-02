@@ -187,9 +187,7 @@ export const Page: FC<Props> = ({
     return { labels: [{ text: title }] };
   }
 
-  const DateInfo = page.datePublished && (
-    <HTMLDate date={new Date(page.datePublished)} />
-  );
+  const DateInfo = page.datePublished && <HTMLDate date={page.datePublished} />;
   const isLanding = page.format && page.format.id === PageFormatIds.Landing;
   const labels =
     !isLanding && page.format?.title

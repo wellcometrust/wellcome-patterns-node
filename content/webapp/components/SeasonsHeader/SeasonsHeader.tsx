@@ -64,10 +64,7 @@ const SeasonsHeader: FunctionComponent<Props> = ({
                       </Space>
                       {start && end && (
                         <div className={font('intr', 5)}>
-                          <DateRange
-                            start={new Date(start)}
-                            end={new Date(end)}
-                          />
+                          <DateRange start={start} end={end} />
                         </div>
                       )}
                       {standfirst && <PageHeaderStandfirst html={standfirst} />}

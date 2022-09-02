@@ -12,11 +12,7 @@ type Props = {
 const DateAndStatusIndicator: FC<Props> = ({ start, end }: Props) => (
   <Fragment>
     <Space v={{ size: 's', properties: ['margin-bottom'] }}>
-      {end ? (
-        <DateRange start={new Date(start)} end={new Date(end)} />
-      ) : (
-        <HTMLDate date={new Date(start)} />
-      )}
+      {end ? <DateRange start={start} end={end} /> : <HTMLDate date={start} />}
     </Space>
     <StatusIndicator start={start} end={end || new Date()} />
   </Fragment>

@@ -44,9 +44,7 @@ const BookMetadata = ({ book }: BookMetadataProps) => (
           Date published
         </dt>
         <dd className={'no-margin ' + grid({ s: 8, m: 8, l: 8, xl: 8 })}>
-          {book.datePublished && (
-            <HTMLDate date={new Date(book.datePublished)} />
-          )}
+          {book.datePublished && <HTMLDate date={book.datePublished} />}
         </dd>
       </Fragment>
     )}
