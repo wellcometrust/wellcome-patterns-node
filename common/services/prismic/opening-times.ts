@@ -20,18 +20,14 @@ import {
 
 export function exceptionalOpeningDates(venues: Venue[]): OverrideDate[] {
   return venues
-    .flatMap(venue => {
-      if (venue.openingHours.exceptional) {
-        return venue.openingHours.exceptional.map(exceptionalDate => {
-          return {
+    .flatMap(venue =>
+      venue.openingHours.exceptional
+        ? venue.openingHours.exceptional.map(exceptionalDate => ({
             overrideDate: exceptionalDate.overrideDate,
             overrideType: exceptionalDate.overrideType,
-          };
-        });
-      } else {
-        return [];
-      }
-    })
+          }))
+        : []
+    )
     .filter(override => Boolean(override && override.overrideDate))
     .sort((a, b) => Number(a && a.overrideDate) - Number(b && b.overrideDate))
     .filter((item, i, array) => {
