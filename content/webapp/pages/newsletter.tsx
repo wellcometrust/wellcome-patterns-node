@@ -6,7 +6,6 @@ import { grid } from '@weco/common/utils/classnames';
 import Space from '@weco/common/views/components/styled/Space';
 import { GetServerSideProps } from 'next';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { newsletterDescription } from '@weco/common/data/microcopy';
 import { landingHeaderBackgroundLs } from '@weco/common/utils/backgrounds';
@@ -21,10 +20,10 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const { result } = context.query;
 
     return {
-      props: removeUndefinedProps({
+      props: {
         result: result ? result.toString() : undefined,
         serverData,
-      }),
+      },
     };
   };
 

@@ -10,7 +10,6 @@ import SpacingSection from '@weco/common/views/components/SpacingSection/Spacing
 import Space from '@weco/common/views/components/styled/Space';
 import { GetServerSideProps } from 'next';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { eventLd } from '../services/prismic/transformers/json-ld';
 import { createClient } from '../services/prismic/fetch';
@@ -67,13 +66,13 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const title = (period === 'past' ? 'Past e' : 'E') + 'vents';
       const jsonLd = events.results.flatMap(eventLd);
       return {
-        props: removeUndefinedProps({
+        props: {
           events,
           title,
           period: period as Period,
           jsonLd,
           serverData,
-        }),
+        },
       };
     } else {
       return { notFound: true };

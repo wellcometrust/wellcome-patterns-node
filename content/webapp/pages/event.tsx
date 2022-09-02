@@ -36,7 +36,6 @@ import {
   ticket,
 } from '@weco/common/icons';
 import { getServerData } from '@weco/common/server-data';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import Body from '../components/Body/Body';
 import ContentPage from '../components/ContentPage/ContentPage';
 import Contributors from '../components/Contributors/Contributors';
@@ -522,7 +521,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async context => {
   // which we could pick out explicitly, or do this.
   // See: https://github.com/vercel/next.js/discussions/11209#discussioncomment-35915
   return {
-    props: removeUndefinedProps({
+    props: {
       jsonEvent: JSON.parse(JSON.stringify(event)),
       jsonLd,
       serverData,
@@ -531,7 +530,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async context => {
           .map(season => season.id)
           .concat(event.series.map(series => series.id)),
       },
-    }),
+    },
   };
 };
 

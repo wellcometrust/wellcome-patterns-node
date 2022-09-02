@@ -19,7 +19,6 @@ import { EventBasic } from '../types/events';
 import { convertItemToCardProps } from '../types/card';
 import { GetServerSideProps } from 'next';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import ExhibitionsAndEvents from '../components/ExhibitionsAndEvents/ExhibitionsAndEvents';
 import CardGrid from '../components/CardGrid/CardGrid';
@@ -119,7 +118,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
 
     if (events && exhibitions && articles && page) {
       return {
-        props: removeUndefinedProps({
+        props: {
           articles: basicArticles,
           exhibitions,
           nextSevenDaysEvents,
@@ -127,7 +126,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           jsonLd,
           standfirst,
           contentLists,
-        }),
+        },
       };
     } else {
       return { notFound: true };

@@ -11,7 +11,6 @@ import PageLayout from '@weco/common/views/components/PageLayout/PageLayout';
 import { FC } from 'react';
 import { GetServerSideProps } from 'next';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { exhibitionGuideLd } from '../services/prismic/transformers/json-ld';
 import { getPage } from '../utils/query-params';
@@ -57,11 +56,11 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const jsonLd = exhibitionGuides.results.map(exhibitionGuideLd);
 
     return {
-      props: removeUndefinedProps({
+      props: {
         exhibitionGuides: basicExhibitionGuides,
         jsonLd,
         serverData,
-      }),
+      },
     };
   };
 

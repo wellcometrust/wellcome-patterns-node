@@ -20,7 +20,6 @@ import PageLayout from '@weco/common/views/components/PageLayout/PageLayout';
 import { FC, SyntheticEvent } from 'react';
 import { IconSvg } from '@weco/common/icons/types';
 import { font, classNames } from '@weco/common/utils/classnames';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { exhibitionGuideLd } from '../services/prismic/transformers/json-ld';
 import { pageDescriptions } from '@weco/common/data/microcopy';
@@ -248,7 +247,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const jsonLd = exhibitionGuideLd(exhibitionGuide);
 
       return {
-        props: removeUndefinedProps({
+        props: {
           exhibitionGuide,
           jsonLd,
           serverData,
@@ -260,7 +259,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
             ),
           },
           userPreferenceSet,
-        }),
+        },
       };
     } else {
       return { notFound: true };

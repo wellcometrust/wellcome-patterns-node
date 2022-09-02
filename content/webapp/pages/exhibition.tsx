@@ -5,7 +5,6 @@ import Installation from '../components/Installation/Installation';
 import { AppErrorProps, WithGaDimensions } from '@weco/common/views/pages/_app';
 import { FC } from 'react';
 import { GetServerSideProps } from 'next';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { createClient } from '../services/prismic/fetch';
 import { fetchExhibition } from '../services/prismic/fetch/exhibitions';
@@ -57,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const jsonLd = exhibitionLd(exhibitionDoc);
 
       return {
-        props: removeUndefinedProps({
+        props: {
           exhibition: exhibitionDoc,
           pages: relatedPages?.results || [],
           jsonLd,
@@ -65,7 +64,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           gaDimensions: {
             partOf: exhibitionDoc.seasons.map(season => season.id),
           },
-        }),
+        },
       };
     } else {
       return { notFound: true };

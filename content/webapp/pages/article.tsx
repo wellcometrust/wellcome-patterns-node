@@ -12,7 +12,6 @@ import { getFeaturedMedia, getHeroPicture } from '../utils/page-header';
 import { ArticleFormatIds } from '@weco/common/data/content-format-ids';
 import Space from '@weco/common/views/components/styled/Space';
 import { AppErrorProps, WithGaDimensions } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import PageHeaderStandfirst from '../components/PageHeaderStandfirst/PageHeaderStandfirst';
 import SeriesNavigation from '../components/SeriesNavigation/SeriesNavigation';
@@ -55,7 +54,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const article = transformArticle(articleDocument);
       const jsonLd = articleLd(article);
       return {
-        props: removeUndefinedProps({
+        props: {
           article,
           jsonLd,
           serverData,
@@ -64,7 +63,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
               .map(season => season.id)
               .concat(article.series.map(series => series.id)),
           },
-        }),
+        },
       };
     } else {
       return { notFound: true };

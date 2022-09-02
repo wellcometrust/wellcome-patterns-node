@@ -4,7 +4,6 @@ import LayoutPaginatedResults from '../components/LayoutPaginatedResults/LayoutP
 import { PaginatedResults } from '@weco/common/services/prismic/types';
 import SpacingSection from '@weco/common/views/components/SpacingSection/SpacingSection';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { FunctionComponent } from 'react';
 import { getServerData } from '@weco/common/server-data';
 import { createClient } from '../services/prismic/fetch';
@@ -42,10 +41,10 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const serverData = await getServerData(context);
     if (books) {
       return {
-        props: removeUndefinedProps({
+        props: {
           books,
           serverData,
-        }),
+        },
       };
     } else {
       return { notFound: true };

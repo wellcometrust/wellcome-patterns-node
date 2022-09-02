@@ -10,7 +10,6 @@ import { ArticleBasic } from '../types/articles';
 import { seasonsFields } from '@weco/common/services/prismic/fetch-links';
 import { headerBackgroundLs } from '@weco/common/utils/backgrounds';
 import { AppErrorProps, WithGaDimensions } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import Body from '../components/Body/Body';
 import SearchResults from '../components/SearchResults/SearchResults';
@@ -81,14 +80,14 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const { articles, series } = transformArticleSeries(id, articlesQuery);
 
     return {
-      props: removeUndefinedProps({
+      props: {
         series,
         articles,
         serverData,
         gaDimensions: {
           partOf: series.seasons.map(season => season.id),
         },
-      }),
+      },
     };
   };
 

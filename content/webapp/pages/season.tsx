@@ -4,7 +4,6 @@ import { Season } from '../types/seasons';
 import PageLayout from '@weco/common/views/components/PageLayout/PageLayout';
 import SeasonsHeader from '../components/SeasonsHeader/SeasonsHeader';
 import PrismicImage from '@weco/common/views/components/PrismicImage/PrismicImage';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import SpacingSection from '@weco/common/views/components/SpacingSection/SpacingSection';
 import SpacingComponent from '@weco/common/views/components/SpacingComponent/SpacingComponent';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
@@ -221,7 +220,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const jsonLd = contentLd(season);
       const serverData = await getServerData(context);
       return {
-        props: removeUndefinedProps({
+        props: {
           season,
           articles: articles.results,
           books: books.results,
@@ -232,7 +231,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           series: series.results,
           jsonLd,
           serverData,
-        }),
+        },
       };
     } else {
       return { notFound: true };

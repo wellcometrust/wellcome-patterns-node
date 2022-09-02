@@ -13,7 +13,6 @@ import SpacingSection from '@weco/common/views/components/SpacingSection/Spacing
 import { FC } from 'react';
 import { GetServerSideProps } from 'next';
 import { appError, AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import { articleLd } from '../services/prismic/transformers/json-ld';
 import { getPage } from '../utils/query-params';
@@ -46,11 +45,11 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
     const serverData = await getServerData(context);
 
     return {
-      props: removeUndefinedProps({
+      props: {
         articles: basicArticles,
         jsonLd,
         serverData,
-      }),
+      },
     };
   };
 

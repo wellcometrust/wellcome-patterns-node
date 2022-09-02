@@ -9,7 +9,6 @@ import Space from '@weco/common/views/components/styled/Space';
 import BookImage from '../components/BookImage/BookImage';
 import styled from 'styled-components';
 import { AppErrorProps, WithGaDimensions } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import Body from '../components/Body/Body';
 import ContentPage from '../components/ContentPage/ContentPage';
@@ -82,13 +81,13 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const book = transformBook(bookDocument);
 
       return {
-        props: removeUndefinedProps({
+        props: {
           book,
           serverData,
           gaDimensions: {
             partOf: book.seasons.map(season => season.id),
           },
-        }),
+        },
       };
     }
 

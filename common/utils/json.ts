@@ -10,8 +10,3 @@ export function removeEmptyProps(obj: Record<string, unknown>): Keyable {
     })
   );
 }
-
-// removes keys with value undefined associated with them
-export function removeUndefinedProps<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj));
-}

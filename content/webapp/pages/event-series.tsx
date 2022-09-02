@@ -8,7 +8,6 @@ import PageHeader from '@weco/common/views/components/PageHeader/PageHeader';
 import { getFeaturedMedia } from '../utils/page-header';
 import Space from '@weco/common/views/components/styled/Space';
 import { AppErrorProps } from '@weco/common/views/pages/_app';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import Body from '../components/Body/Body';
 import ContentPage from '../components/ContentPage/ContentPage';
@@ -92,13 +91,13 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const jsonLd = events.flatMap(eventLd);
 
       return {
-        props: removeUndefinedProps({
+        props: {
           series,
           upcomingEvents,
           pastEvents,
           jsonLd,
           serverData,
-        }),
+        },
       };
     } else {
       return { notFound: true };

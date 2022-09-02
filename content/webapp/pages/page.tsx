@@ -26,7 +26,6 @@ import { links } from '@weco/common/views/components/Header/Header';
 import { Props as LabelsListProps } from '@weco/common/views/components/LabelsList/LabelsList';
 import { AppErrorProps, WithGaDimensions } from '@weco/common/views/pages/_app';
 import { GetServerSideProps } from 'next';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { getServerData } from '@weco/common/server-data';
 import CardGrid from '../components/CardGrid/CardGrid';
 import Body from '../components/Body/Body';
@@ -154,7 +153,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
       const jsonLd = contentLd(page);
 
       return {
-        props: removeUndefinedProps({
+        props: {
           page,
           siblings,
           children,
@@ -166,7 +165,7 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
           gaDimensions: {
             partOf: page.seasons.map(season => season.id),
           },
-        }),
+        },
       };
     } else {
       return { notFound: true };

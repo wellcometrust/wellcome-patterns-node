@@ -5,7 +5,6 @@ import SpacingSection from '@weco/common/views/components/SpacingSection/Spacing
 import LayoutPaginatedResults from '../components/LayoutPaginatedResults/LayoutPaginatedResults';
 import Layout12 from '@weco/common/views/components/Layout12/Layout12';
 import SegmentedControl from '@weco/common/views/components/SegmentedControl/SegmentedControl';
-import { removeUndefinedProps } from '@weco/common/utils/json';
 import { PaginatedResults } from '@weco/common/services/prismic/types';
 import { pageDescriptions } from '@weco/common/data/microcopy';
 import { createClient } from '../services/prismic/fetch';
@@ -127,12 +126,12 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
 
     if (guides) {
       return {
-        props: removeUndefinedProps({
+        props: {
           guides,
           guideFormats: guideFormats.results,
           formatId: format || null,
           serverData,
-        }),
+        },
       };
     } else {
       return { notFound: true };
