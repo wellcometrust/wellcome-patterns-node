@@ -97,9 +97,9 @@ export function exceptionalOpeningPeriodsAllDates(
     const lastDate = period.dates[period.dates.length - 1];
 
     const arrayLength = london(lastDate).diff(startDate, 'days') + 1;
-    const completeDateArray = [...Array(arrayLength).keys()].map(i => {
-      return london(startDate).clone().add(i, 'days').toDate();
-    });
+    const completeDateArray = [...Array(arrayLength).keys()].map(i =>
+      addDays(startDate, i)
+    );
 
     return {
       type: period.type,
