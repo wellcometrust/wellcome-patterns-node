@@ -11,7 +11,6 @@ import {
   stringCodec,
 } from '../../../utils/routes';
 import { LinkProps } from '../../../model/link-props';
-import { removeUndefinedProps } from '../../../utils/json';
 
 const itemPropsSources = [
   'work',
@@ -61,11 +60,7 @@ function toLink(
     ...emptyItemProps,
     ...partialProps,
   };
-
-  // It's a bit annoying that we have to `removeUndefinedProps`
-  // here, but if we don't they come through as
-  // urlProperty=&anotherUrlProperty=
-  const query = removeUndefinedProps(toQuery(props));
+  const query = toQuery(props);
 
   return {
     href: {

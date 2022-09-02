@@ -10,7 +10,6 @@ import {
   stringCodec,
 } from '../../../utils/routes';
 import { LinkProps } from '../../../model/link-props';
-import { removeUndefinedProps } from '../../../utils/json';
 
 const imagePropsSources = ['images_search_result', 'viewer/paginator'] as const;
 type ImagePropsSource = typeof imagePropsSources[number];
@@ -46,11 +45,7 @@ function toLink(
     ...emptyImageProps,
     ...partialProps,
   };
-
-  // It's a bit annoying that we have to `removeUndefinedProps`
-  // here, but if we don't they come through as
-  // urlProperty=&anotherUrlProperty=
-  const query = removeUndefinedProps(toQuery(props));
+  const query = toQuery(props);
 
   return {
     href: {

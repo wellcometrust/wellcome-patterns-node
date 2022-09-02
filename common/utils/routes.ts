@@ -1,6 +1,7 @@
 import { LinkProps } from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import { PropsWithChildren } from 'react';
+import { isNotUndefined, isUndefined } from './array';
 import { parseCsv, quoteVal } from './csv';
 import { isInTuple } from './type-guards';
 import { OptionalToUndefined, UndefinableToOptional } from './utility-types';
@@ -192,7 +193,11 @@ export function decodeQuery<R>(query: ParsedUrlQuery, codecMap: CodecMap): R {
 export function encodeQuery<T>(props: T, codecMap: CodecMap): ParsedUrlQuery {
   const map = new Map();
   for (const prop in codecMap) {
-    map.set(prop, codecMap[prop].encode(props[prop]));
+    const value = codecMap[prop].encode(props[prop]);
+
+    if (isNotUndefined(value)) {
+      map.set(prop, value);
+    }
   }
 
   return Object.fromEntries(map);
