@@ -10,7 +10,6 @@ import {
   getVenueById,
   getTodaysVenueHours,
   groupConsecutiveExceptionalDays,
-  getVenueHours,
 } from '../../../services/prismic/opening-times';
 import { venues } from '../../../test/fixtures/components/venues';
 import { ExceptionalOpeningHoursDay } from '../../../model/opening-hours';
