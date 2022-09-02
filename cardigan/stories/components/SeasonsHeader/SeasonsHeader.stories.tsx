@@ -17,8 +17,8 @@ const image: ImageType = {
 const headerProps = {
   labels: { labels: [{ text: 'Article' }] },
   title: 'What does it mean to be human, now?',
-  start: '2021-01-05T00:00:00.000Z',
-  end: '2021-01-26T00:00:00.000Z',
+  start: new Date('2021-01-05T00:00:00.000Z'),
+  end: new Date('2021-01-26T00:00:00.000Z'),
   FeaturedMedia: <PrismicImage image={image} quality="low" />,
   standfirst: [
     {
