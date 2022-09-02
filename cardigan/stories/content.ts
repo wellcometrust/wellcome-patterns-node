@@ -53,8 +53,8 @@ export const url = faker.internet.url();
 
 export const bannerCardItem: Card = {
   title: 'What does it mean to be human, now?',
-  start: '2021-01-05T00:00:00.000Z',
-  end: '2021-01-26T00:00:00.000Z',
+  start: new Date('2021-01-05T00:00:00.000Z'),
+  end: new Date('2021-01-26T00:00:00.000Z'),
   promo: {
     caption:
       'Our new season explores the intertwined connections between the individual, societal and global health.',
