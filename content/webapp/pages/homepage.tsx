@@ -194,7 +194,7 @@ const Homepage: FC<Props> = ({
           <SpacingComponent>
             <ExhibitionsAndEvents
               exhibitions={exhibitions}
-              events={nextSevenDaysEvents as EventBasic[]}
+              events={nextSevenDaysEvents}
               links={[{ text: 'All exhibitions and events', url: '/whats-on' }]}
             />
           </SpacingComponent>
