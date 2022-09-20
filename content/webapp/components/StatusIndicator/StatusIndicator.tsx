@@ -3,6 +3,7 @@ import Space from '@weco/common/views/components/styled/Space';
 import Dot from '@weco/common/views/components/Dot/Dot';
 import { FC } from 'react';
 import {
+  addDays,
   isFuture,
   isPast,
   isSameDay,
@@ -24,8 +25,7 @@ export function formatDateRangeWithMessage({
 }): { text: string; color: string } {
   const today = getToday();
 
-  const sevenDaysTime = getToday();
-  sevenDaysTime.setDate(sevenDaysTime.getDate() + 7);
+  const sevenDaysTime = addDays(getToday(), 7);
 
   const closesToday = isSameDay(end, today);
   const closesInSevenDays = today < end && end < sevenDaysTime;
