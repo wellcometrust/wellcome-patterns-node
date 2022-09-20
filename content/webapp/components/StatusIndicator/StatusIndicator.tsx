@@ -2,7 +2,12 @@ import { font } from '@weco/common/utils/classnames';
 import Space from '@weco/common/views/components/styled/Space';
 import Dot from '@weco/common/views/components/Dot/Dot';
 import { FC } from 'react';
-import { isFuture, isPast, isSameDay } from '@weco/common/utils/dates';
+import {
+  isFuture,
+  isPast,
+  isSameDay,
+  today as getToday,
+} from '@weco/common/utils/dates';
 
 type Props = {
   start: Date;
@@ -17,13 +22,17 @@ export function formatDateRangeWithMessage({
   start: Date;
   end: Date;
 }): { text: string; color: string } {
-  const today = new Date();
+  const today = getToday();
 
-  const sevenDaysTime = new Date();
+  const sevenDaysTime = getToday();
   sevenDaysTime.setDate(sevenDaysTime.getDate() + 7);
 
   const closesToday = isSameDay(end, today);
   const closesInSevenDays = today < end && end < sevenDaysTime;
+
+  console.log(
+    `@@AWLC today = ${today}, sevenDaysTime = ${sevenDaysTime}, start = ${start}, end = ${end}`
+  );
 
   if (!isSameDay(today, start) && isFuture(start)) {
     return { text: 'Coming soon', color: 'marble' };

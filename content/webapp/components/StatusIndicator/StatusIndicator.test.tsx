@@ -1,4 +1,5 @@
 import { formatDateRangeWithMessage } from './StatusIndicator';
+import * as dateUtils from '@weco/common/utils/dates';
 
 describe('formatDateRangeWithMessage', () => {
   it('formats a range that hasn’t started yet', () => {
@@ -84,7 +85,18 @@ describe('formatDateRangeWithMessage', () => {
     });
 
     it('says "Now on" if the last day is 7 or more days away', () => {
-      const end = new Date();
+      const spyOnToday = jest.spyOn(dateUtils, 'today');
+      let i = 0;
+      spyOnToday.mockImplementation(() => {
+        if (i === 0) {
+          i += 1;
+          return new Date('Tue Sep 20 2022 07:50:59.001 GMT+0100');
+        } else {
+          return new Date('Tue Sep 20 2022 07:50:59.002 GMT+0100');
+        }
+      });
+
+      const end = new Date('Tue Sep 20 2022 07:50:59.001 GMT+0100');
       end.setDate(end.getDate() + 7);
 
       const result = formatDateRangeWithMessage({
