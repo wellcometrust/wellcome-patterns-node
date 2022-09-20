@@ -25,18 +25,14 @@ export function formatDateRangeWithMessage({
 }): { text: string; color: string } {
   const today = getToday();
 
-  const sevenDaysTime = addDays(getToday(), 7);
+  const opensToday = isSameDay(today, start);
 
   const closesToday = isSameDay(end, today);
-  const closesInSevenDays = today < end && end < sevenDaysTime;
+  const closesInSevenDays = today < end && end < addDays(today, 7);
 
-  console.log(
-    `@@AWLC today = ${today}, sevenDaysTime = ${sevenDaysTime}, start = ${start}, end = ${end}`
-  );
-
-  if (!isSameDay(today, start) && isFuture(start)) {
+  if (!opensToday && isFuture(start)) {
     return { text: 'Coming soon', color: 'marble' };
-  } else if (!isSameDay(today, end) && isPast(end)) {
+  } else if (!closesToday && isPast(end)) {
     return { text: 'Past', color: 'marble' };
   } else if (closesToday || closesInSevenDays) {
     return { text: 'Final week', color: 'orange' };
