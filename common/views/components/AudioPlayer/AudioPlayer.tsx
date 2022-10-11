@@ -283,12 +283,14 @@ export type AudioPlayerProps = {
   audioFile: string;
   title: string;
   idPrefix?: string;
+  anchorId?: string;
 };
 
 export const AudioPlayer: FC<AudioPlayerProps> = ({
   audioFile,
   title,
   idPrefix,
+  anchorId,
 }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -386,7 +388,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
   };
 
   return (
-    <figure className="no-margin">
+    <figure className="no-margin" id={anchorId}>
       <Space v={{ size: 'm', properties: ['margin-bottom'] }}>
         <figcaption className={font('intb', 5)}>{title}</figcaption>
       </Space>

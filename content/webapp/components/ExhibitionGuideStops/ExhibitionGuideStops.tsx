@@ -26,10 +26,11 @@ const Stop = styled(Space).attrs({
 type VideoPlayerProps = {
   title: string;
   videoUrl: string;
+  anchorId?: string;
 };
 
-const VideoPlayer: FC<VideoPlayerProps> = ({ title, videoUrl }) => (
-  <figure className="no-margin">
+const VideoPlayer: FC<VideoPlayerProps> = ({ title, videoUrl, anchorId }) => (
+  <figure className="no-margin" id={anchorId}>
     <Space v={{ size: 'm', properties: ['margin-bottom'] }}>
       <figcaption className={font('intb', 5)}>{title}</figcaption>
     </Space>
@@ -80,6 +81,7 @@ const Stops: FC<Props> = ({ stops, type }) => {
                     <AudioPlayer
                       title={stopTitle}
                       audioFile={audioWithDescription.url}
+                      anchorId={dasherizeShorten(title)}
                     />
                   )}
                 {type === 'audio-without-descriptions' &&
@@ -87,10 +89,15 @@ const Stops: FC<Props> = ({ stops, type }) => {
                     <AudioPlayer
                       title={stopTitle}
                       audioFile={audioWithoutDescription.url}
+                      anchorId={dasherizeShorten(title)}
                     />
                   )}
                 {type === 'bsl' && bsl.embedUrl && (
-                  <VideoPlayer title={stopTitle} videoUrl={bsl.embedUrl} />
+                  <VideoPlayer
+                    title={stopTitle}
+                    videoUrl={bsl.embedUrl}
+                    anchorId={dasherizeShorten(title)}
+                  />
                 )}
               </Stop>
             ) : null; // We've decided to omit stops that don't have content for the selected type.
