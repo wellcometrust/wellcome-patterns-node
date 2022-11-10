@@ -27,36 +27,6 @@ const handle = nextApp.getRequestHandler();
 
 const permanentRedirect = 301;
 
-function pageVanityUrl(
-  router: Router,
-  app,
-  url: string,
-  pageId: string,
-  template: string
-) {
-  // Redirect specific page IDs to their vanity URL.  In some cases, this also
-  // means redirecting them to a different template (e.g. the homepage needs
-  // to go to the homepage template, not the page template with ID=Xph...)
-  //
-  // Note: we have similar logic in a Lambda@Edge that's part of the CloudFront
-  // distribution, but we duplicate it here because this is the most up-to-date
-  // definition of vanity URLs.
-  //
-  // See https://github.com/wellcomecollection/wellcomecollection.org/blob/main/cache/edge_lambdas/src/redirects.ts
-  const regularPage =
-    template === '/page'
-      ? `/pages/${pageId}`
-      : template === '/exhibition'
-      ? `/exhibitions/${pageId}`
-      : null;
-
-  if (regularPage !== null) {
-    router.redirect(regularPage, url, permanentRedirect);
-  }
-
-  route(url, template, router, app, { id: pageId });
-}
-
 // A Prismic ID is an alphanumeric string, plus underscore and hyphen
 //
 // We filter out any requests for pages that obviously aren't Prismic IDs; we know
@@ -93,15 +63,17 @@ const appPromise = nextApp
     koaApp.use(withCachedValues);
     koaApp.use(bodyParser());
 
-    pageVanityUrl(router, nextApp, '/', homepageId, '/homepage');
+    router.redirect(`/pages/${homepageId}`, '/homepage', permanentRedirect);
+    route('/', '/homepage', router, nextApp);
+
     route('/whats-on', '/whats-on', router, nextApp);
     route(`/whats-on/:period(${periodPaths})`, '/whats-on', router, nextApp);
 
     // We define the vanity URLs as soon as possible, so they can intercept
     // any routes defined further down, e.g. /pages/:id
-    vanityUrls.forEach(({ url, prismicId, template = '/page' }) =>
-      pageVanityUrl(router, nextApp, url, prismicId, template)
-    );
+    vanityUrls.forEach(({ url, prismicId, template = '/page' }) => {
+      route(url, template, router, nextApp, { id: prismicId });
+    });
 
     route('/exhibitions', '/exhibitions', router, nextApp);
     route(
@@ -143,11 +115,7 @@ const appPromise = nextApp
     );
     route('/collections', '/collections', router, nextApp);
 
-    router.redirect(
-      `/pages/${prismicPageIds.visitUs}`,
-      '/visit-us',
-      permanentRedirect
-    );
+    route(`/pages/${prismicPageIds.visitUs}`, '/visit-us', router, nextApp);
     route('/visit-us', '/visit-us', router, nextApp);
 
     route(`/pages/:id(${prismicId})`, '/page', router, nextApp);
