@@ -1,5 +1,5 @@
 import NextLink, { LinkProps } from 'next/link';
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { font } from '@weco/common/utils/classnames';
 import { downloadUrl } from '../../services/catalogue/urls';
 import { toLink as worksLink } from '@weco/common/views/components/WorksLink/WorksLink';
@@ -51,6 +51,7 @@ import {
 import { themeValues } from '@weco/common/views/themes/config';
 import { formatDuration } from '@weco/common/utils/format-date';
 import { Audio, Video } from 'services/iiif/types/manifest/v3';
+import useLocalContexts from '../../hooks/useLocalContexts';
 
 type Props = {
   work: Work;
@@ -85,11 +86,83 @@ function getItemLinkState({
   }
 }
 
+type LocalContextsInstitution = {
+  id: number;
+  institution_name: string;
+};
+
+type LocalContextsCreator = {
+  institution?: LocalContextsInstitution;
+};
+
+type LocalContextsNotice = {
+  created: Date;
+  updated: Date;
+  default_text: string;
+  img_url: string;
+  svg_url: string;
+  name: string;
+  notice_type: string;
+};
+
+type LocalContextsLabel = {
+  unique_id: string;
+  name: string;
+  label_type: string;
+  language_tag: string;
+  language: string;
+  default_text: string;
+  img_url: string;
+  community: string;
+  created: string;
+  updated: string;
+};
+
+type LocalContexts = {
+  created_by: LocalContextsCreator[];
+  date_added: Date;
+  date_modified: Date;
+  project_page: string;
+  project_privacy: string;
+  providers_id?: string;
+  title: string;
+  unique_id: string;
+  notice?: LocalContextsNotice[];
+  bclabels?: LocalContextsLabel[];
+  tklabels?: LocalContextsLabel[];
+};
+
 const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
   const isArchive = useContext(IsArchiveContext);
   const itemUrl = itemLink({ workId: work.id }, 'work');
   const transformedIIIFImage = useTransformedIIIFImage(work);
   const transformedIIIFManifest = useTransformedManifest(work);
+  const [localContexts, setLocalContexts] = useState<LocalContexts | null>(
+    null
+  );
+  // const localContextsApiBaseUrl = 'https://localcontextshub.org/api/v1/';
+  const localContextsApiBaseUrl =
+    'https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1/';
+
+  useEffect(() => {
+    (async () => {
+      const data = await fetch(
+        `${localContextsApiBaseUrl}projects?search=${work.id}`
+      );
+      const json = await data.json();
+      const result = json?.results?.[0];
+
+      if (result) {
+        const data = await fetch(
+          `${localContextsApiBaseUrl}/api/v1/projects/${result.unique_id}`
+        );
+        const json = await data.json();
+        setLocalContexts(json);
+        console.log({ json });
+      }
+    })();
+  }, []);
+
   const {
     video,
     iiifCredit,
@@ -303,6 +376,39 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
 
   const renderContent = () => (
     <>
+      {localContexts?.notice?.length && (
+        <>
+          <h2 className="h2">Local contexts</h2>
+          {localContexts?.notice.map(n => (
+            <div
+              key={n.unique_id}
+              style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}
+            >
+              <img
+                width="44"
+                height="44"
+                style={{ display: 'block', width: '44px', height: '44px' }}
+                src={n.svg_url}
+                alt={n.name}
+              />
+              <div>
+                <p>
+                  <strong>{n.name}</strong> – {n.default_text}
+                </p>
+                <p>Created: {n.created}</p>
+                <p>Updated: {n.updated}</p>
+              </div>
+            </div>
+          ))}
+          <p>
+            Find out more on the{' '}
+            <a href={localContexts.project_page}>
+              Local Contexts project page for this item.
+            </a>
+          </p>
+        </>
+      )}
+
       {digitalLocation && itemLinkState !== 'useNoLink' && (
         <WorkDetailsSection headingText="Available online">
           <ConditionalWrapper
