@@ -51,7 +51,7 @@ import {
 import { themeValues } from '@weco/common/views/themes/config';
 import { formatDuration } from '@weco/common/utils/format-date';
 import { Audio, Video } from 'services/iiif/types/manifest/v3';
-import useLocalContexts from '../../hooks/useLocalContexts';
+import AudioPlayer from '@weco/common/views/components/AudioPlayer/AudioPlayer';
 
 type Props = {
   work: Work;
@@ -128,8 +128,8 @@ type LocalContexts = {
   title: string;
   unique_id: string;
   notice?: LocalContextsNotice[];
-  bclabels?: LocalContextsLabel[];
-  tklabels?: LocalContextsLabel[];
+  bc_labels?: LocalContextsLabel[];
+  tk_labels?: LocalContextsLabel[];
 };
 
 const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
@@ -154,7 +154,7 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
 
       if (result) {
         const data = await fetch(
-          `${localContextsApiBaseUrl}/api/v1/projects/${result.unique_id}`
+          `${localContextsApiBaseUrl}projects/${result.unique_id}`
         );
         const json = await data.json();
         setLocalContexts(json);
@@ -162,6 +162,17 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
       }
     })();
   }, []);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const data = await fetch(
+  //       `${localContextsApiBaseUrl}projects/38720c17-0d83-4ac7-bd3f-94af3ba39e52`
+  //     );
+  //     const json = await data.json();
+  //     setLocalContexts(json);
+  //     console.log({ json });
+  //   })();
+  // }, []);
 
   const {
     video,
@@ -377,12 +388,39 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
   const renderContent = () => (
     <>
       {localContexts?.notice?.length && (
-        <>
-          <h2 className="h2">Local contexts</h2>
+        <details>
+          <summary style={{ cursor: 'pointer' }}>
+            <h2
+              className="font-size-4 font-wb"
+              style={{ display: 'inline-block' }}
+            >
+              <span
+                style={{ display: 'flex', gap: '10px', alignItems: 'center' }}
+              >
+                Local contexts{' '}
+                {localContexts?.notice.map(n => (
+                  <img
+                    key={n.name}
+                    width="44"
+                    height="44"
+                    style={{ width: '22px', height: '22px' }}
+                    src={n.svg_url}
+                    alt={n.name}
+                  />
+                ))}
+              </span>
+            </h2>
+          </summary>
           {localContexts?.notice.map(n => (
             <div
-              key={n.unique_id}
-              style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}
+              key={n.name}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                fontSize: '16px',
+                maxWidth: '70ch',
+              }}
             >
               <img
                 width="44"
@@ -392,21 +430,168 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
                 alt={n.name}
               />
               <div>
-                <p>
+                <p className="no-margin">
                   <strong>{n.name}</strong> – {n.default_text}
                 </p>
-                <p>Created: {n.created}</p>
-                <p>Updated: {n.updated}</p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '10px',
+                    margin: '10px 0 30px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Created:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.created)
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Updated:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.updated)
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
-          <p>
+          <p style={{ fontSize: '16px' }}>
             Find out more on the{' '}
             <a href={localContexts.project_page}>
               Local Contexts project page for this item.
             </a>
           </p>
-        </>
+        </details>
+      )}
+
+      {localContexts?.tk_labels?.length && (
+        <details>
+          <summary style={{ cursor: 'pointer' }}>
+            <h2
+              className="font-size-4 font-wb"
+              style={{ display: 'inline-block' }}
+            >
+              <span
+                style={{ display: 'flex', gap: '10px', alignItems: 'center' }}
+              >
+                Local contexts{' '}
+                {localContexts?.tk_labels.map(n => (
+                  <img
+                    key={n.name}
+                    width="44"
+                    height="44"
+                    style={{ width: '22px', height: '22px' }}
+                    src={n.svg_url}
+                    alt={n.name}
+                  />
+                ))}
+              </span>
+            </h2>
+          </summary>
+          {localContexts?.tk_labels.map(n => (
+            <div
+              key={n.name}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                fontSize: '16px',
+                maxWidth: '70ch',
+              }}
+            >
+              {n.audiofile && (
+                <AudioPlayer
+                  audioFile={n.audiofile}
+                  title="Audio title goes here?"
+                />
+              )}
+              <img
+                width="44"
+                height="44"
+                style={{ display: 'block', width: '44px', height: '44px' }}
+                src={n.svg_url}
+                alt={n.name}
+              />
+              <div>
+                <p className="no-margin">
+                  <strong>{n.name}</strong> – {n.label_text}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '10px',
+                    margin: '10px 0 30px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#ffce3c',
+                      color: '#333',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    {n.community}
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Created:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.created)
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Updated:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.updated)
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          <p style={{ fontSize: '16px' }}>
+            Find out more on the{' '}
+            <a href={localContexts.project_page}>
+              Local Contexts project page for this item.
+            </a>
+          </p>
+        </details>
       )}
 
       {digitalLocation && itemLinkState !== 'useNoLink' && (
