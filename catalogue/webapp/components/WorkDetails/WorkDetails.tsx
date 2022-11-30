@@ -166,7 +166,7 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
   // useEffect(() => {
   //   (async () => {
   //     const data = await fetch(
-  //       `${localContextsApiBaseUrl}projects/38720c17-0d83-4ac7-bd3f-94af3ba39e52`
+  //       `${localContextsApiBaseUrl}projects/75ef4ef5-7884-4405-9c7e-c480c60d70da`
   //     );
   //     const json = await data.json();
   //     setLocalContexts(json);
@@ -493,6 +493,16 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
                 style={{ display: 'flex', gap: '10px', alignItems: 'center' }}
               >
                 Local contexts{' '}
+                {localContexts?.bc_labels.map(n => (
+                  <img
+                    key={n.name}
+                    width="44"
+                    height="44"
+                    style={{ width: '22px', height: '22px' }}
+                    src={n.svg_url}
+                    alt={n.name}
+                  />
+                ))}
                 {localContexts?.tk_labels.map(n => (
                   <img
                     key={n.name}
@@ -506,6 +516,86 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
               </span>
             </h2>
           </summary>
+
+          {localContexts?.bc_labels.map(n => (
+            <div
+              key={n.name}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                fontSize: '16px',
+                maxWidth: '70ch',
+              }}
+            >
+              <img
+                width="44"
+                height="44"
+                style={{ display: 'block', width: '44px', height: '44px' }}
+                src={n.svg_url}
+                alt={n.name}
+              />
+              <div>
+                <p className="no-margin">
+                  <strong>{n.name}</strong> – {n.label_text}
+                </p>
+                {n.audiofile && (
+                  <div style={{ margin: '20px 0 10px' }}>
+                    <AudioPlayer audioFile={n.audiofile} title="" />
+                  </div>
+                )}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '10px',
+                    margin: '10px 0 30px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#ffce3c',
+                      color: '#333',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    {n.community}
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Created:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.created)
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.5em 1em',
+                      fontSize: '14px',
+                      background: '#aaa',
+                      color: '#fff',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    Updated:{' '}
+                    {new Intl.DateTimeFormat('en-US').format(
+                      new Date(n.updated)
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
           {localContexts?.tk_labels.map(n => (
             <div
               key={n.name}
