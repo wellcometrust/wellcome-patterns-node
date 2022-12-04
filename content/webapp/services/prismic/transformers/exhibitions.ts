@@ -21,6 +21,7 @@ import {
   asHtml,
   asRichText,
   asText,
+  asTitle,
   transformGenericFields,
   transformSingleLevelGroup,
 } from '.';
@@ -66,7 +67,7 @@ function transformExhibitionFormat(
 ): ExhibitionFormat {
   return {
     id: format.id,
-    title: (format.data && asText(format.data.title)) || '',
+    title: asTitle(format.data.title),
     description: format.data && asHtml(format.data.description),
   };
 }
@@ -121,7 +122,7 @@ export function transformExhibition(
 
   const exhibition = {
     ...genericFields,
-    shortTitle: data.shortTitle && asText(data.shortTitle),
+    shortTitle: asText(data.shortTitle),
     format,
     start,
     end,

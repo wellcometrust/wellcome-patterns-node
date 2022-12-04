@@ -98,7 +98,7 @@ function transformMapSlice(slice: MapSlice): BodySlice {
   return {
     type: 'map',
     value: {
-      title: asText(slice.primary.title) || '',
+      title: asTitle(slice.primary.title),
       latitude: slice.primary.geolocation.latitude,
       longitude: slice.primary.geolocation.longitude,
     },
