@@ -152,9 +152,12 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
       const json = await data.json();
       const result = json?.results?.[0];
 
-      if (result) {
+      if (true) {
+        // if (result) {
         const data = await fetch(
-          `${localContextsApiBaseUrl}projects/${result.unique_id}`
+          `${localContextsApiBaseUrl}projects/${
+            result?.unique_id || '38720c17-0d83-4ac7-bd3f-94af3ba39e52'
+          }`
         );
         const json = await data.json();
         setLocalContexts(json);
@@ -162,17 +165,6 @@ const WorkDetails: FunctionComponent<Props> = ({ work }: Props) => {
       }
     })();
   }, []);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const data = await fetch(
-  //       `${localContextsApiBaseUrl}projects/75ef4ef5-7884-4405-9c7e-c480c60d70da`
-  //     );
-  //     const json = await data.json();
-  //     setLocalContexts(json);
-  //     console.log({ json });
-  //   })();
-  // }, []);
 
   const {
     video,
