@@ -44,7 +44,7 @@ function getAvailableDates(
     .filter(isTruthy);
 }
 
-const Calendar: FunctionComponent<Props> = ({
+const CalendarSelect: FunctionComponent<Props> = ({
   min,
   max,
   excludedDates,
@@ -68,4 +68,4 @@ const Calendar: FunctionComponent<Props> = ({
   ) : null;
 };
 
-export default Calendar;
+export default CalendarSelect;
