@@ -526,13 +526,13 @@ const WorkDetails: FunctionComponent<Props> = ({
             text={work.currentFrequency}
           />
         )}
-        {work.formerFrequency && (
+        {work.formerFrequency.length > 0 && (
           <WorkDetailsText
             title="Former frequency"
             text={work.formerFrequency}
           />
         )}
-        {work.designation && (
+        {work.designation.length > 0 && (
           <WorkDetailsText title="Designation" text={work.designation} />
         )}
         {work.physicalDescription && (
