@@ -256,7 +256,8 @@ export const getServerSideProps: GetServerSideProps<Props | AppErrorProps> =
         },
       };
     } catch (error) {
-      return appError(context, error.httpStatus, 'Search results error');
+      console.error(error);
+      return appError(context, 500, 'Search results error');
     }
   };
 
