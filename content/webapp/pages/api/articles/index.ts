@@ -31,6 +31,6 @@ export default async (
     const articles = transformQuery(query, article =>
       transformArticleToArticleBasic(transformArticle(article))
     );
-    return res.status(200).json(superjson.stringify(articles));
+    return res.status(200).json(superjson.serialize(articles).json as string);
   }
 };
