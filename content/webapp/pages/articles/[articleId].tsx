@@ -147,6 +147,18 @@ function getNextUp(
   }
 }
 
+const ContentTypeInfoSection = styled.span`
+  &:not(:first-child):before {
+    content: ' | ';
+    margin: 0 4px;
+  }
+`;
+
+const HTMLDateWrapper = styled.span.attrs({ className: font('intr', 6) })`
+  display: block;
+  color: ${props => props.theme.color('neutral.600')};
+`;
+
 const ArticlePage: FunctionComponent<Props> = ({ article, jsonLd }) => {
   const [listOfSeries, setListOfSeries] = useState<ArticleSeriesList>();
 
@@ -219,18 +231,6 @@ const ArticlePage: FunctionComponent<Props> = ({ article, jsonLd }) => {
       description={isPodcast ? 'Episode' : 'Part'}
     />
   );
-
-  const ContentTypeInfoSection = styled.span`
-    &:not(:first-child):before {
-      content: ' | ';
-      margin: 0 4px;
-    }
-  `;
-
-  const HTMLDateWrapper = styled.span.attrs({ className: font('intr', 6) })`
-    display: block;
-    color: ${props => props.theme.color('neutral.600')};
-  `;
 
   const ContentTypeInfo = (
     <Fragment>
