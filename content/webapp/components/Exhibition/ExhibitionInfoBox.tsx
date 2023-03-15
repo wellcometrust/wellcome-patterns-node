@@ -21,6 +21,7 @@ import { isNotUndefined } from '@weco/common/utils/array';
 import { a11y } from '@weco/common/data/microcopy';
 import { Exhibition as ExhibitionType } from '../../types/exhibitions';
 import * as prismicT from '@prismicio/types';
+import styled from 'styled-components';
 
 type ExhibitionItem = LabelField & {
   icon?: IconSvg;
@@ -178,6 +179,12 @@ export function getInfoItems(exhibition: ExhibitionType): ExhibitionItem[] {
   ].filter(isNotUndefined);
 }
 
+const AccessibilityServices = styled.p.attrs({
+  className: font('intr', 5),
+})`
+  margin: 0;
+`;
+
 type Props = {
   exhibition: ExhibitionType;
 };
@@ -185,8 +192,8 @@ type Props = {
 export const ExhibitionInfoBox: FunctionComponent<Props> = ({ exhibition }) =>
   exhibition.end && !isPast(exhibition.end) ? (
     <InfoBox title="Visit us" items={getInfoItems(exhibition)}>
-      <p className={`no-margin ${font('intr', 5)}`}>
+      <AccessibilityServices>
         <a href="/access">All our accessibility services</a>
-      </p>
+      </AccessibilityServices>
     </InfoBox>
   ) : null;
