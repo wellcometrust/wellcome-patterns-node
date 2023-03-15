@@ -60,7 +60,7 @@ function getadmissionObject(): ExhibitionItem {
 function getTodaysHoursObject(): ExhibitionItem {
   const todaysHoursText = 'Galleries open Tuesday–Sunday, Opening times';
 
-  const link = {
+  const link: prismicT.RTLinkNode = {
     type: 'hyperlink',
     start: todaysHoursText.length - 'Opening times'.length,
     end: todaysHoursText.length,
@@ -68,7 +68,7 @@ function getTodaysHoursObject(): ExhibitionItem {
       link_type: 'Web',
       url: '/opening-times',
     },
-  } as prismicT.RTLinkNode;
+  };
 
   return {
     description: [
@@ -106,12 +106,10 @@ const resourceIcons: { [key: string]: IconSvg } = {
 };
 
 function getResourcesItems(exhibition: ExhibitionType): ExhibitionItem[] {
-  return exhibition.resources.map(resource => {
-    return {
-      description: resource.description,
-      icon: resource.icon ? resourceIcons[resource.icon] : undefined,
-    };
-  });
+  return exhibition.resources.map(({ icon, description }) => ({
+    description,
+    icon: icon ? resourceIcons[icon] : undefined,
+  }));
 }
 
 function getBslAdItems(exhibition: ExhibitionType): ExhibitionItem[] {
