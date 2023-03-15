@@ -66,7 +66,7 @@ function getTodaysHoursObject(): ExhibitionItem {
 
   const link = {
     type: 'hyperlink',
-    start: todaysHoursText.length - 13,
+    start: todaysHoursText.length - 'Opening times'.length,
     end: todaysHoursText.length,
     data: {
       link_type: 'Web',
