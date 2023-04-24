@@ -123,8 +123,8 @@ export const Pagination: FunctionComponent<Props> = ({
     }
   }, [query.page]);
 
-  const showPrev = currentPage > 1;
-  const showNext = currentPage < totalPages;
+  const showPrev = pageNumber > 1;
+  const showNext = pageNumber < totalPages;
 
   return (
     <Container
@@ -157,7 +157,8 @@ export const Pagination: FunctionComponent<Props> = ({
             name="page"
             form="search-page-form"
             aria-labelledby="searchInputLabel"
-            defaultValue={currentPage}
+            value={currentPage}
+            onChange={e => setCurrentPage(Number(e.target.value))}
             darkBg={hasDarkBg}
           />
           <span aria-hidden>/ {formatNumber(totalPages)}</span>

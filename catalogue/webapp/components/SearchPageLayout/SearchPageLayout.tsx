@@ -148,16 +148,30 @@ const SearchLayout: FunctionComponent<
       ? getUrlQueryFromSortValue(sortOptionValue)
       : undefined;
 
-    const link = linkResolver({
-      params: {
-        ...formValues,
-        ...(urlFormattedSort && {
-          sort: urlFormattedSort.sort,
-          sortOrder: urlFormattedSort.sortOrder,
-        }),
-      },
-      pathname: router.pathname,
-    });
+    let link;
+    if (queryString !== inputValue) {
+      console.log(
+        'should strip all other filter values since the search query itself changed',
+        formValues
+      );
+      link = linkResolver({
+        params: {
+          query: formValues.query,
+        },
+        pathname: router.pathname,
+      });
+    } else {
+      link = linkResolver({
+        params: {
+          ...formValues,
+          ...(urlFormattedSort && {
+            sort: urlFormattedSort.sort,
+            sortOrder: urlFormattedSort.sortOrder,
+          }),
+        },
+        pathname: router.pathname,
+      });
+    }
 
     return router.push(link.href, link.as);
   };
