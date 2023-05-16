@@ -17,7 +17,6 @@ import { ServerDataContext } from '../../server-data/Context';
 import UserProvider from '../components/UserProvider/UserProvider';
 import { ApmContextProvider } from '../components/ApmContext/ApmContext';
 import { AppErrorProps } from '../../services/app';
-import usePrismicPreview from '../../services/app/usePrismicPreview';
 import useMaintainPageHeight from '../../services/app/useMaintainPageHeight';
 import {
   GaDimensions,
@@ -27,6 +26,10 @@ import { useOnPageLoad } from '../../services/app/useOnPageLoad';
 import ReactGA from 'react-ga';
 import { NextPage } from 'next';
 import { deserialiseProps } from '@weco/common/utils/json';
+
+import { PrismicProvider } from '@prismicio/react';
+import { PrismicPreview } from '@prismicio/next';
+import Link from 'next/link';
 
 // Error pages can't send anything via the data fetching methods as
 // the page needs to be rendered as soon as the error happens.
@@ -111,39 +114,45 @@ const WecoApp: FunctionComponent<WecoAppProps> = ({
   // or when requested client-side through next/link or next/router
   // i.e. everything that we consider to be a page view
 
-  usePrismicPreview(() => Boolean(document.cookie.match('isPreview=true')));
+  // usePrismicPreview(() => Boolean(document.cookie.match('isPreview=true')));
 
   const getLayout = Component.getLayout || (page => <>{page}</>);
 
   return (
     <>
-      <ApmContextProvider>
-        <ServerDataContext.Provider value={serverData}>
-          <UserProvider>
-            <AppContextProvider>
-              <ThemeProvider theme={theme}>
-                <GlobalStyle
-                  toggles={serverData.toggles}
-                  isFontsLoaded={useIsFontsLoaded()}
-                />
-                <OutboundLinkTracker>
-                  <LoadingIndicator />
-                  {!pageProps.err &&
-                    getLayout(
-                      <Component {...(deserialiseProps(pageProps) as any)} />
-                    )}
-                  {pageProps.err && (
-                    <ErrorPage
-                      statusCode={pageProps.err.statusCode}
-                      title={pageProps.err.message}
+      <PrismicProvider internalLinkComponent={props => <Link {...props} />}>
+        <PrismicPreview repositoryName={'wellcomecollection'}>
+          <ApmContextProvider>
+            <ServerDataContext.Provider value={serverData}>
+              <UserProvider>
+                <AppContextProvider>
+                  <ThemeProvider theme={theme}>
+                    <GlobalStyle
+                      toggles={serverData.toggles}
+                      isFontsLoaded={useIsFontsLoaded()}
                     />
-                  )}
-                </OutboundLinkTracker>
-              </ThemeProvider>
-            </AppContextProvider>
-          </UserProvider>
-        </ServerDataContext.Provider>
-      </ApmContextProvider>
+                    <OutboundLinkTracker>
+                      <LoadingIndicator />
+                      {!pageProps.err &&
+                        getLayout(
+                          <Component
+                            {...(deserialiseProps(pageProps) as any)}
+                          />
+                        )}
+                      {pageProps.err && (
+                        <ErrorPage
+                          statusCode={pageProps.err.statusCode}
+                          title={pageProps.err.message}
+                        />
+                      )}
+                    </OutboundLinkTracker>
+                  </ThemeProvider>
+                </AppContextProvider>
+              </UserProvider>
+            </ServerDataContext.Provider>
+          </ApmContextProvider>
+        </PrismicPreview>
+      </PrismicProvider>
     </>
   );
 };
