@@ -34,7 +34,7 @@ const SearchResultListItem = styled.li`
   }
 `;
 
-const WorksSearchResults: FunctionComponent<Props> = ({ works }: Props) => {
+const WorksSearchResults: FunctionComponent<Props> = ({ works }) => {
   return (
     <SearchResultUnorderedList data-test-id="works-search-results-container">
       {works.map((result, i) => (
