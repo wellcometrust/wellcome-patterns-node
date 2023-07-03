@@ -28,7 +28,10 @@ import { NextPageWithLayout } from '@weco/common/views/pages/_app';
 import { Pageview } from '@weco/common/services/conversion/track';
 import { getWorks } from '@weco/catalogue/services/wellcome/catalogue/works';
 import { worksFilters } from '@weco/catalogue/services/wellcome/catalogue/filters';
-import { emptyResultList } from '@weco/catalogue/services/wellcome';
+import {
+  emptyResultList,
+  WellcomeResultList,
+} from '@weco/catalogue/services/wellcome';
 import convertUrlToString from '@weco/common/utils/convert-url-to-string';
 import { hasFilters, linkResolver } from '@weco/common/utils/search';
 import { AppErrorProps, appError } from '@weco/common/services/app';
@@ -38,14 +41,15 @@ import { looksLikeSpam } from '@weco/catalogue/utils/spam-detector';
 
 // Types
 import {
-  CatalogueResultsList,
-  Work,
+  toWorkBasic,
+  WorkAggregations,
+  WorkBasic,
 } from '@weco/catalogue/services/wellcome/catalogue/types';
 import { Query } from '@weco/catalogue/types/search';
 import { ApiToolbarLink } from '@weco/common/views/components/ApiToolbar';
 
 type Props = {
-  works: CatalogueResultsList<Work>;
+  works: WellcomeResultList<WorkBasic, WorkAggregations>;
   worksRouteProps: WorksRouteProps;
   query: Query;
   pageview: Pageview;
@@ -282,7 +286,10 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: serialiseProps({
       ...defaultProps,
-      works,
+      works: {
+        ...works,
+        results: works.results.map(toWorkBasic),
+      },
       pageview: {
         name: 'works',
         properties: { totalResults: works.totalResults },

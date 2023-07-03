@@ -19,7 +19,11 @@ import { font } from '@weco/common/utils/classnames';
 import { getWorks } from '@weco/catalogue/services/wellcome/catalogue/works';
 import { Query } from '@weco/catalogue/types/search';
 import { getImages } from '@weco/catalogue/services/wellcome/catalogue/images';
-import { Image, Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import {
+  Image,
+  toWorkBasic,
+  WorkBasic,
+} from '@weco/catalogue/services/wellcome/catalogue/types';
 import {
   getQueryResults,
   getQueryPropertyValue,
@@ -52,7 +56,7 @@ const fromQuery: (params: ParsedUrlQuery) => CodecMapProps = params => {
 };
 
 type Props = {
-  works?: ReturnedResults<Work>;
+  works?: ReturnedResults<WorkBasic>;
   images?: ReturnedResults<Image>;
   stories?: ReturnedResults<Article>;
   query: Query;
@@ -300,7 +304,9 @@ export const getServerSideProps: GetServerSideProps<
         ...defaultProps,
         ...(stories && stories.pageResults?.length && { stories }),
         ...(images?.pageResults.length && { images }),
-        ...(works?.pageResults.length && { works }),
+        works: works
+          ? { ...works, pageResults: works.pageResults.map(toWorkBasic) }
+          : undefined,
       },
     };
   } catch (error) {
