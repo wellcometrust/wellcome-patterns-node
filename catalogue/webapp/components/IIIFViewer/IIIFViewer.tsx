@@ -206,7 +206,7 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
   handleImageError,
   searchResults,
   setSearchResults,
-}: IIIFViewerProps) => {
+}) => {
   const router = useRouter();
   const {
     page = 1,
