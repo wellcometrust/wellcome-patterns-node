@@ -1,11 +1,6 @@
 import { FunctionComponent, useContext } from 'react';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import { WorkBasic } from '@weco/catalogue/services/wellcome/catalogue/types';
 import { font, grid } from '@weco/common/utils/classnames';
-import {
-  getProductionDates,
-  getArchiveLabels,
-  getCardLabels,
-} from '../../utils/works';
 import SpacingComponent from '@weco/common/views/components/styled/SpacingComponent';
 import LinkLabels from '@weco/common/views/components/LinkLabels/LinkLabels';
 import Space from '@weco/common/views/components/styled/Space';
@@ -13,7 +8,6 @@ import Number from '@weco/common/views/components/Number/Number';
 import styled from 'styled-components';
 import WorkTitle from '../WorkTitle/WorkTitle';
 import LabelsList from '@weco/common/views/components/LabelsList/LabelsList';
-import useTransformedManifest from '../../hooks/useTransformedManifest';
 import Divider from '@weco/common/views/components/Divider/Divider';
 import IsArchiveContext from '../IsArchiveContext/IsArchiveContext';
 
@@ -29,20 +23,18 @@ const WorkTitleWrapper = styled.h1.attrs({ className: font('intb', 2) })`
 `;
 
 type Props = {
-  work: Work;
+  work: WorkBasic;
+  collectionManifestsCount: number | undefined;
 };
 
 const WorkHeader: FunctionComponent<Props> = ({ work }) => {
   const isArchive = useContext(IsArchiveContext);
-  const productionDates = getProductionDates(work);
-  const archiveLabels = getArchiveLabels(work);
-  const cardLabels = getCardLabels(work);
-  const manifestData = useTransformedManifest(work);
-  const { collectionManifestsCount } = { ...manifestData };
-
-  const primaryContributorLabel = work.contributors.find(
-    contributor => contributor.primary
-  )?.agent.label;
+  const {
+    productionDates,
+    archiveLabels,
+    cardLabels,
+    primaryContributorLabel,
+  } = work;
 
   return (
     <>
@@ -61,9 +53,7 @@ const WorkHeader: FunctionComponent<Props> = ({ work }) => {
               // We only send a lang if it's unambiguous -- better to send
               // no language than the wrong one.
               lang={
-                work?.languages?.length === 1
-                  ? work?.languages[0]?.id
-                  : undefined
+                work.languageIds.length === 1 ? work.languageIds[0] : undefined
               }
             >
               <WorkTitle title={work.title} />
