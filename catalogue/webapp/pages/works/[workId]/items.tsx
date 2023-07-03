@@ -6,6 +6,7 @@ import {
 } from '@weco/common/model/catalogue';
 import {
   Work,
+  WorkBasic,
   toWorkBasic,
 } from '@weco/catalogue/services/wellcome/catalogue/types';
 import { getDigitalLocationOfType } from '@weco/catalogue/utils/works';
@@ -93,13 +94,14 @@ function createTzitzitWorkLink(work: Work): ApiToolbarLink | undefined {
 
 type Props = {
   compressedTransformedManifest?: CompressedTransformedManifest;
-  work: Work;
+  work: WorkBasic;
   canvas: number;
   canvasOcr?: string;
   iiifImageLocation?: DigitalLocation;
   iiifPresentationLocation?: DigitalLocation;
   pageview: Pageview;
   serverSearchResults: SearchResults | null;
+  apiToolbarLinks: ApiToolbarLink[];
 };
 
 const ItemPage: NextPage<Props> = ({
@@ -109,7 +111,8 @@ const ItemPage: NextPage<Props> = ({
   iiifImageLocation,
   iiifPresentationLocation,
   canvas,
-  serverSearchResults
+  serverSearchResults,
+  apiToolbarLinks
 }) => {
   const transformedManifest =
     compressedTransformedManifest &&
@@ -193,7 +196,7 @@ const ItemPage: NextPage<Props> = ({
       openGraphType="website"
       jsonLd={{ '@type': 'WebPage' }}
       siteSection="collections"
-      apiToolbarLinks={[createTzitzitWorkLink(work)]}
+      apiToolbarLinks={apiToolbarLinks}
       hideNewsletterPromo={true}
       hideFooter={true}
       hideTopContent={true}
@@ -210,11 +213,11 @@ const ItemPage: NextPage<Props> = ({
           <Container>
             <Grid>
               <WorkHeader
-                work={toWorkBasic(work)}
+                work={work}
                 collectionManifestsCount={collectionManifestsCount}
               />
             </Grid>
-            <WorkTabbedNav work={toWorkBasic(work)} selected="imageViewer" />
+            <WorkTabbedNav work={work} selected="imageViewer" />
           </Container>
         </Space>
       )}
@@ -335,7 +338,7 @@ const ItemPage: NextPage<Props> = ({
       {showViewer &&
         ((mainImageService && currentCanvas) || iiifImageLocation) && (
           <IIIFViewer
-            work={toWorkBasic(work)}
+            work={work}
             transformedManifest={transformedManifest}
             canvasOcr={canvasOcr}
             iiifImageLocation={iiifImageLocation}
@@ -431,6 +434,8 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
+  const apiToolbarLinks = [createTzitzitWorkLink(work)];
+
   if (transformedManifest) {
     const displayManifest = await getDisplayManifest(
       transformedManifest,
@@ -463,11 +468,12 @@ export const getServerSideProps: GetServerSideProps<
         compressedTransformedManifest:
           toCompressedTransformedManifest(displayManifest),
         canvasOcr,
-        work,
+        work: toWorkBasic(work),
         canvas,
         iiifImageLocation,
         iiifPresentationLocation,
         pageview,
+        apiToolbarLinks,
         serverData,
         serverSearchResults,
       }),
@@ -478,12 +484,13 @@ export const getServerSideProps: GetServerSideProps<
     return {
       props: serialiseProps({
         compressedTransformedManifest: undefined,
-        work,
+        work: toWorkBasic(work),
         canvas,
         canvases: [],
         iiifImageLocation,
         iiifPresentationLocation,
         pageview,
+        apiToolbarLinks,
         serverData,
         serverSearchResults: null
       }),
