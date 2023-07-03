@@ -1,11 +1,11 @@
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import { WorkBasic } from '@weco/catalogue/services/wellcome/catalogue/types';
 import { FunctionComponent } from 'react';
 import SubNavigation from '@weco/common/views/components/SubNavigation/SubNavigation';
 import { listView, eye } from '@weco/common/icons';
 import { toLink as itemLink } from '../ItemLink';
 
 type Props = {
-  work: Work;
+  work: WorkBasic;
   selected: 'catalogueDetails' | 'imageViewer';
 };
 const WorkTabbedNav: FunctionComponent<Props> = ({ work, selected }) => {

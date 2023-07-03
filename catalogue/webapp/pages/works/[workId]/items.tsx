@@ -214,7 +214,7 @@ const ItemPage: NextPage<Props> = ({
                 collectionManifestsCount={collectionManifestsCount}
               />
             </Grid>
-            <WorkTabbedNav work={work} selected="imageViewer" />
+            <WorkTabbedNav work={toWorkBasic(work)} selected="imageViewer" />
           </Container>
         </Space>
       )}
