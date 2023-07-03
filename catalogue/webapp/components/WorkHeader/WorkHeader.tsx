@@ -27,7 +27,10 @@ type Props = {
   collectionManifestsCount: number | undefined;
 };
 
-const WorkHeader: FunctionComponent<Props> = ({ work }) => {
+const WorkHeader: FunctionComponent<Props> = ({
+  work,
+  collectionManifestsCount,
+}) => {
   const isArchive = useContext(IsArchiveContext);
   const {
     productionDates,
@@ -50,11 +53,7 @@ const WorkHeader: FunctionComponent<Props> = ({ work }) => {
             <WorkTitleWrapper
               aria-live="polite"
               id="work-info"
-              // We only send a lang if it's unambiguous -- better to send
-              // no language than the wrong one.
-              lang={
-                work.languageIds.length === 1 ? work.languageIds[0] : undefined
-              }
+              lang={work.languageId}
             >
               <WorkTitle title={work.title} />
             </WorkTitleWrapper>

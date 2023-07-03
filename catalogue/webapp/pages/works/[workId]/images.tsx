@@ -1,7 +1,12 @@
 import { FunctionComponent } from 'react';
 import { GetServerSideProps } from 'next';
 import { appError, AppErrorProps } from '@weco/common/services/app';
-import { Work, Image } from '@weco/catalogue/services/wellcome/catalogue/types';
+import {
+  Work,
+  Image,
+  WorkBasic,
+  toWorkBasic,
+} from '@weco/catalogue/services/wellcome/catalogue/types';
 import CataloguePageLayout from '@weco/catalogue/components/CataloguePageLayout/CataloguePageLayout';
 import Layout12 from '@weco/common/views/components/Layout12/Layout12';
 import BetaMessage from '@weco/common/views/components/BetaMessage/BetaMessage';
@@ -35,15 +40,15 @@ function createTzitzitImageLink(
 
 type Props = {
   image: Image;
-  catalogueApiUrl: string;
-  work: Work;
+  apiToolbarLinks: (ApiToolbarLink | undefined)[];
+  work: WorkBasic;
   pageview: Pageview;
 };
 
 const ImagePage: FunctionComponent<Props> = ({
   image,
   work,
-  catalogueApiUrl,
+  apiToolbarLinks,
 }) => {
   const title = work.title || '';
   const iiifImageLocation =
@@ -52,12 +57,6 @@ const ImagePage: FunctionComponent<Props> = ({
     work,
     'iiif-presentation'
   );
-
-  const apiLink = {
-    id: 'json',
-    label: 'JSON',
-    link: catalogueApiUrl,
-  };
 
   return (
     <CataloguePageLayout
@@ -70,7 +69,7 @@ const ImagePage: FunctionComponent<Props> = ({
       openGraphType="website"
       jsonLd={{ '@type': 'WebPage' }}
       siteSection="collections"
-      apiToolbarLinks={[apiLink, createTzitzitImageLink(work, image)]}
+      apiToolbarLinks={apiToolbarLinks}
       hideNewsletterPromo={true}
       hideFooter={true}
       hideTopContent={true}
@@ -147,8 +146,15 @@ export const getServerSideProps: GetServerSideProps<
       // We know we'll get a catalogue API URL for a non-error response, but
       // this isn't (currently) asserted by the type system.
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      catalogueApiUrl: catalogueApiUrl!,
-      work,
+      apiToolbarLinks: [
+        {
+          id: 'json',
+          label: 'JSON',
+          link: catalogueApiUrl!,
+        },
+        createTzitzitImageLink(work, image),
+      ],
+      work: toWorkBasic(work),
       pageview: {
         name: 'image',
         properties: {},

@@ -1,5 +1,5 @@
 import { createContext, RefObject } from 'react';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import { WorkBasic } from '@weco/catalogue/services/wellcome/catalogue/types';
 import { SearchResults } from '@weco/catalogue/services/iiif/types/search/v3';
 import { Manifest } from '@iiif/presentation-3';
 import { TransformedManifest } from '../../types/manifest';
@@ -17,7 +17,7 @@ export type Query = {
 type Props = {
   // DATA props:
   query: Query;
-  work: Work;
+  work: WorkBasic;
   transformedManifest: TransformedManifest | undefined;
   parentManifest: Manifest | undefined;
   searchResults: SearchResults | null;
@@ -67,34 +67,12 @@ const query = {
   shouldScrollToCanvas: true,
 };
 
-const work = {
-  type: 'Work',
+const work: WorkBasic = {
   id: '',
   title: '',
-  alternativeTitles: [],
-  physicalDescription: '',
-  workType: {
-    id: '',
-    label: '',
-    type: 'Format',
-  },
-  contributors: [],
-  identifiers: [],
-  subjects: [],
-  genres: [],
-  production: [],
-  languages: [],
-  notes: [],
-  formerFrequency: [],
-  designation: [],
-  parts: [],
-  partOf: [],
-  precededBy: [],
-  succeededBy: [],
-  availabilities: [],
-  availableOnline: false,
-  holdings: [],
-} as Work;
+  productionDates: [],
+  cardLabels: [],
+};
 
 const ItemViewerContext = createContext<Props>({
   // DATA props:

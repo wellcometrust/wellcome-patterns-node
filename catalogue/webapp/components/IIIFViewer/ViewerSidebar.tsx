@@ -13,7 +13,6 @@ import styled from 'styled-components';
 import Space from '@weco/common/views/components/styled/Space';
 import { classNames, font } from '@weco/common/utils/classnames';
 import LinkLabels from '@weco/common/views/components/LinkLabels/LinkLabels';
-import { getProductionDates } from '@weco/catalogue/utils/works';
 import { getCatalogueLicenseData } from '@weco/common/utils/licenses';
 import ViewerStructures from './ViewerStructures';
 import ItemViewerContext from '../ItemViewerContext/ItemViewerContext';
@@ -141,7 +140,7 @@ const ViewerSidebar: FunctionComponent<ViewerSidebarProps> = ({
     string | undefined
   >();
   const { iiifCredit, structures, searchService } = { ...transformedManifest };
-  const productionDates = getProductionDates(work);
+  const { productionDates } = work;
 
   const digitalLocation: DigitalLocation | undefined =
     iiifPresentationLocation || iiifImageLocation;
@@ -180,12 +179,12 @@ const ViewerSidebar: FunctionComponent<ViewerSidebarProps> = ({
           <WorkTitle title={work.title} />
         </h1>
 
-        {work.contributors.length > 0 && (
+        {work.primaryContributorLabel && (
           <Space
             h={{ size: 'm', properties: ['margin-right'] }}
             data-test-id="work-contributors"
           >
-            <LinkLabels items={[{ text: work.contributors[0].agent.label }]} />
+            <LinkLabels items={[{ text: work.primaryContributorLabel }]} />
           </Space>
         )}
 

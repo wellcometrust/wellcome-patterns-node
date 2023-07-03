@@ -31,7 +31,10 @@ import { trackGaEvent } from '@weco/common/utils/ga';
 import PhysicalItems from '../PhysicalItems/PhysicalItems';
 import Layout10 from '@weco/common/views/components/Layout10/Layout10';
 import { DigitalLocation } from '@weco/common/model/catalogue';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import {
+  Work,
+  toWorkBasic,
+} from '@weco/catalogue/services/wellcome/catalogue/types';
 import useTransformedManifest from '../../hooks/useTransformedManifest';
 import useTransformedIIIFImage from '../../hooks/useTransformedIIIFImage';
 import IIIFClickthrough from '../IIIFClickthrough/IIIFClickthrough';
@@ -58,7 +61,17 @@ const WorkDetails: FunctionComponent<Props> = ({
 }: Props) => {
   const isArchive = useContext(IsArchiveContext);
   const itemUrl = itemLink({ workId: work.id, source: 'work', props: {} });
-  const transformedIIIFImage = useTransformedIIIFImage(work);
+
+  const iiifImageLocation = getDigitalLocationOfType(work, 'iiif-image');
+  const iiifPresentationLocation = getDigitalLocationOfType(
+    work,
+    'iiif-presentation'
+  );
+
+  const transformedIIIFImage = useTransformedIIIFImage(
+    toWorkBasic(work),
+    iiifImageLocation
+  );
   const transformedIIIFManifest = useTransformedManifest(work);
   const {
     video,
@@ -71,12 +84,6 @@ const WorkDetails: FunctionComponent<Props> = ({
     clickThroughService,
     tokenService,
   } = { ...transformedIIIFManifest };
-
-  const iiifImageLocation = getDigitalLocationOfType(work, 'iiif-image');
-  const iiifPresentationLocation = getDigitalLocationOfType(
-    work,
-    'iiif-presentation'
-  );
 
   // Works can have a DigitalLocation of type iiif-presentation and/or iiif-image.
   // For a iiif-presentation DigitalLocation we get the download options from the manifest to which it points.

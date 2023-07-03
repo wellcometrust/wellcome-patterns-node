@@ -335,7 +335,7 @@ const ItemPage: NextPage<Props> = ({
       {showViewer &&
         ((mainImageService && currentCanvas) || iiifImageLocation) && (
           <IIIFViewer
-            work={work}
+            work={toWorkBasic(work)}
             transformedManifest={transformedManifest}
             canvasOcr={canvasOcr}
             iiifImageLocation={iiifImageLocation}

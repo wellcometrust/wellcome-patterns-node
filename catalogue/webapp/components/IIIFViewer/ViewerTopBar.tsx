@@ -220,7 +220,7 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
   } = { ...transformedManifest };
   const currentCanvas = canvases?.[queryParamToArrayIndex(query.canvas)];
   const mainImageService = { '@id': currentCanvas?.imageServiceId };
-  const transformedIIIFImage = useTransformedIIIFImage(work);
+  const transformedIIIFImage = useTransformedIIIFImage(work, iiifImageLocation);
 
   // Works can have a DigitalLocation of type iiif-presentation and/or iiif-image.
   // For a iiif-presentation DigitalLocation we get the download options from the manifest to which it points.

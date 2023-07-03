@@ -8,7 +8,7 @@ import {
 import styled from 'styled-components';
 import { Manifest } from '@iiif/presentation-3';
 import { DigitalLocation } from '@weco/common/model/catalogue';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import { WorkBasic } from '@weco/catalogue/services/wellcome/catalogue/types';
 import ViewerSidebar from './ViewerSidebar';
 import MainViewer from './MainViewer';
 import ViewerTopBar from './ViewerTopBar';
@@ -32,7 +32,7 @@ import { NoScriptImage } from '@weco/catalogue/components/IIIFViewer/NoScriptIma
 import { queryParamToArrayIndex, DelayVisibility } from '.';
 
 type IIIFViewerProps = {
-  work: Work;
+  work: WorkBasic;
   iiifImageLocation?: DigitalLocation;
   iiifPresentationLocation?: DigitalLocation;
   transformedManifest?: TransformedManifest;
