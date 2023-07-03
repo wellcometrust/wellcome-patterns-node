@@ -2,14 +2,9 @@ import { FunctionComponent } from 'react';
 
 // Types
 import { DigitalLocation } from '@weco/common/model/catalogue';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import { WorkBasic } from '@weco/catalogue/services/wellcome/catalogue/types';
 
 // Helpers/Utils
-import {
-  getArchiveLabels,
-  getProductionDates,
-  getCardLabels,
-} from '../../utils/works';
 import { convertIiifImageUri } from '@weco/common/utils/convert-image-uri';
 
 // Components
@@ -29,7 +24,7 @@ import {
 } from './WorksSearchResult.styles';
 
 type Props = {
-  work: Work;
+  work: WorkBasic;
   resultPosition: number;
 };
 
@@ -44,13 +39,12 @@ const WorkSearchResult: FunctionComponent<Props> = ({
   work,
   resultPosition,
 }) => {
-  const productionDates = getProductionDates(work);
-  const archiveLabels = getArchiveLabels(work);
-  const cardLabels = getCardLabels(work);
-
-  const primaryContributorLabel = work.contributors.find(
-    contributor => contributor.primary
-  )?.agent.label;
+  const {
+    productionDates,
+    archiveLabels,
+    cardLabels,
+    primaryContributorLabel,
+  } = work;
 
   return (
     <WorkLink

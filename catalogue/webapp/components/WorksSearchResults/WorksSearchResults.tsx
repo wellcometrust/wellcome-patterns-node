@@ -1,7 +1,10 @@
 import { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import WorksSearchResult from '../WorksSearchResult/WorksSearchResult';
-import { Work } from '@weco/catalogue/services/wellcome/catalogue/types';
+import {
+  Work,
+  toWorkBasic,
+} from '@weco/catalogue/services/wellcome/catalogue/types';
 import PlainList from '@weco/common/views/components/styled/PlainList';
 
 type Props = {
@@ -36,7 +39,7 @@ const WorksSearchResults: FunctionComponent<Props> = ({ works }: Props) => {
     <SearchResultUnorderedList data-test-id="works-search-results-container">
       {works.map((result, i) => (
         <SearchResultListItem data-test-id="work-search-result" key={result.id}>
-          <WorksSearchResult work={result} resultPosition={i} />
+          <WorksSearchResult work={toWorkBasic(result)} resultPosition={i} />
         </SearchResultListItem>
       ))}
     </SearchResultUnorderedList>

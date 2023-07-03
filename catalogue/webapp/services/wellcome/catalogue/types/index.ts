@@ -17,6 +17,7 @@ import {
   WorkAggregations,
 } from './aggregations';
 import { WellcomeResultList } from '../../index';
+import { WorkBasic, toWorkBasic } from './work';
 
 export type {
   CatalogueWorksApiProps,
@@ -25,7 +26,10 @@ export type {
   ConceptAggregations,
   ImageAggregations,
   WorkAggregations,
+  WorkBasic,
 };
+
+export { toWorkBasic };
 
 export type Work = {
   type: 'Work' | 'Collection' | 'Section' | 'Series';

@@ -204,7 +204,7 @@ export function getItemIdentifiersWith(
   );
 }
 
-type ArchiveLabels = {
+export type ArchiveLabels = {
   reference: string;
   partOf?: string;
 };
