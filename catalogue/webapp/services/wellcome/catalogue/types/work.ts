@@ -27,7 +27,9 @@ export function toWorkBasic(work: Work): WorkBasic {
   // We only send a lang if it's unambiguous -- better to send
   // no language than the wrong one.
   const languageId =
-    work.languages.length === 1 ? work.languages[0].id : undefined;
+    work.languages && work.languages.length === 1
+      ? work.languages[0].id
+      : undefined;
 
   return {
     id,

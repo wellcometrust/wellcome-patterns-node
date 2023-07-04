@@ -52,7 +52,7 @@ export type Work = {
   currentFrequency?: string;
   formerFrequency: string[];
   designation: string[];
-  languages: Language[];
+  languages?: Language[];
   edition?: string;
   notes: Note[];
   duration?: number;
