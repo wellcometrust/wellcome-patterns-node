@@ -101,7 +101,7 @@ type Props = {
   iiifPresentationLocation?: DigitalLocation;
   pageview: Pageview;
   serverSearchResults: SearchResults | null;
-  apiToolbarLinks: ApiToolbarLink[];
+  apiToolbarLinks: (ApiToolbarLink | undefined)[];
 };
 
 const ItemPage: NextPage<Props> = ({
