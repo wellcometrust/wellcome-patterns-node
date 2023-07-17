@@ -300,14 +300,14 @@ export const getServerSideProps: GetServerSideProps<
     }
 
     return {
-      props: {
+      props: serialiseProps({
         ...defaultProps,
         ...(stories && stories.pageResults?.length && { stories }),
         ...(images?.pageResults.length && { images }),
         works: works
           ? { ...works, pageResults: works.pageResults.map(toWorkBasic) }
           : undefined,
-      },
+      }),
     };
   } catch (error) {
     console.error(error);
