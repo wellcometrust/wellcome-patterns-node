@@ -1,6 +1,6 @@
 import { default as React } from 'react';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
-import { DocsContainer } from '@storybook/addon-docs/blocks';
+import { DocsContainer } from '@storybook/blocks';
 import theme from '@weco/common/views/themes/default';
 import { ContextDecorator } from '@weco/cardigan/config/decorators';
 import wellcomeTheme from './wellcome-theme';
@@ -26,7 +26,7 @@ export const decorators = [
 
 const themeColors = Object.entries(theme.colors).map(([key, value]) => ({
   name: key,
-  value: value.base,
+  value: value,
 }));
 
 export const parameters = {
@@ -42,18 +42,6 @@ export const parameters = {
     grid: {
       disable: true,
     },
-  },
-  previewTabs: {
-    canvas: { hidden: true },
-    'storybook/docs/panel': { hidden: true },
-  },
-  docs: {
-    theme: wellcomeTheme,
-    container: ({ children, context }) => (
-      <DocsContainer context={context}>
-        <ContextDecorator>{children}</ContextDecorator>
-      </DocsContainer>
-    ),
   },
   a11y: {
     config: {

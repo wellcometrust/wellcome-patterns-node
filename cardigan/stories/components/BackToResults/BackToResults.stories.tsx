@@ -1,6 +1,5 @@
 import BackToResults from '@weco/content/components/BackToResults/BackToResults';
-import Readme from '@weco/content/components/BackToResults/README.md';
-import { ReadmeDecorator } from '@weco/cardigan/config/decorators';
+import type { Meta, StoryObj } from '@storybook/react';
 import SearchContext from '@weco/common/views/components/SearchContext/SearchContext';
 
 const nextLink = {
@@ -20,26 +19,29 @@ const nextLink = {
   },
 };
 
-const WrappedBackToResults = () => (
-  <SearchContext.Provider
-    value={{
-      link: nextLink,
-      setLink: () => {
-        /* */
-      },
-    }}
-  >
-    <BackToResults />
-  </SearchContext.Provider>
-);
+type Story = StoryObj<typeof BackToResults>;
 
-const Template = args => (
-  <ReadmeDecorator
-    WrappedComponent={WrappedBackToResults}
-    args={args}
-    Readme={Readme}
-  />
-);
-export const basic = Template.bind({});
+export const Basic: Story = {
+  args: [],
+};
 
-basic.storyName = 'BackToResults';
+const meta: Meta<typeof BackToResults> = {
+  component: BackToResults,
+  title: 'Components/BackToResults',
+  decorators: [
+    Story => (
+      <SearchContext.Provider
+        value={{
+          link: nextLink,
+          setLink: () => {
+            /* */
+          },
+        }}
+      >
+        <Story />
+      </SearchContext.Provider>
+    ),
+  ],
+};
+
+export default meta;

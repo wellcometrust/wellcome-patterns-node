@@ -1,24 +1,22 @@
+import { dirname, join } from "path";
+
 const path = require('path');
 module.exports = {
-  core: {
-    builder: 'webpack5',
-  },
   stories: [
-    '../stories/global/**/*.stories.mdx',
-    '../stories/global/**/*.stories.tsx',
-    '../stories/components/**/*.stories.mdx',
+    // '../stories/global/**/*.stories.mdx',
+    // '../stories/global/**/*.stories.tsx',
+    '../stories/components/**/*.mdx',
     '../stories/components/**/*.stories.tsx',
   ],
+
   addons: [
-    '@storybook/addon-controls',
-    '@storybook/addon-a11y',
-    '@storybook/addon-backgrounds',
-    'storybook-addon-next-router',
-    {
-      name: '@storybook/addon-docs',
-      options: { transcludeMarkdown: true },
-    },
+    getAbsolutePath("@storybook/addon-controls"),
+    getAbsolutePath("@storybook/addon-a11y"),
+    getAbsolutePath("@storybook/addon-backgrounds"),
+    getAbsolutePath("@storybook/addon-docs"),
+    getAbsolutePath("@storybook/addon-mdx-gfm")
   ],
+
   webpackFinal: async (config, { configType }) => {
     // Adds support for modules using mjs
     config.module.rules.push({
@@ -51,4 +49,21 @@ module.exports = {
 
     return config;
   },
+
+  framework: {
+    name: getAbsolutePath("@storybook/nextjs"),
+    options: {}
+  },
+
+  docs: {
+    autodocs: false
+  },
+
+  core: {
+    disableTelemetry: true
+  },
 };
+
+function getAbsolutePath(value) {
+  return dirname(require.resolve(join(value, "package.json")));
+}
