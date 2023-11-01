@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "jsx": "preserve",
-    "noEmit": true
-  },
-  "exclude": ["node_modules", ".dist", ".cache"]
-}
