@@ -1,0 +1,15 @@
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+import Message from '@weco/content/components/Message/Message';
+import Readme from '@weco/content/components/Message/README.md';
+import * as stories from './Message.stories.tsx';
+
+<Meta title={`Components/Message`} component={Message} />
+
+# Message
+
+<Readme />
+
+{' '}
+<Story story={stories.basic} />
+
+<ArgsTable />
