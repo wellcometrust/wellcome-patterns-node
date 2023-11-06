@@ -22,7 +22,7 @@ const nextLink = {
 type Story = StoryObj<typeof BackToResults>;
 
 export const Basic: Story = {
-  args: [],
+  name: 'BackToResults',
 };
 
 const meta: Meta<typeof BackToResults> = {
