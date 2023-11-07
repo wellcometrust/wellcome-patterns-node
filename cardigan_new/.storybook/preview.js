@@ -1,9 +1,6 @@
 import { default as React } from 'react';
-import { RouterContext } from 'next/dist/shared/lib/router-context';
-import { DocsContainer } from '@storybook/blocks';
 import theme from '@weco/common/views/themes/default';
 import { ContextDecorator } from '@weco/cardigan_new/config/decorators';
-import wellcomeTheme from './wellcome-theme';
 import { grid } from '@weco/common/utils/classnames';
 import ConditionalWrapper from '@weco/common/views/components/ConditionalWrapper/ConditionalWrapper';
 
@@ -33,9 +30,6 @@ export const parameters = {
   options: {
     name: 'Cardigan',
     url: 'https://cardigan.wellcomecollection.org',
-    storySort: {
-      order: ['Cardigan', 'Components', 'Global'],
-    },
   },
   backgrounds: {
     values: themeColors,
@@ -53,10 +47,8 @@ export const parameters = {
       ],
     },
   },
+  actions: { argTypesRegex: '^on.*' },
   chromatic: {
     viewports: [375, 1200],
-  },
-  nextRouter: {
-    Provider: RouterContext.Provider,
   },
 };

@@ -3,16 +3,16 @@ import { dirname, join } from "path";
 const path = require('path');
 module.exports = {
   stories: [
-    '../stories/components/**/*.mdx',
-    '../stories/components/**/*.stories.tsx',
+    '../stories/**/*.mdx',
+    '../stories/**/*.stories.tsx',
   ],
 
   addons: [
+    getAbsolutePath("@storybook/addon-actions"),
     getAbsolutePath("@storybook/addon-controls"),
     getAbsolutePath("@storybook/addon-a11y"),
     getAbsolutePath("@storybook/addon-backgrounds"),
     getAbsolutePath("@storybook/addon-docs"),
-    getAbsolutePath("@storybook/addon-mdx-gfm"),
   ],
 
   framework: {

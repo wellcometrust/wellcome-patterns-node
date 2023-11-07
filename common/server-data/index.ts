@@ -102,7 +102,7 @@ export async function init(): Promise<void> {
 
 export function clear(): void {
   for (const [, timer] of timers) {
-    clearTimeout(timer);
+    // clearTimeout(timer);
   }
 }
 
