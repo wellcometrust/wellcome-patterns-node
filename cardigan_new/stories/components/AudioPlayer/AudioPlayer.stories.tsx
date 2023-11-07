@@ -1,15 +1,13 @@
 import AudioPlayer from '@weco/content/components/AudioPlayer/AudioPlayer';
 import type { Meta, StoryObj } from '@storybook/react';
 
-
 export const Basic: StoryObj<typeof AudioPlayer> = {
   args: {
     audioFile:
-    'https://iiif.wellcomecollection.org/av/b2248887x_0001.wav/full/max/default.mp3#identity',
-  title: 'Mat Fraser: interview 1',
-  }
+      'https://iiif.wellcomecollection.org/av/b2248887x_0001.wav/full/max/default.mp3#identity',
+    title: 'Mat Fraser: interview 1',
+  },
 };
-
 
 const meta: Meta<typeof AudioPlayer> = {
   component: AudioPlayer,
@@ -18,9 +16,9 @@ const meta: Meta<typeof AudioPlayer> = {
     idPrefix: {
       table: {
         disable: true,
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 
 export default meta;
