@@ -1,34 +1,31 @@
-import { dirname, join } from "path";
+import { dirname, join } from 'path';
 
-const path = require('path');
 module.exports = {
-  stories: [
-    '../stories/**/*.mdx',
-    '../stories/**/*.stories.tsx',
-  ],
+  stories: ['../stories/**/*.mdx', '../stories/**/*.stories.tsx'],
 
   addons: [
-    getAbsolutePath("@storybook/addon-actions"),
-    getAbsolutePath("@storybook/addon-controls"),
-    getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@storybook/addon-backgrounds"),
-    getAbsolutePath("@storybook/addon-docs"),
+    getAbsolutePath('@storybook/addon-actions'),
+    getAbsolutePath('@storybook/addon-controls'),
+    getAbsolutePath('@storybook/addon-a11y'),
+    getAbsolutePath('@storybook/addon-backgrounds'),
+    getAbsolutePath('@storybook/addon-docs'),
   ],
 
   framework: {
-    name: getAbsolutePath("@storybook/nextjs"),
-    options: {}
+    name: getAbsolutePath('@storybook/nextjs'),
+    options: {},
   },
 
   docs: {
-    autodocs: false
+    autodocs: false,
   },
 
   core: {
-    disableTelemetry: true
+    disableTelemetry: true,
   },
+  staticDirs: ['./public'],
 };
 
 function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
+  return dirname(require.resolve(join(value, 'package.json')));
 }

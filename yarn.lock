@@ -4918,7 +4918,7 @@
   resolved "https://registry.yarnpkg.com/@storybook/global/-/global-5.0.0.tgz#b793d34b94f572c1d7d9e0f44fac4e0dbc9572ed"
   integrity sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==
 
-"@storybook/manager-api@7.5.3":
+"@storybook/manager-api@7.5.3", "@storybook/manager-api@^7.5.3":
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/@storybook/manager-api/-/manager-api-7.5.3.tgz#6e9e791a8996631dc77f3a0cecc34ce4f4869647"
   integrity sha512-d8mVLr/5BEG4bAS2ZeqYTy/aX4jPEpZHdcLaWoB4mAM+PAL9wcWsirUyApKtDVYLITJf/hd8bb2Dm2ok6E45gA==
@@ -5393,7 +5393,7 @@
     memoizerific "^1.11.3"
     regenerator-runtime "^0.13.7"
 
-"@storybook/theming@7.5.3":
+"@storybook/theming@7.5.3", "@storybook/theming@^7.5.3":
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/@storybook/theming/-/theming-7.5.3.tgz#bbcf547c8b3ec1e59e641c58155a44781d5f310d"
   integrity sha512-Cjmthe1MAk0z4RKCZ7m72gAD8YD0zTAH97z5ryM1Qv84QXjiCQ143fGOmYz1xEQdNFpOThPcwW6FEccLHTkVcg==

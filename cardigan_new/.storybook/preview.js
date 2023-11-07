@@ -1,4 +1,3 @@
-import { default as React } from 'react';
 import theme from '@weco/common/views/themes/default';
 import { ContextDecorator } from '@weco/cardigan_new/config/decorators';
 import { grid } from '@weco/common/utils/classnames';
@@ -23,7 +22,7 @@ export const decorators = [
 
 const themeColors = Object.entries(theme.colors).map(([key, value]) => ({
   name: key,
-  value: value,
+  value,
 }));
 
 export const parameters = {
@@ -35,16 +34,6 @@ export const parameters = {
     values: themeColors,
     grid: {
       disable: true,
-    },
-  },
-  a11y: {
-    config: {
-      rules: [
-        {
-          id: 'color-contrast',
-          selector: '*:not(#readme)',
-        },
-      ],
     },
   },
   actions: { argTypesRegex: '^on.*' },

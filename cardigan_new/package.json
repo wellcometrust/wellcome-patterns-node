@@ -3,8 +3,8 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "dev": "storybook dev -s ./public -p 9001 -c .storybook",
-    "build": "storybook build -s ./public -c .storybook -o .dist",
+    "dev": "storybook dev -p 9001 -c .storybook",
+    "build": "storybook build -c .storybook -o .dist",
     "chromatic": "chromatic --only-changed"
   },
   "dependencies": {
@@ -14,8 +14,10 @@
     "@storybook/addon-backgrounds": "^7.5.2",
     "@storybook/addon-controls": "^7.5.2",
     "@storybook/addon-docs": "^7.5.2",
+    "@storybook/manager-api": "^7.5.3",
     "@storybook/nextjs": "^7.5.2",
     "@storybook/react": "^7.5.2",
+    "@storybook/theming": "^7.5.3",
     "chromatic": "^6.7.3",
     "eslint": "^8",
     "eslint-plugin-storybook": "^0.6.15",

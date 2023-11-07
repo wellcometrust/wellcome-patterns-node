@@ -38,6 +38,7 @@ module.exports = {
   },
   extends: sharedExtends,
   rules: sharedRules,
+  ignorePatterns: ['!.storybook'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
