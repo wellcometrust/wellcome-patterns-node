@@ -31,7 +31,7 @@ const meta: Meta<typeof TextInput> = {
     id: 'test-id',
     type: 'email',
     name: 'email',
-    label: 'Your email yo',
+    label: 'Your email address',
     errorMessage:
       'Enter an email address in the correct format, like name@example.com',
   },
