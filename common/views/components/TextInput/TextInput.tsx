@@ -126,7 +126,7 @@ export const TextInputErrorMessage = styled.span.attrs({
   color: ${props => props.theme.color('validation.red')};
 `;
 
-type Props = {
+export type Props = {
   label: string;
   value: string;
   setValue: (value: string) => void;
