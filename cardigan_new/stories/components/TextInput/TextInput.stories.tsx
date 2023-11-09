@@ -3,6 +3,7 @@ import { useState } from 'react';
 import TextInput, {
   Props,
 } from '@weco/common/views/components/TextInput/TextInput';
+import readme from '@weco/common/views/components/TextInput/README.md';
 import useValidation from '@weco/common/hooks/useValidation';
 
 const TextInputStory: FunctionComponent<Props> = args => {
@@ -34,6 +35,9 @@ const meta: Meta<typeof TextInput> = {
     label: 'Your email address',
     errorMessage:
       'Enter an email address in the correct format, like name@example.com',
+  },
+  parameters: {
+    readme,
   },
 };
 
