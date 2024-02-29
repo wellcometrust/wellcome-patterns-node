@@ -11,16 +11,19 @@ export type EditorialImageGalleryProps =
 
 const EditorialImageGallerySlice: FunctionComponent<
   EditorialImageGalleryProps
-> = ({ slice, context }) => {
+> = ({ slice, slices, context }) => {
   const transformedSlice = transformEditorialImageGallerySlice(slice);
   const options = { ...defaultContext, ...context };
-  // TODO: increment `id` based on the image gallery's position within all the
-  // possible image gallery slices (probably using `slices` and `index` props)
+  const allImageGallerySlices = slices.filter(
+    slice => slice.slice_type === 'editorialImageGallery'
+  );
+  const index = allImageGallerySlices.findIndex(s => s.id === slice.id);
+
   return (
     <SpacingComponent $sliceType={transformedSlice.type}>
       <ImageGallery
         {...transformedSlice.value}
-        id={1}
+        id={index + 1}
         comicPreviousNext={options.comicPreviousNext}
       />
     </SpacingComponent>
