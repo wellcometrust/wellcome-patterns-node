@@ -1,5 +1,10 @@
 import { AppProps } from 'next/app';
-import React, { useEffect, FunctionComponent, ReactElement } from 'react';
+import React, {
+  useEffect,
+  useState,
+  FunctionComponent,
+  ReactElement,
+} from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme, { GlobalStyle } from '@weco/common/views/themes/default';
 import LoadingIndicator from '@weco/common/views/components/LoadingIndicator/LoadingIndicator';
@@ -21,7 +26,11 @@ import { ApmContextProvider } from '@weco/common/views/components/ApmContext/Apm
 import { AppErrorProps } from '@weco/common/services/app';
 import usePrismicPreview from '@weco/common/services/app/usePrismicPreview';
 import useMaintainPageHeight from '@weco/common/services/app/useMaintainPageHeight';
-import { GaDimensions } from '@weco/common/services/app/google-analytics';
+import {
+  GaDimensions,
+  GoogleTagManager,
+  Ga4DataLayer,
+} from '@weco/common/services/app/google-analytics';
 import { NextPage } from 'next';
 import { deserialiseProps } from '@weco/common/utils/json';
 import { SearchContextProvider } from '@weco/common/views/components/SearchContext/SearchContext';
@@ -83,8 +92,21 @@ const WecoApp: FunctionComponent<WecoAppProps> = ({
 
   const serverData = isServerDataSet ? pageProps.serverData : defaultServerData;
 
-  const onAnalyticsConsentChange = () =>
-    console.log('Decide on what to do here and how to handle');
+  const [dynComp, setDynComp] = useState(<div />);
+
+  const analyticsConsentAccepted = () => {
+    console.log('analyticsConsentAccepted, loading ga scripts...');
+    setDynComp(
+      <>
+        <Ga4DataLayer
+          data={{
+            toggles: serverData.toggles,
+          }}
+        />
+        <GoogleTagManager />
+      </>
+    );
+  };
 
   useMaintainPageHeight();
   useEffect(() => {
@@ -92,11 +114,14 @@ const WecoApp: FunctionComponent<WecoAppProps> = ({
   }, []);
 
   useEffect(() => {
-    window.addEventListener('analyticsConsentChange', onAnalyticsConsentChange);
+    window.addEventListener(
+      'analyticsConsentAccepted',
+      analyticsConsentAccepted
+    );
     return () => {
       window.removeEventListener(
-        'analyticsConsentChange',
-        onAnalyticsConsentChange
+        'analyticsConsentAccepted',
+        analyticsConsentAccepted
       );
     };
   }, []);
@@ -132,6 +157,7 @@ const WecoApp: FunctionComponent<WecoAppProps> = ({
                     isFontsLoaded={useIsFontsLoaded()}
                   />
                   <LoadingIndicator />
+                  {dynComp}
                   {!pageProps.err &&
                     getLayout(<Component {...deserialiseProps(pageProps)} />)}
                   {pageProps.err && (

@@ -19,11 +19,11 @@ const CivicUK = () => (
                 description: 'Analytical cookies help us to improve our website by collecting and reporting information on its usage.',
                 cookies: ['_ga', '_ga*', '_gid', '_gat', '__utma', '__utmt', '__utmb', '__utmc', '__utmz', '__utmv'],
                 onAccept: function () {
-                  const event = new CustomEvent('analyticsConsentChange', {});
+                  const event = new CustomEvent('analyticsConsentAccepted', {});
                   window.dispatchEvent(event);
                 },
                 onRevoke: function () {
-                  const event = new CustomEvent('analyticsConsentChange', {});
+                  const event = new CustomEvent('analyticsConsentRejected', {});
                   window.dispatchEvent(event);
                 }
               }
