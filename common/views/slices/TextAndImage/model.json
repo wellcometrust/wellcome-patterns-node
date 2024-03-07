@@ -1,0 +1,39 @@
+{
+  "id": "textAndImage",
+  "type": "SharedSlice",
+  "name": "TextAndImage",
+  "description": "Text and image (side-by-side)",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "paragraph,hyperlink,strong,em,heading3",
+            "label": "Text"
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Image"
+          }
+        },
+        "isZoomable": {
+          "type": "Boolean",
+          "config": {
+            "default_value": false,
+            "label": "Allow image to be zoomed to fill viewport?"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

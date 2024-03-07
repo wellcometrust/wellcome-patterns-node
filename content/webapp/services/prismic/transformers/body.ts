@@ -55,6 +55,7 @@ import { AudioPlayerProps } from '../../../components/AudioPlayer/AudioPlayer';
 import { Props as QuoteProps } from '../../../components/Quote/Quote';
 import { CaptionedImageProps } from '../../../components/CaptionedImage/CaptionedImage';
 import { Props as ImageGalleryProps } from '../../../components/ImageGallery';
+import { TextAndImageItem } from 'components/TextAndImageOrIcons';
 
 export function getWeight(weight: string | null): Weight {
   switch (weight) {
@@ -87,7 +88,9 @@ function transformTextSlice(slice: TextSlice): BodySlice {
   };
 }
 
-function transformTextAndImage(slice: TextAndImageSlice): BodySlice {
+export function transformTextAndImage(
+  slice: TextAndImageSlice
+): Slice<'textAndImage', TextAndImageItem> {
   return {
     type: 'textAndImage',
     value: {

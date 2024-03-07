@@ -14565,6 +14565,57 @@ export type EditorialImageSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *EditorialImageGallery → Primary*
+ */
+export interface EditorialImageGallerySliceDefaultPrimary {
+  /**
+   * Title field in *EditorialImageGallery → Primary*
+   *
+   * - **Field Type**: Title
+   * - **Placeholder**: *None*
+   * - **API ID Path**: editorialImageGallery.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.TitleField;
+}
+
+/**
+ * Primary content in *EditorialImageGallery → Items*
+ */
+export interface EditorialImageGallerySliceDefaultItem {
+  /**
+   * Image field in *EditorialImageGallery → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: editorialImageGallery.items[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<'32:15' | '16:9' | 'square'>;
+
+  /**
+   * Caption field in *EditorialImageGallery → Items*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: editorialImageGallery.items[].caption
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  caption: prismic.RichTextField;
+
+  /**
+   * round image corners field in *EditorialImageGallery → Items*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: editorialImageGallery.items[].hasRoundedCorners
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  hasRoundedCorners: prismic.BooleanField;
+}
+
+/**
  * Default variation for EditorialImageGallery Slice
  *
  * - **API ID**: `default`
@@ -14573,8 +14624,8 @@ export type EditorialImageSlice = prismic.SharedSlice<
  */
 export type EditorialImageGallerySliceDefault = prismic.SharedSliceVariation<
   'default',
-  Record<string, never>,
-  never
+  Simplify<EditorialImageGallerySliceDefaultPrimary>,
+  Simplify<EditorialImageGallerySliceDefaultItem>
 >;
 
 /**
@@ -14687,6 +14738,72 @@ type TextSliceVariation = TextSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
+
+/**
+ * Primary content in *TextAndImage → Primary*
+ */
+export interface TextAndImageSliceDefaultPrimary {
+  /**
+   * Text field in *TextAndImage → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndImage.primary.text
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  text: prismic.RichTextField;
+
+  /**
+   * Image field in *TextAndImage → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndImage.primary.image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Allow image to be zoomed to fill viewport? field in *TextAndImage → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: textAndImage.primary.isZoomable
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  isZoomable: prismic.BooleanField;
+}
+
+/**
+ * Default variation for TextAndImage Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndImageSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Simplify<TextAndImageSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *TextAndImage*
+ */
+type TextAndImageSliceVariation = TextAndImageSliceDefault;
+
+/**
+ * TextAndImage Shared Slice
+ *
+ * - **API ID**: `textAndImage`
+ * - **Description**: Text and image (side-by-side)
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndImageSlice = prismic.SharedSlice<
+  'textAndImage',
+  TextAndImageSliceVariation
+>;
 
 declare module '@prismicio/client' {
   interface CreateClient {
@@ -15119,6 +15236,8 @@ declare module '@prismicio/client' {
       EditorialImageSliceVariation,
       EditorialImageSliceDefault,
       EditorialImageGallerySlice,
+      EditorialImageGallerySliceDefaultPrimary,
+      EditorialImageGallerySliceDefaultItem,
       EditorialImageGallerySliceVariation,
       EditorialImageGallerySliceDefault,
       QuoteSlice,
@@ -15129,6 +15248,10 @@ declare module '@prismicio/client' {
       TextSliceDefaultPrimary,
       TextSliceVariation,
       TextSliceDefault,
+      TextAndImageSlice,
+      TextAndImageSliceDefaultPrimary,
+      TextAndImageSliceVariation,
+      TextAndImageSliceDefault,
     };
   }
 }
