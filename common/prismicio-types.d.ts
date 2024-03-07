@@ -14646,6 +14646,68 @@ export type EditorialImageGallerySlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Embed → Primary*
+ */
+export interface EmbedSliceDefaultPrimary {
+  /**
+   * `embed` field in *Embed → Primary*
+   *
+   * - **Field Type**: Embed
+   * - **Placeholder**: *None*
+   * - **API ID Path**: embed.primary.embed
+   * - **Documentation**: https://prismic.io/docs/field#embed
+   */
+  embed: prismic.EmbedField;
+
+  /**
+   * Caption field in *Embed → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: embed.primary.caption
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  caption: prismic.RichTextField;
+
+  /**
+   * Transcript (Collapsible content) field in *Embed → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: embed.primary.transcript
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  transcript: prismic.RichTextField;
+}
+
+/**
+ * Default variation for Embed Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EmbedSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Simplify<EmbedSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Embed*
+ */
+type EmbedSliceVariation = EmbedSliceDefault;
+
+/**
+ * Embed Shared Slice
+ *
+ * - **API ID**: `embed`
+ * - **Description**: Embed (Youtube, SoundCloud, etc.)
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EmbedSlice = prismic.SharedSlice<'embed', EmbedSliceVariation>;
+
+/**
  * Primary content in *Quote → Primary*
  */
 export interface QuoteSliceDefaultPrimary {
@@ -14740,6 +14802,66 @@ type TextSliceVariation = TextSliceDefault;
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
 
 /**
+ * Primary content in *TextAndIcons → Primary*
+ */
+export interface TextAndIconsSliceDefaultPrimary {
+  /**
+   * Text field in *TextAndIcons → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndIcons.primary.text
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  text: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *TextAndIcons → Items*
+ */
+export interface TextAndIconsSliceDefaultItem {
+  /**
+   * Icon (will display at 100px wide) field in *TextAndIcons → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndIcons.items[].icon
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  icon: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for TextAndIcons Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndIconsSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Simplify<TextAndIconsSliceDefaultPrimary>,
+  Simplify<TextAndIconsSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TextAndIcons*
+ */
+type TextAndIconsSliceVariation = TextAndIconsSliceDefault;
+
+/**
+ * TextAndIcons Shared Slice
+ *
+ * - **API ID**: `textAndIcons`
+ * - **Description**: Text and icons (side-by-side)
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndIconsSlice = prismic.SharedSlice<
+  'textAndIcons',
+  TextAndIconsSliceVariation
+>;
+
+/**
  * Primary content in *TextAndImage → Primary*
  */
 export interface TextAndImageSliceDefaultPrimary {
@@ -14803,66 +14925,6 @@ type TextAndImageSliceVariation = TextAndImageSliceDefault;
 export type TextAndImageSlice = prismic.SharedSlice<
   'textAndImage',
   TextAndImageSliceVariation
->;
-
-/**
- * Primary content in *TextAndIcons → Primary*
- */
-export interface TextAndIconsSliceDefaultPrimary {
-  /**
-   * Text field in *TextAndIcons → Primary*
-   *
-   * - **Field Type**: Rich Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: textAndIcons.primary.text
-   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
-   */
-  text: prismic.RichTextField;
-}
-
-/**
- * Primary content in *TextAndIcons → Items*
- */
-export interface TextAndIconsSliceDefaultItem {
-  /**
-   * Icon (will display at 100px wide) field in *TextAndIcons → Items*
-   *
-   * - **Field Type**: Image
-   * - **Placeholder**: *None*
-   * - **API ID Path**: textAndIcons.items[].icon
-   * - **Documentation**: https://prismic.io/docs/field#image
-   */
-  icon: prismic.ImageField<never>;
-}
-
-/**
- * Default variation for TextAndIcons Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slice
- */
-export type TextAndIconsSliceDefault = prismic.SharedSliceVariation<
-  'default',
-  Simplify<TextAndIconsSliceDefaultPrimary>,
-  Simplify<TextAndIconsSliceDefaultItem>
->;
-
-/**
- * Slice variation for *TextAndIcons*
- */
-type TextAndIconsSliceVariation = TextAndIconsSliceDefault;
-
-/**
- * TextAndIcons Shared Slice
- *
- * - **API ID**: `textAndIcons`
- * - **Description**: TextAndIcons
- * - **Documentation**: https://prismic.io/docs/slice
- */
-export type TextAndIconsSlice = prismic.SharedSlice<
-  'textAndIcons',
-  TextAndIconsSliceVariation
 >;
 
 declare module '@prismicio/client' {
@@ -15300,6 +15362,10 @@ declare module '@prismicio/client' {
       EditorialImageGallerySliceDefaultItem,
       EditorialImageGallerySliceVariation,
       EditorialImageGallerySliceDefault,
+      EmbedSlice,
+      EmbedSliceDefaultPrimary,
+      EmbedSliceVariation,
+      EmbedSliceDefault,
       QuoteSlice,
       QuoteSliceDefaultPrimary,
       QuoteSliceVariation,
@@ -15308,15 +15374,15 @@ declare module '@prismicio/client' {
       TextSliceDefaultPrimary,
       TextSliceVariation,
       TextSliceDefault,
-      TextAndImageSlice,
-      TextAndImageSliceDefaultPrimary,
-      TextAndImageSliceVariation,
-      TextAndImageSliceDefault,
       TextAndIconsSlice,
       TextAndIconsSliceDefaultPrimary,
       TextAndIconsSliceDefaultItem,
       TextAndIconsSliceVariation,
       TextAndIconsSliceDefault,
+      TextAndImageSlice,
+      TextAndImageSliceDefaultPrimary,
+      TextAndImageSliceVariation,
+      TextAndImageSliceDefault,
     };
   }
 }

@@ -5,8 +5,9 @@ import dynamic from 'next/dynamic';
 export const components = {
   editorialImage: dynamic(() => import('./EditorialImage')),
   editorialImageGallery: dynamic(() => import('./EditorialImageGallery')),
+  embed: dynamic(() => import('./Embed')),
   quote: dynamic(() => import('./Quote')),
   text: dynamic(() => import('./Text')),
-  textAndImage: dynamic(() => import('./TextAndImage')),
   textAndIcons: dynamic(() => import('./TextAndIcons')),
+  textAndImage: dynamic(() => import('./TextAndImage')),
 };

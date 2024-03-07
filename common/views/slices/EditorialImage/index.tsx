@@ -5,12 +5,15 @@ import SpacingComponent from '../../components/styled/SpacingComponent';
 import {
   LayoutWidth,
   defaultContext,
+  SliceZoneContext,
 } from '@weco/content/components/Body/Body';
 import CaptionedImage from '@weco/content/components/CaptionedImage/CaptionedImage';
 import { transformEditorialImageSlice } from '@weco/content/services/prismic/transformers/body';
 
-export type EditorialImageSliceProps =
-  SliceComponentProps<Content.EditorialImageSlice>;
+export type EditorialImageSliceProps = SliceComponentProps<
+  Content.EditorialImageSlice,
+  SliceZoneContext
+>;
 
 const EditorialImageSlice: FunctionComponent<EditorialImageSliceProps> = ({
   slice,

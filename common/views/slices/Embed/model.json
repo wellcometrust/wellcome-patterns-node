@@ -1,0 +1,37 @@
+{
+  "id": "embed",
+  "type": "SharedSlice",
+  "name": "Embed",
+  "description": "Embed (Youtube, SoundCloud, etc.)",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "embed": {
+          "type": "Embed",
+          "fieldset": "Embed"
+        },
+        "caption": {
+          "type": "StructuredText",
+          "config": {
+            "single": "hyperlink,em",
+            "label": "Caption"
+          }
+        },
+        "transcript": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "heading2,heading3,paragraph,strong",
+            "label": "Transcript (Collapsible content)"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

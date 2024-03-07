@@ -134,11 +134,20 @@ const Wrapper = styled(Space).attrs<WrapperProps>(props => ({
   background-color: ${props => props.theme.color(props.$rowBackgroundColor)};
 `;
 
-export const defaultContext = {
+export type SliceZoneContext = {
+  minWidth: 8 | 10 | 12;
+  firstTextSliceIndex: number;
+  isVisualStory: boolean;
+  comicPreviousNext?: ComicPreviousNextProps;
+  isShortFilm: boolean;
+};
+
+export const defaultContext: SliceZoneContext = {
   minWidth: 8,
   firstTextSliceIndex: 1,
   isVisualStory: false,
   comicPreviousNext: undefined,
+  isShortFilm: false,
 };
 
 const Body: FunctionComponent<Props> = ({

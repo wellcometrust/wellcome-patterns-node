@@ -4,10 +4,15 @@ import ImageGallery from '@weco/content/components/ImageGallery';
 import { SliceComponentProps } from '@prismicio/react';
 import SpacingComponent from '../../components/styled/SpacingComponent';
 import { transformEditorialImageGallerySlice } from '@weco/content/services/prismic/transformers/body';
-import { defaultContext } from '@weco/content/components/Body/Body';
+import {
+  defaultContext,
+  SliceZoneContext,
+} from '@weco/content/components/Body/Body';
 
-export type EditorialImageGalleryProps =
-  SliceComponentProps<Content.EditorialImageGallerySlice>;
+export type EditorialImageGalleryProps = SliceComponentProps<
+  Content.EditorialImageGallerySlice,
+  SliceZoneContext
+>;
 
 const EditorialImageGallerySlice: FunctionComponent<
   EditorialImageGalleryProps

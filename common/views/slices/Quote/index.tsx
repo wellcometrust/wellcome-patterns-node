@@ -3,17 +3,21 @@ import { FunctionComponent } from 'react';
 import { SliceComponentProps } from '@prismicio/react';
 import Quote from '@weco/content/components/Quote/Quote';
 import SpacingComponent from '../../components/styled/SpacingComponent';
-import { LayoutWidth } from '@weco/content/components/Body/Body';
+import {
+  LayoutWidth,
+  SliceZoneContext,
+  defaultContext,
+} from '@weco/content/components/Body/Body';
 import { transformQuoteSlice } from '@weco/content/services/prismic/transformers/body';
 
 export type QuoteSliceProps = SliceComponentProps<
   Content.QuoteSlice,
-  { minWidth?: 8 | 10 | 12 }
+  SliceZoneContext
 >;
 
 const QuoteSlice: FunctionComponent<QuoteSliceProps> = ({ slice, context }) => {
   const transformedSlice = transformQuoteSlice(slice);
-  const options = { minWidth: 8 as const, ...context };
+  const options = { ...defaultContext, ...context };
 
   return (
     <SpacingComponent $sliceType={transformedSlice.type}>

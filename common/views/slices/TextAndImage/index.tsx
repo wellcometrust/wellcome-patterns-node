@@ -8,9 +8,7 @@ import { transformTextAndImage } from '@weco/content/services/prismic/transforme
 
 export type TextAndImageProps = SliceComponentProps<Content.TextAndImageSlice>;
 
-const TextAndImageSlice: FunctionComponent<TextAndImageProps> = ({
-  slice,
-}: TextAndImageProps) => {
+const TextAndImageSlice: FunctionComponent<TextAndImageProps> = ({ slice }) => {
   const transformedSlice = transformTextAndImage(slice);
 
   return (

@@ -11,12 +11,13 @@ import SpacingComponent from '../../components/styled/SpacingComponent';
 import {
   LayoutWidth,
   defaultContext,
+  SliceZoneContext,
 } from '@weco/content/components/Body/Body';
 import { classNames } from '@weco/common/utils/classnames';
 
 export type TextProps = SliceComponentProps<
   Content.TextSlice,
-  typeof defaultContext
+  SliceZoneContext
 >;
 
 const Text: FunctionComponent<TextProps> = ({ slice, context, index }) => {
