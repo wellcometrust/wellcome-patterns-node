@@ -1,0 +1,33 @@
+{
+  "id": "textAndIcons",
+  "type": "SharedSlice",
+  "name": "TextAndIcons",
+  "description": "Text and icons (side-by-side)",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "paragraph,hyperlink,strong,em,heading3",
+            "label": "Text"
+          }
+        }
+      },
+      "items": {
+        "icon": {
+          "type": "Image",
+          "config": {
+            "label": "Icon (will display at 100px wide)"
+          }
+        }
+      }
+    }
+  ]
+}

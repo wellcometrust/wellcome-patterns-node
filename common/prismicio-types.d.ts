@@ -14805,6 +14805,66 @@ export type TextAndImageSlice = prismic.SharedSlice<
   TextAndImageSliceVariation
 >;
 
+/**
+ * Primary content in *TextAndIcons → Primary*
+ */
+export interface TextAndIconsSliceDefaultPrimary {
+  /**
+   * Text field in *TextAndIcons → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndIcons.primary.text
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  text: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *TextAndIcons → Items*
+ */
+export interface TextAndIconsSliceDefaultItem {
+  /**
+   * Icon (will display at 100px wide) field in *TextAndIcons → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: textAndIcons.items[].icon
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  icon: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for TextAndIcons Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndIconsSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Simplify<TextAndIconsSliceDefaultPrimary>,
+  Simplify<TextAndIconsSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TextAndIcons*
+ */
+type TextAndIconsSliceVariation = TextAndIconsSliceDefault;
+
+/**
+ * TextAndIcons Shared Slice
+ *
+ * - **API ID**: `textAndIcons`
+ * - **Description**: TextAndIcons
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TextAndIconsSlice = prismic.SharedSlice<
+  'textAndIcons',
+  TextAndIconsSliceVariation
+>;
+
 declare module '@prismicio/client' {
   interface CreateClient {
     (
@@ -15252,6 +15312,11 @@ declare module '@prismicio/client' {
       TextAndImageSliceDefaultPrimary,
       TextAndImageSliceVariation,
       TextAndImageSliceDefault,
+      TextAndIconsSlice,
+      TextAndIconsSliceDefaultPrimary,
+      TextAndIconsSliceDefaultItem,
+      TextAndIconsSliceVariation,
+      TextAndIconsSliceDefault,
     };
   }
 }

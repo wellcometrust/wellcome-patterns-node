@@ -8,4 +8,5 @@ export const components = {
   quote: dynamic(() => import('./Quote')),
   text: dynamic(() => import('./Text')),
   textAndImage: dynamic(() => import('./TextAndImage')),
+  textAndIcons: dynamic(() => import('./TextAndIcons')),
 };
