@@ -1,0 +1,33 @@
+{
+  "id": "searchResults",
+  "type": "SharedSlice",
+  "name": "SearchResults",
+  "description": "SearchResults",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "single": "heading1",
+            "useAsTitle": true
+          }
+        },
+        "query": {
+          "type": "Text",
+          "config": {
+            "label": "Query"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

@@ -14760,6 +14760,61 @@ type QuoteSliceVariation = QuoteSliceDefault;
 export type QuoteSlice = prismic.SharedSlice<'quote', QuoteSliceVariation>;
 
 /**
+ * Primary content in *SearchResults → Primary*
+ */
+export interface SearchResultsSliceDefaultPrimary {
+  /**
+   * Title field in *SearchResults → Primary*
+   *
+   * - **Field Type**: Title
+   * - **Placeholder**: *None*
+   * - **API ID Path**: searchResults.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.TitleField;
+
+  /**
+   * Query field in *SearchResults → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: searchResults.primary.query
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  query: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for SearchResults Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SearchResultsSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Simplify<SearchResultsSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *SearchResults*
+ */
+type SearchResultsSliceVariation = SearchResultsSliceDefault;
+
+/**
+ * SearchResults Shared Slice
+ *
+ * - **API ID**: `searchResults`
+ * - **Description**: SearchResults
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SearchResultsSlice = prismic.SharedSlice<
+  'searchResults',
+  SearchResultsSliceVariation
+>;
+
+/**
  * Primary content in *Text → Primary*
  */
 export interface TextSliceDefaultPrimary {
@@ -14984,7 +15039,7 @@ type TitledTextListSliceVariation = TitledTextListSliceDefault;
  * TitledTextList Shared Slice
  *
  * - **API ID**: `titledTextList`
- * - **Description**: TitledTextList
+ * - **Description**: Descriptive links list
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type TitledTextListSlice = prismic.SharedSlice<
@@ -15435,6 +15490,10 @@ declare module '@prismicio/client' {
       QuoteSliceDefaultPrimary,
       QuoteSliceVariation,
       QuoteSliceDefault,
+      SearchResultsSlice,
+      SearchResultsSliceDefaultPrimary,
+      SearchResultsSliceVariation,
+      SearchResultsSliceDefault,
       TextSlice,
       TextSliceDefaultPrimary,
       TextSliceVariation,

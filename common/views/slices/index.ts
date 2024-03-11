@@ -7,6 +7,7 @@ export const components = {
   editorialImageGallery: dynamic(() => import('./EditorialImageGallery')),
   embed: dynamic(() => import('./Embed')),
   quote: dynamic(() => import('./Quote')),
+  searchResults: dynamic(() => import('./SearchResults')),
   text: dynamic(() => import('./Text')),
   textAndIcons: dynamic(() => import('./TextAndIcons')),
   textAndImage: dynamic(() => import('./TextAndImage')),

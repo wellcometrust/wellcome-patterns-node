@@ -61,6 +61,7 @@ import {
   TextAndIconsItem,
 } from '../../../components/TextAndImageOrIcons';
 import { Props as TitledTextListProps } from '../../../components/TitledTextList/TitledTextList';
+import { Props as AsyncSearchResultsProps } from '../../../components/SearchResults/AsyncSearchResults';
 
 export function getWeight(weight: string | null): Weight {
   switch (weight) {
@@ -310,7 +311,9 @@ export function transformAudioPlayerSlice(
   };
 }
 
-function transformSearchResultsSlice(slice: SearchResultsSlice): BodySlice {
+export function transformSearchResultsSlice(
+  slice: SearchResultsSlice
+): Slice<'searchResults', AsyncSearchResultsProps> {
   return {
     type: 'searchResults',
     weight: getWeight(slice.slice_label),
