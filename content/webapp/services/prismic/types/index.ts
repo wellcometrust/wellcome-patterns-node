@@ -47,9 +47,11 @@ export type FetchLinks<T extends prismic.PrismicDocument> = {
 
 // Currently the Prismic types only allow you to specify 1 image
 type ThumbnailedImageField<Thumbnails extends Record<string, ImageDimensions>> =
-  prismic.FilledImageFieldImage & {
-    [Property in keyof Thumbnails]?: prismic.FilledImageFieldImage;
-  };
+
+    | (prismic.FilledImageFieldImage & {
+        [Property in keyof Thumbnails]: prismic.FilledImageFieldImage;
+      })
+    | prismic.EmptyImageFieldImage;
 
 export type Image = ThumbnailedImageField<{
   '32:15': {
