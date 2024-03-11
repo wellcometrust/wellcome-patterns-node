@@ -1,0 +1,41 @@
+{
+  "id": "titledTextList",
+  "type": "SharedSlice",
+  "name": "TitledTextList",
+  "description": "Descriptive links list",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {},
+      "items": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "single": "heading3",
+            "label": "Title"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "paragraph,hyperlink,strong,em",
+            "label": "Text"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Link",
+            "customtypes": [],
+            "select": null
+          }
+        }
+      }
+    }
+  ]
+}

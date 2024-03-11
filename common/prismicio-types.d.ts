@@ -14927,6 +14927,71 @@ export type TextAndImageSlice = prismic.SharedSlice<
   TextAndImageSliceVariation
 >;
 
+/**
+ * Primary content in *TitledTextList → Items*
+ */
+export interface TitledTextListSliceDefaultItem {
+  /**
+   * Title field in *TitledTextList → Items*
+   *
+   * - **Field Type**: Title
+   * - **Placeholder**: *None*
+   * - **API ID Path**: titledTextList.items[].title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.TitleField;
+
+  /**
+   * Text field in *TitledTextList → Items*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: titledTextList.items[].text
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  text: prismic.RichTextField;
+
+  /**
+   * Link field in *TitledTextList → Items*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: titledTextList.items[].link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField;
+}
+
+/**
+ * Default variation for TitledTextList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TitledTextListSliceDefault = prismic.SharedSliceVariation<
+  'default',
+  Record<string, never>,
+  Simplify<TitledTextListSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TitledTextList*
+ */
+type TitledTextListSliceVariation = TitledTextListSliceDefault;
+
+/**
+ * TitledTextList Shared Slice
+ *
+ * - **API ID**: `titledTextList`
+ * - **Description**: TitledTextList
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TitledTextListSlice = prismic.SharedSlice<
+  'titledTextList',
+  TitledTextListSliceVariation
+>;
+
 declare module '@prismicio/client' {
   interface CreateClient {
     (
@@ -15383,6 +15448,10 @@ declare module '@prismicio/client' {
       TextAndImageSliceDefaultPrimary,
       TextAndImageSliceVariation,
       TextAndImageSliceDefault,
+      TitledTextListSlice,
+      TitledTextListSliceDefaultItem,
+      TitledTextListSliceVariation,
+      TitledTextListSliceDefault,
     };
   }
 }
