@@ -34,7 +34,7 @@ const ButtonInner = styled(Space).attrs({
   className: font('intb', 5),
   $h: { size: 'xs', properties: ['padding-right', 'padding-left'] },
   $v: { size: 'xs', properties: ['padding-top', 'padding-bottom'] },
-})<{ isActive: boolean }>`
+})`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,7 +66,7 @@ const ToolbarSegmentedControl: FunctionComponent<Props> = ({
             onClick={item.clickHandler}
             data-gtm-trigger={item.dataGtmTrigger}
           >
-            <ButtonInner isActive={activeId === item.id}>
+            <ButtonInner>
               <Icon
                 icon={item.icon}
                 iconColor={activeId === item.id ? 'yellow' : 'neutral.600'}

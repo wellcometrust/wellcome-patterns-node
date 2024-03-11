@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { expect } from 'playwright/test';
 
 export type CookieType = {
   name: string;
@@ -32,3 +33,7 @@ export async function makeDefaultToggleCookies(
     };
   });
 }
+
+// Certain pages, such as search, tend to be slower to load and will benefit from a longer timeout
+// Default is currently 5000 https://playwright.dev/docs/test-timeouts
+export const slowExpect = expect.configure({ timeout: 10000 });

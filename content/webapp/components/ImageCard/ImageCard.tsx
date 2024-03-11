@@ -1,6 +1,7 @@
 import { FunctionComponent, SyntheticEvent, useContext } from 'react';
 import NextLink from 'next/link';
 import styled from 'styled-components';
+import { usePathname } from 'next/navigation';
 
 import { ImageType } from '@weco/common/model/image';
 
@@ -31,10 +32,11 @@ const ImageCard: FunctionComponent<Props> = ({
   background,
 }: Props) => {
   const { isEnhanced } = useContext(AppContext);
+  const pathname = usePathname();
 
   return (
     <NextLink
-      {...imageLink({ id, workId }, 'images_search_result')}
+      {...imageLink({ id, workId }, `images_search_result_${pathname}`)}
       passHref
       legacyBehavior
     >

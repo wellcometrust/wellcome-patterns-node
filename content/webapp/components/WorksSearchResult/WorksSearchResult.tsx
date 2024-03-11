@@ -6,6 +6,7 @@ import { WorkBasic } from '@weco/content/services/wellcome/catalogue/types';
 
 // Helpers/Utils
 import { convertIiifImageUri } from '@weco/common/utils/convert-image-uri';
+import { usePathname } from 'next/navigation';
 
 // Components
 import Space from '@weco/common/views/components/styled/Space';
@@ -45,12 +46,13 @@ const WorkSearchResult: FunctionComponent<Props> = ({
     cardLabels,
     primaryContributorLabel,
   } = work;
+  const pathname = usePathname();
 
   return (
     <WorkLink
       id={work.id}
       resultPosition={resultPosition}
-      source="works_search_result"
+      source={`works_search_result_${pathname}`}
       passHref
     >
       <Wrapper as="a">

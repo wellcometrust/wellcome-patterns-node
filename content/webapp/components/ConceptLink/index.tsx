@@ -21,7 +21,9 @@ function toLink(props: ConceptLinkProps, source: ConceptLinkSource): LinkProps {
   };
 }
 
-type Props = LinkFrom<ConceptLinkProps> & { source: ConceptLinkSource };
+type Props = LinkFrom<ConceptLinkProps> & {
+  source: ConceptLinkSource;
+};
 
 const ConceptLink: FunctionComponent<Props> = ({
   children,

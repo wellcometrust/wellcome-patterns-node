@@ -1,41 +1,42 @@
 import { FunctionComponent } from 'react';
-import MediaAnnotations from '../MediaAnnotations/MediaAnnotations';
-import { Video } from '../../services/iiif/types/manifest/v3';
 import { useAVTracking } from '@weco/content/hooks/useAVTracking';
+import { ChoiceBody, ContentResource } from '@iiif/presentation-3';
+import { CustomContentResource } from '@weco/content/types/manifest';
+
 type Props = {
-  video: Video;
+  video: (ContentResource | CustomContentResource | ChoiceBody) & {
+    format?: string;
+  };
+  placeholderId: string | undefined;
   showDownloadOptions: boolean;
 };
 
 const VideoPlayer: FunctionComponent<Props> = ({
   video,
+  placeholderId,
   showDownloadOptions,
 }: Props) => {
   const { trackPlay, trackEnded, trackTimeUpdate } = useAVTracking('video');
-
   return (
-    <>
-      <video
-        onPlay={event => {
-          trackPlay(event);
-        }}
-        onEnded={trackEnded}
-        onTimeUpdate={trackTimeUpdate}
-        controlsList={!showDownloadOptions ? 'nodownload' : undefined}
-        controls
-        preload="none"
-        poster={video.thumbnail}
-        style={{
-          maxWidth: '100%',
-          maxHeight: '260px',
-          display: 'inline-block',
-        }}
-      >
-        <source src={video.id} type={video.format} />
-        {`Sorry, your browser doesn't support embedded video.`}
-      </video>
-      <MediaAnnotations media={video} />
-    </>
+    <video
+      onPlay={event => {
+        trackPlay(event);
+      }}
+      onEnded={trackEnded}
+      onTimeUpdate={trackTimeUpdate}
+      controlsList={!showDownloadOptions ? 'nodownload' : undefined}
+      controls
+      preload="none"
+      poster={placeholderId}
+      style={{
+        maxWidth: '100%',
+        maxHeight: '260px',
+        display: 'inline-block',
+      }}
+    >
+      <source src={video.id} type={video.format} />
+      {`Sorry, your browser doesn't support embedded video.`}
+    </video>
   );
 };
 

@@ -13,16 +13,19 @@ import {
 export type ServerData = {
   toggles: Toggles;
   prismic: PrismicData;
+  hasAnalyticsConsent: boolean;
 };
 
 export type SimplifiedServerData = {
   toggles: Toggles;
   prismic: SimplifiedPrismicData;
+  hasAnalyticsConsent: boolean;
 };
 
 export const defaultServerData: SimplifiedServerData = {
   toggles: {},
   prismic: prismicDefaultValue,
+  hasAnalyticsConsent: false,
 };
 
 /**

@@ -48,8 +48,6 @@ const IconWrapper = styled.span<{ $forceInline: boolean }>`
   }
 `;
 
-export type DownloadFormat = 'PDF' | 'PLAIN' | 'JPG' | 'MP4' | 'MP3';
-
 type DisplayText =
   | {
       linkText?: never;
@@ -63,7 +61,7 @@ type DisplayText =
 type Props = {
   isTabbable?: boolean;
   href: string;
-  format?: DownloadFormat;
+  format?: string;
   width?: 'full' | number;
   mimeType: string;
   trackingTags?: string[];

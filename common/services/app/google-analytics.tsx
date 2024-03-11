@@ -11,13 +11,14 @@ type Props = {
   data: {
     toggles?: Toggles;
   };
+  hasAnalyticsConsent: boolean;
 };
 
 // We send toggles as an event parameter to GA4 so we can determine the condition in which a particular event took place.
 // GA4 now limits event parameter values to 100 characters: https://support.google.com/analytics/answer/9267744?hl=en
 // So instead of sending the whole toggles JSON blob, we only look at the "test" typed toggles and send a concatenated string made of the toggles' name
 // , preceeded with a! if its value is false.
-function createToggleString(toggles: Toggles | undefined): string | null {
+function createABToggleString(toggles: Toggles | undefined): string | null {
   const testToggles = toggles
     ? Object.keys(toggles).reduce((acc, key) => {
         if (toggles?.[key].type === 'test') {
@@ -42,18 +43,40 @@ function createToggleString(toggles: Toggles | undefined): string | null {
     : null;
 }
 
-export const Ga4DataLayer: FunctionComponent<Props> = ({ data }) => {
-  const toggleString = createToggleString(data.toggles);
+export const Ga4DataLayer: FunctionComponent<Props> = ({
+  data,
+  hasAnalyticsConsent,
+}) => {
+  const abTestsToggleString = createABToggleString(data.toggles);
 
-  return toggleString ? (
+  return data.toggles?.cookiesWork?.value || abTestsToggleString ? (
     <script
       dangerouslySetInnerHTML={{
         __html: `
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          toggles: '${toggleString}'
-        });
-        `,
+            window.dataLayer = window.dataLayer || [];
+
+            ${
+              data.toggles?.cookiesWork?.value
+                ? `function gtag(){window.dataLayer.push(arguments);}
+              
+              gtag('consent', 'default', {
+                'analytics_storage': ${
+                  hasAnalyticsConsent ? '"granted"' : '"denied"'
+                },
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied'
+              });`
+                : ``
+            }
+
+            ${
+              abTestsToggleString &&
+              `window.dataLayer.push({
+                toggles: '${abTestsToggleString}'
+              });`
+            }
+          `,
       }}
     />
   ) : null;
@@ -70,15 +93,4 @@ export const GoogleTagManager: FunctionComponent = () => (
           })(window,document,'script','dataLayer','GTM-53DFWQD');`,
     }}
   />
-);
-
-export const GoogleTagManagerNoScript: FunctionComponent = () => (
-  <noscript>
-    <iframe
-      src="https://www.googletagmanager.com/ns.html?id=GTM-53DFWQD"
-      height="0"
-      width="0"
-      style={{ display: 'none', visibility: 'hidden' }}
-    ></iframe>
-  </noscript>
 );

@@ -62,7 +62,9 @@ function toLink(
   };
 }
 
-type Props = LinkFrom<ImageProps> & { source: ImageLinkSource };
+type Props = LinkFrom<ImageProps> & {
+  source: ImageLinkSource;
+};
 
 const ImageLink: FunctionComponent<Props> = ({
   children,

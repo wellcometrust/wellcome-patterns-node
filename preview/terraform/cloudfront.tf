@@ -1,5 +1,10 @@
-# This is a cache that essentially does nothing, but gives us a shield against our origin ALB
+# This is a cache that gives us a shield against our origin ALB:
+# - Allows us to use a custom header to authenticate requests to the backend.
+# - Uses the prod WAF web ACL to protect the distribution.
+
 resource "aws_cloudfront_distribution" "preview" {
+  web_acl_id = local.prod_waf_web_acl_arn
+
   origin {
     domain_name = local.prod_alb_dns
     origin_id   = local.prod_cf_origin_id

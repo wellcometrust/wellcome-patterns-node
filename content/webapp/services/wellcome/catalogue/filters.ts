@@ -11,6 +11,8 @@ import { WorksProps } from '@weco/content/components/SearchPagesLink/Works';
 import { StoriesProps } from '@weco/content/components/SearchPagesLink/Stories';
 import { isNotUndefined, isString } from '@weco/common/utils/type-guards';
 import { formatNumber } from '@weco/common/utils/grammar';
+import { EventsProps } from '@weco/content/components/SearchPagesLink/Events';
+import { EventAggregations } from '../content/types';
 
 export type DateRangeFilter<Ids extends string = string> = {
   type: 'dateRange';
@@ -195,6 +197,11 @@ type ImagesFilterProps = {
 type StoriesFilterProps = {
   stories: { aggregations?: ArticleAggregations };
   props: StoriesProps;
+};
+
+type EventsFilterProps = {
+  events: { aggregations?: EventAggregations };
+  props: EventsProps;
 };
 
 const productionDatesFilter = ({
@@ -572,6 +579,68 @@ const storiesContributorFilter = ({
   }),
 });
 
+// TODO move content filters out of catalogue?
+const eventsFormatFilter = ({
+  events,
+  props,
+}: EventsFilterProps): CheckboxFilter<keyof EventsProps> => ({
+  type: 'checkbox',
+  id: 'format',
+  label: 'Event types',
+  options: filterOptionsWithNonAggregates({
+    options: events?.aggregations?.format?.buckets.map(bucket => ({
+      id: bucket.data.id,
+      value: bucket.data.id,
+      count: bucket.count,
+      label: bucket.data.label,
+      selected: props.format.includes(bucket.data.id),
+    })),
+    selectedValues: props.format,
+  }),
+});
+
+const eventsAudienceFilter = ({
+  events,
+  props,
+}: EventsFilterProps): CheckboxFilter<keyof EventsProps> => ({
+  type: 'checkbox',
+  id: 'audience',
+  label: 'Audiences',
+  options: filterOptionsWithNonAggregates({
+    options: events?.aggregations?.audience?.buckets.map(bucket => ({
+      id: bucket.data.id,
+      value: bucket.data.id,
+      count: bucket.count,
+      label: bucket.data.label,
+      selected: props.audience.includes(bucket.data.id),
+    })),
+    selectedValues: props.audience,
+  }),
+});
+
+const eventsInterpretationFilter = ({
+  events,
+  props,
+}: EventsFilterProps): CheckboxFilter<keyof EventsProps> => {
+  return {
+    type: 'checkbox',
+    id: 'interpretation',
+    label: 'Accessibility',
+    options: filterOptionsWithNonAggregates({
+      options: events?.aggregations?.interpretation?.buckets.map(bucket => {
+        return {
+          id: bucket.data.id,
+          value: bucket.data.id,
+          count: bucket.count,
+          label: bucket.data.label,
+          selected: props.interpretation.includes(bucket.data.id),
+        };
+      }),
+      selectedValues: props.interpretation,
+    }),
+  };
+};
+
 const imagesFilters: (props: ImagesFilterProps) => Filter[] = props =>
   [
     colorFilter,
@@ -601,4 +670,11 @@ const storiesFilters: (
 ) => Filter<keyof StoriesProps>[] = props =>
   [storiesFormatFilter, storiesContributorFilter].map(f => f(props));
 
-export { worksFilters, imagesFilters, storiesFilters };
+const eventsFilters: (
+  props: EventsFilterProps
+) => Filter<keyof EventsProps>[] = props =>
+  [eventsFormatFilter, eventsAudienceFilter, eventsInterpretationFilter].map(
+    f => f(props)
+  );
+
+export { worksFilters, imagesFilters, storiesFilters, eventsFilters };

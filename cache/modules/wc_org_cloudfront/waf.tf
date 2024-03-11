@@ -302,41 +302,6 @@ resource "aws_wafv2_web_acl" "wc_org" {
     }
   }
 
-
-  // Block ByteSpider, a prolific bot causing problems with load
-  // on our services that has resulted in outages.
-  rule {
-    name     = "bytespider-useragent"
-
-    priority = 8
-
-    action {
-      block {}
-    }
-
-    statement {
-      byte_match_statement {
-        field_to_match {
-          single_header {
-            name = "user-agent"
-          }
-        }
-
-        positional_constraint = "CONTAINS"
-        search_string          = "Bytespider"
-        text_transformation {
-          priority = 0
-          type     = "NONE"
-        }
-      }
-    }
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      sampled_requests_enabled   = true
-      metric_name                = "weco-cloudfront-acl-bytespider-useragent-${var.namespace}"
-    }
-  }
-
   visibility_config {
     cloudwatch_metrics_enabled = true
     sampled_requests_enabled   = true

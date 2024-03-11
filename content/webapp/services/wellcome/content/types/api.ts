@@ -105,12 +105,17 @@ type Contributor = {
 
 // Aggregrations
 type BasicAggregations = {
-  format: WellcomeAggregation;
   type: 'Aggregations';
+  format: WellcomeAggregation;
 };
 
 export type ArticleAggregations = BasicAggregations & {
   'contributors.contributor': WellcomeAggregation;
+};
+
+export type EventAggregations = BasicAggregations & {
+  audience: WellcomeAggregation;
+  interpretation: WellcomeAggregation;
 };
 
 // Results
@@ -118,5 +123,5 @@ export type ResultType = Article | EventDocument;
 
 export type ContentResultsList<Result extends ResultType> = WellcomeResultList<
   Result,
-  Result extends Article ? ArticleAggregations : null
+  Result extends Article ? ArticleAggregations : EventAggregations
 >;

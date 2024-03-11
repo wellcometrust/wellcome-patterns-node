@@ -12,6 +12,7 @@ import {
   ResourceType,
   ContentResource,
   ChoiceBody,
+  MetadataItem,
 } from '@iiif/presentation-3';
 
 type CompressedTransformedCanvases = {
@@ -25,7 +26,10 @@ type CompressedTransformedCanvases = {
   textServiceId: CommonParts;
   thumbnailImageUrl: CommonParts;
   thumbnailImageWidth: (number | undefined)[];
-  downloadData: (CustomContentResource | ChoiceBody | ContentResource)[][];
+  painting: (ChoiceBody | ContentResource)[][];
+  original: CustomContentResource[][];
+  supplementing: (ChoiceBody | ContentResource)[][];
+  metadata: MetadataItem[][];
 };
 
 export type CompressedTransformedManifest = Omit<
@@ -56,7 +60,10 @@ export function toCompressedTransformedManifest(
         canvases.map(c => c.thumbnailImage?.url)
       ),
       thumbnailImageWidth: canvases.map(c => c.thumbnailImage?.width),
-      downloadData: canvases.map(c => c.downloadData),
+      painting: canvases.map(c => c.painting),
+      original: canvases.map(c => c.original),
+      supplementing: canvases.map(c => c.supplementing),
+      metadata: canvases.map(c => c.metadata),
     },
     ...otherFields,
   };
@@ -81,7 +88,10 @@ export function fromCompressedManifest(
     height,
     restrictedImageIds,
     thumbnailImageWidth,
-    downloadData,
+    painting,
+    original,
+    supplementing,
+    metadata,
   } = compressedCanvases;
 
   const uncompressedCanvases: TransformedCanvas[] = [];
@@ -105,7 +115,10 @@ export function fromCompressedManifest(
               /* eslint-enable @typescript-eslint/no-non-null-assertion */
             }
           : undefined,
-      downloadData: downloadData[index],
+      painting: painting[index],
+      original: original[index],
+      supplementing: supplementing[index],
+      metadata: metadata[index],
     };
 
     uncompressedCanvases.push(canvas);

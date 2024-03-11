@@ -182,12 +182,10 @@ const ViewerSidebar: FunctionComponent<ViewerSidebarProps> = ({
         )}
 
         {work.referenceNumber && (
-          <div data-test-id="reference-number">
-            <LinkLabels
-              heading="Reference"
-              items={[{ text: work.referenceNumber }]}
-            />
-          </div>
+          <LinkLabels
+            heading="Reference"
+            items={[{ text: work.referenceNumber }]}
+          />
         )}
 
         <Space $v={{ size: 'm', properties: ['margin-top'] }}>

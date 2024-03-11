@@ -84,7 +84,9 @@ function toLink(
   };
 }
 
-type Props = LinkFrom<WorksProps> & { source: WorksLinkSource };
+type Props = LinkFrom<WorksProps> & {
+  source: WorksLinkSource;
+};
 const WorksLink: FunctionComponent<Props> = ({
   children,
   source,

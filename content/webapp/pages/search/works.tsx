@@ -42,6 +42,7 @@ import {
 } from '@weco/content/services/wellcome/catalogue/types';
 import { Query } from '@weco/content/types/search';
 import { ApiToolbarLink } from '@weco/common/views/components/ApiToolbar';
+import { usePathname } from 'next/navigation';
 
 type Props = {
   works: WellcomeResultList<WorkBasic, WorkAggregations>;
@@ -65,8 +66,12 @@ const CatalogueSearchPage: NextPageWithLayout<Props> = ({
   const { query: queryString } = query;
 
   const { setLink } = useContext(SearchContext);
+  const pathname = usePathname();
   useEffect(() => {
-    const link = toLink({ ...worksRouteProps }, 'works_search_context');
+    const link = toLink(
+      { ...worksRouteProps },
+      `works_search_context_${pathname}`
+    );
     setLink(link);
   }, [worksRouteProps]);
 
@@ -94,7 +99,7 @@ const CatalogueSearchPage: NextPageWithLayout<Props> = ({
             href={convertUrlToString(
               toLink(
                 { ...worksRouteProps, page: (worksRouteProps.page || 1) - 1 },
-                'search/paginator'
+                `search/paginator_${pathname}`
               ).as
             )}
           />
@@ -105,7 +110,7 @@ const CatalogueSearchPage: NextPageWithLayout<Props> = ({
             href={convertUrlToString(
               toLink(
                 { ...worksRouteProps, page: worksRouteProps.page + 1 },
-                'search/paginator'
+                `search/paginator_${pathname}`
               ).as
             )}
           />

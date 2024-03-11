@@ -3,12 +3,11 @@ import { DownloadOption } from '../../types/manifest';
 import { FunctionComponent, useContext, useRef } from 'react';
 import styled from 'styled-components';
 import { font } from '@weco/common/utils/classnames';
-import DownloadLink, {
-  DownloadFormat,
-} from '@weco/content/components/DownloadLink/DownloadLink';
+import DownloadLink from '@weco/content/components/DownloadLink/DownloadLink';
 import SpacingComponent from '@weco/common/views/components/styled/SpacingComponent';
 import Button from '@weco/common/views/components/Buttons';
 import PlainList from '@weco/common/views/components/styled/PlainList';
+import { getFormatString } from '@weco/content/utils/iiif/v3';
 
 export const DownloadOptions = styled.div.attrs({
   className: font('intb', 4),
@@ -20,23 +19,6 @@ export const DownloadOptions = styled.div.attrs({
     margin-top: ${props => `${props.theme.spacingUnit * 2}px`};
   }
 `;
-
-function getFormatString(format: string): DownloadFormat | undefined {
-  switch (format) {
-    case 'application/pdf':
-      return 'PDF';
-    case 'text/plain':
-      return 'PLAIN';
-    case 'image/jpeg':
-      return 'JPG';
-    case 'video/mp4':
-      return 'MP4';
-    case 'audio/mp3':
-      return 'MP3';
-    default:
-      return undefined;
-  }
-}
 
 const Wrapper = styled.div.attrs({
   className: font('intr', 5),

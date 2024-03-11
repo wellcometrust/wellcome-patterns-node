@@ -61,14 +61,16 @@ export function getThumbnailImage(canvas: Canvas): ThumbnailImage | undefined {
   }
 }
 
-// If the canvas has a behavior which includes 'placeholder'
-// we know it is Born digital: https://github.com/wellcomecollection/docs/blob/main/rfcs/046-born-digital-iiif/README.md
-// The data we need to display a link to the file is found in the rendering property of the canvas.
+// Items considered born digital, i.e. those without width, height or duration properties
+// have a rendering with a behavior of 'original'.
+// This is used to display a link to the original file.
+// See: https://github.com/wellcomecollection/docs/blob/main/rfcs/046-born-digital-iiif/README.md
 export function getOriginal(
   rendering: Canvas['rendering']
-): CustomContentResource | undefined {
+): CustomContentResource[] {
   const customRendering = rendering as CustomContentResource[];
-  return customRendering?.find(item => {
+  const original = customRendering?.filter(item => {
     return item?.behavior?.includes('original');
   });
+  return original || [];
 }

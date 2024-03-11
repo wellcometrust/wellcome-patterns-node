@@ -20,6 +20,10 @@ import {
 } from '@weco/common/icons';
 import { queryParamToArrayIndex } from '.';
 import { getDownloadOptionsFromImageUrl } from '@weco/content/utils/works';
+import {
+  getDownloadOptionsFromCanvasRenderingAndSupplementing,
+  getDownloadOptionsFromManifestRendering,
+} from '@weco/content/utils/iiif/v3';
 import useTransformedIIIFImage from '@weco/content/hooks/useTransformedIIIFImage';
 import { OptionalToUndefined } from '@weco/common/utils/utility-types';
 
@@ -210,11 +214,7 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
     viewerRef,
   } = useContext(ItemViewerContext);
   const { canvas } = query;
-  const {
-    canvases,
-    downloadEnabled,
-    downloadOptions: manifestDownloadOptions,
-  } = { ...transformedManifest };
+  const { canvases, rendering } = { ...transformedManifest };
   const currentCanvas = canvases?.[queryParamToArrayIndex(query.canvas)];
   const mainImageService = { '@id': currentCanvas?.imageServiceId };
   const transformedIIIFImage = useTransformedIIIFImage(work);
@@ -228,7 +228,6 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
   // gets this data client side.
   // Sometimes we render images for works that have neither a iiif-image or a iiif-presentation location type.
   // In this case we use the iiifImageLocation passed from the serverSideProps of the /images.tsx
-
   const iiifImageDownloadOptions = iiifImageLocation
     ? getDownloadOptionsFromImageUrl({
         url: iiifImageLocation.url,
@@ -242,21 +241,29 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
   const canvasImageDownloads = mainImageService['@id']
     ? getDownloadOptionsFromImageUrl({
         url: mainImageService['@id'],
+        // TODO the dimensions should really be from the painting width and height, not the canvas
+        // it is coincidental that the canvas width and height are the same as the painting width and height
+        // Fix this if/when we remove imageServiceId from the TransformedCanvas
+        // in favour of using the painting property to find the image/image service
         width: currentCanvas && currentCanvas.width,
         height: currentCanvas && currentCanvas.height,
       })
     : [];
 
-  // If there is no manifest we show the downloads
-  // If there is one we use the downloadEnabled value it contains to determine download visibility
-  const downloadOptions =
-    !transformedManifest || downloadEnabled
-      ? [
-          ...iiifImageDownloadOptions,
-          ...canvasImageDownloads,
-          ...(manifestDownloadOptions || []),
-        ]
-      : [];
+  const canvasDownloadOptions = currentCanvas
+    ? getDownloadOptionsFromCanvasRenderingAndSupplementing(currentCanvas)
+    : [];
+
+  const manifestDownloadOptions =
+    getDownloadOptionsFromManifestRendering(rendering);
+
+  const downloadOptions = [
+    ...iiifImageDownloadOptions,
+    ...canvasImageDownloads,
+    ...canvasDownloadOptions,
+    ...manifestDownloadOptions,
+  ];
+
   return (
     <TopBar
       $isZooming={showZoomed}
@@ -344,7 +351,7 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
         <RightZone>
           {isEnhanced && (
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {!showZoomed && (
+              {!showZoomed && downloadOptions.length > 0 && (
                 <Space $h={{ size: 's', properties: ['margin-right'] }}>
                   <Download
                     ariaControlsId="itemDownloads"

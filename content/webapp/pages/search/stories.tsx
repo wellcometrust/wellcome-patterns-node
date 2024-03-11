@@ -100,33 +100,31 @@ export const StoriesSearchPage: NextPageWithLayout<Props> = ({
   return (
     <Space $v={{ size: 'l', properties: ['padding-bottom'] }}>
       {(!hasNoResults || (hasNoResults && hasActiveFilters)) && (
-        <>
-          <Container>
-            <Space
-              $v={{ size: 'l', properties: ['padding-top', 'padding-bottom'] }}
-            >
-              <SearchFilters
-                query={queryString}
-                linkResolver={params =>
-                  linkResolver({ params, pathname: '/search/stories' })
-                }
-                searchFormId={SEARCH_PAGES_FORM_ID}
-                changeHandler={() => {
-                  const form = document.getElementById(SEARCH_PAGES_FORM_ID);
-                  form &&
-                    form.dispatchEvent(
-                      new window.Event('submit', {
-                        cancelable: true,
-                        bubbles: true,
-                      })
-                    );
-                }}
-                filters={filters}
-                hasNoResults={hasNoResults}
-              />
-            </Space>
-          </Container>
-        </>
+        <Container>
+          <Space
+            $v={{ size: 'l', properties: ['padding-top', 'padding-bottom'] }}
+          >
+            <SearchFilters
+              query={queryString}
+              linkResolver={params =>
+                linkResolver({ params, pathname: '/search/stories' })
+              }
+              searchFormId={SEARCH_PAGES_FORM_ID}
+              changeHandler={() => {
+                const form = document.getElementById(SEARCH_PAGES_FORM_ID);
+                form &&
+                  form.dispatchEvent(
+                    new window.Event('submit', {
+                      cancelable: true,
+                      bubbles: true,
+                    })
+                  );
+              }}
+              filters={filters}
+              hasNoResults={hasNoResults}
+            />
+          </Space>
+        </Container>
       )}
       {storyResponseList && (
         <Wrapper>

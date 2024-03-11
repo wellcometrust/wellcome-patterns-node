@@ -86,7 +86,7 @@ const PageLayoutComponent: FunctionComponent<Props> = ({
   apiToolbarLinks = [],
   skipToContentLinks = [],
 }) => {
-  const { apiToolbar, issuesBanner } = useToggles();
+  const { apiToolbar, issuesBanner, cookiesWork } = useToggles();
   const urlString = convertUrlToString(url);
   const fullTitle =
     title !== ''
@@ -162,14 +162,22 @@ const PageLayoutComponent: FunctionComponent<Props> = ({
     <>
       <Head>
         <title>{fullTitle}</title>
-        <meta name="description" content={description} />
+        <meta key="metadescription" name="description" content={description} />
         <link rel="canonical" href={absoluteUrl} />
         {/* meta elements need to be contained as direct children of the Head element, so don't componentise the following */}
-        <meta property="og:site_name" content="Wellcome Collection" />
-        <meta property="og:type" content={openGraphType} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content={absoluteUrl} />
+        <meta
+          key="og:sitename"
+          property="og:site_name"
+          content="Wellcome Collection"
+        />
+        <meta key="og:type" property="og:type" content={openGraphType} />
+        <meta key="og:title" property="og:title" content={title} />
+        <meta
+          key="og:description"
+          property="og:description"
+          content={description}
+        />
+        <meta key="og:url" property="og:url" content={absoluteUrl} />
         <meta
           key="og:image"
           property="og:image"
@@ -207,9 +215,21 @@ const PageLayoutComponent: FunctionComponent<Props> = ({
           content={description}
         />
         <meta key="twitter:image" name="twitter:image" content={imageUrl} />
-        <meta name="twitter:image:alt" content={imageAltText} />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          key="twitter:image:alt"
+          name="twitter:image:alt"
+          content={imageAltText}
+        />
+        <meta
+          key="httpEquiv"
+          httpEquiv="X-UA-Compatible"
+          content="IE=edge,chrome=1"
+        />
+        <meta
+          key="viewport"
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -265,7 +285,7 @@ const PageLayoutComponent: FunctionComponent<Props> = ({
       */}
 
       <Script
-        src={`https://cdn.polyfill.io/v3/polyfill.js?version=${polyfillVersion}&features=${polyfillFeatures.join(
+        src={`https://polyfill-fastly.io/v3/polyfill.js?version=${polyfillVersion}&features=${polyfillFeatures.join(
           ','
         )}`}
       />
@@ -298,7 +318,7 @@ const PageLayoutComponent: FunctionComponent<Props> = ({
         {apiToolbar && (
           <ApiToolbar links={apiToolbarLinks.filter(isNotUndefined)} />
         )}
-        <CookieNotice source={url.pathname || ''} />
+        {!cookiesWork && <CookieNotice source={url.pathname || ''} />}
         {skipToContentLinks.map(({ anchorId, label }) => (
           <a
             className="visually-hidden visually-hidden-focusable"

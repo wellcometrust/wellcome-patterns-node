@@ -32,25 +32,27 @@ export type PageviewName =
   | 'works';
 
 export type ConceptLinkSource =
-  | 'work_details/contributors'
-  | 'work_details/subjects'
-  | 'work_details/genres';
+  | `work_details/contributors_${string}`
+  | `work_details/subjects_${string}`
+  | `work_details/genres_${string}`;
 
-export type ImageLinkSource = 'images_search_result' | 'viewer/paginator';
+export type ImageLinkSource =
+  | `images_search_result_${string}`
+  | `viewer/paginator_${string}`;
 
 export type ImagesLinkSource =
   | 'search/paginator'
   | 'canonical_link'
-  | 'concept/images_about'
-  | 'concept/images_by'
-  | 'concept/images_in'
+  | `concept/images_about_${string}`
+  | `concept/images_by_${string}`
+  | `concept/images_in_${string}`
   | 'images_search_context'
   | 'work_details/images'
   | 'unknown';
 
 export type ItemLinkSource =
-  | 'work'
-  | 'images_search_result'
+  | `work_${string}`
+  | `images_search_result_${string}`
   | 'viewer/paginator'
   | 'viewer/thumbnail'
   | 'viewer/scroll'
@@ -62,8 +64,8 @@ export type ItemLinkSource =
   | 'search_within_result';
 
 export type WorkLinkSource =
-  | 'works_search_result'
-  | 'images_search_result'
+  | `works_search_result_${string}`
+  | `images_search_result_${string}`
   | 'item_auth_modal_back_to_work_link'
   | 'archive_tree'
   | 'viewer_back_link'
@@ -73,16 +75,16 @@ export type WorksLinkSource =
   | 'search_form'
   | 'canonical_link'
   | 'meta_link'
-  | 'search/paginator'
+  | `search/paginator_${string}`
   | 'concept/works_about'
   | 'concept/works_by'
   | 'concept/works_in'
-  | 'works_search_context'
-  | 'work_details/contributors'
+  | `works_search_context_${string}`
+  | `work_details/contributors_${string}`
   | 'work_details/genres'
-  | 'work_details/subjects'
-  | 'work_details/partOf'
-  | 'work_details/languages'
+  | `work_details/subjects_${string}`
+  | `work_details/partOf_${string}`
+  | `work_details/languages_${string}`
   | Prefix<'cancel_filter/'>
   | 'unknown';
 

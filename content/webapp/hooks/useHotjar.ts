@@ -5,6 +5,8 @@
 // We should probably move out the pieces that are troublesome, and check the rest
 
 import { useEffect, useState } from 'react';
+import { getAnalyticsConsentState } from '@weco/common/services/app/civic-uk';
+
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +46,11 @@ const heatMapTrigger = (triggerName: string): void => {
 
 const useHotjar = (shouldRender: boolean, triggerName?: string) => {
   const [rendered, setRendered] = useState(false);
+  const hasAnalyticsConsent = getAnalyticsConsentState();
+
   useEffect(() => {
+    if (!hasAnalyticsConsent) return;
+
     if (shouldRender && !rendered) {
       renderScript().then(() => {
         setRendered(true);

@@ -24,6 +24,7 @@ import LL from '@weco/common/views/components/styled/LL';
 import { toLink as itemLink } from '../ItemLink';
 import { toLink as imageLink } from '../ImageLink';
 import { trackSegmentEvent } from '@weco/common/services/conversion/track';
+import { usePathname } from 'next/navigation';
 
 type Props = {
   image: ImageType | undefined;
@@ -141,6 +142,8 @@ const ExpandedImage: FunctionComponent<Props> = ({
 
   const workId = image?.source.id;
 
+  const pathname = usePathname();
+
   useEffect(() => {
     // We want this fired only if there is a workId (not on initial load),
     // but not everytime it changes, so excluding it from dependency array
@@ -201,9 +204,8 @@ const ExpandedImage: FunctionComponent<Props> = ({
       imageUrl: string
     ) => {
       const imageLocationBase = imageUrl.replace('/info.json', '');
-      const iiifManifest = await fetchIIIFPresentationManifest(
-        manifestLocation
-      );
+      const iiifManifest =
+        await fetchIIIFPresentationManifest(manifestLocation);
       const transformedManifest =
         iiifManifest && transformManifest(iiifManifest);
       const { firstCollectionManifestLocation, canvases } = {
@@ -264,14 +266,14 @@ const ExpandedImage: FunctionComponent<Props> = ({
             id: image.id,
             resultPosition,
           },
-          trackingSource
+          `${trackingSource}_${pathname}`
         )
       : detailedWork &&
         workId &&
         itemLink({
           workId,
           props: { resultPosition, ...(canvasDeeplink || {}) },
-          source: trackingSource,
+          source: `${trackingSource}_${pathname}`,
         });
 
   if (!detailedWork) {

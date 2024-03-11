@@ -4,6 +4,8 @@ import { font } from '@weco/common/utils/classnames';
 import Space from '@weco/common/views/components/styled/Space';
 import { NavLink, links } from '@weco/common/views/components/Header/Header';
 import { prismicPageIds } from '@weco/common/data/hardcoded-ids';
+import Buttons from '../Buttons';
+import { useToggles } from '@weco/common/server-data/Context';
 
 const NavList = styled.ul<{ $isInline?: boolean }>`
   list-style-type: none;
@@ -88,6 +90,8 @@ const FooterNav = ({
   ariaLabel: string;
   isInline?: boolean;
 }): ReactElement => {
+  const { cookiesWork } = useToggles();
+
   const itemsList =
     type === 'PoliciesNavigation' ? PoliciesNavigation : InternalNavigation;
 
@@ -111,6 +115,19 @@ const FooterNav = ({
             </li>
           );
         })}
+        {/* TODO style this/change the preference centre link to something else, this is a very temporary idea/solution */}
+        {cookiesWork && type === 'InternalNavigation' && (
+          <li>
+            <Buttons
+              variant="ButtonSolid"
+              dataGtmTrigger="consent_test_btn"
+              text="Cookie preference centre"
+              clickHandler={() => {
+                window.CookieControl.open();
+              }}
+            />
+          </li>
+        )}
       </NavList>
     </nav>
   );

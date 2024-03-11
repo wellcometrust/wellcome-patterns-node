@@ -17,13 +17,15 @@ const emptyEventsProps: EventsProps = {
   query: '',
   page: 1,
   format: [],
-  'contributors.contributor': [],
+  audience: [],
+  interpretation: [],
 };
 const codecMap = {
   query: stringCodec,
   page: numberCodec,
   format: csvCodec,
-  'contributors.contributor': csvCodec,
+  audience: csvCodec,
+  interpretation: csvCodec,
 };
 const fromQuery: (params: ParsedUrlQuery) => EventsProps = params => {
   return decodeQuery<EventsProps>(params, codecMap);

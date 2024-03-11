@@ -1,154 +1,146 @@
 import { FunctionComponent } from 'react';
 import {
-  TransformedRange,
   TransformedCanvas,
   CustomContentResource,
 } from '@weco/content/types/manifest';
 import {
-  getLabelString,
-  isTransformedCanvas,
-  isTransformedRange,
-} from '@weco/content/utils/iiif/v3';
-import ConditionalWrapper from '@weco/common/views/components/ConditionalWrapper/ConditionalWrapper';
-import {
-  InternationalString,
+  Body,
+  Canvas,
+  Range,
   ContentResource,
   ChoiceBody,
+  Manifest,
+  InternationalString,
 } from '@iiif/presentation-3';
-
-type Format = {
-  format: string | undefined;
-};
-const Format: FunctionComponent<Format> = ({ format }) => {
-  if (format) {
-    return <>{`, format: ${format}`}</>;
-  } else {
-    return null;
-  }
-};
+import {
+  getLabelString,
+  isTransformedCanvas,
+  isCanvas,
+  isRange,
+  getOriginalFiles,
+  getFileSize,
+  isChoiceBody,
+} from '@weco/content/utils/iiif/v3';
+import ConditionalWrapper from '@weco/common/views/components/ConditionalWrapper/ConditionalWrapper';
 
 type FileLinkProps = {
   canvasLabel: string | undefined;
-  itemLabel: InternationalString | null | undefined;
+  itemLabel: string | undefined;
   fileUri: string | undefined;
   format: string | undefined;
+  fileSize: string | undefined;
 };
 
-// We need to determine exactly what we want to display
-// N.B. canvas and item labels are often the same, but item label is not always present
-// Should we just show item label and fall back to canvas label if the item label isn't present?
-// If so, maybe do this at the transform stage and only have one label
 const FileLink: FunctionComponent<FileLinkProps> = ({
   canvasLabel,
   itemLabel,
   format,
   fileUri,
-  /*, fileSize - is file size actually available in the data? */
+  fileSize,
 }) => {
-  const itemLabelString = itemLabel && getLabelString(itemLabel);
   return (
-    <a href={fileUri}>
-      {`canvas label: ${canvasLabel}`}
-      <br />
-      {`annotation item label: ${itemLabelString}`}
-      <br />
-      {`format: ${format}`}
-    </a>
+    <a href={fileUri}>{`${canvasLabel} ${itemLabel} ${
+      format ? `(${format})` : ''
+    } ${fileSize ? `(${fileSize})` : ''}`}</a>
   );
 };
 
-const DownloadData: FunctionComponent<{
-  canvas: TransformedCanvas;
-  data: ContentResource | CustomContentResource | ChoiceBody;
-}> = ({ canvas, data }) => {
-  if (data.type === 'Choice') {
-    return (
-      <>
-        {data.items.map(choiceItem => {
-          if (
-            typeof choiceItem !== 'string' &&
-            'label' in choiceItem &&
-            'format' in choiceItem
-          ) {
-            return (
-              <li key={choiceItem.id}>
-                <FileLink
-                  canvasLabel={canvas.label}
-                  itemLabel={
-                    choiceItem.label as InternationalString | null | undefined
-                  }
-                  fileUri={choiceItem.id}
-                  format={choiceItem.format}
-                />
-              </li>
-            );
-          } else {
-            return null;
-          }
-        })}
-      </>
-    );
+const getLabel = (item: Body) => {
+  if (typeof item !== 'string' && 'label' in item) {
+    return getLabelString(item.label as InternationalString);
   } else {
-    if (typeof data !== 'string' && 'label' in data && 'format' in data) {
-      return (
-        <li key={data.id}>
-          <FileLink
-            canvasLabel={canvas.label}
-            itemLabel={data.label as InternationalString | null | undefined}
-            fileUri={data.id}
-            format={data.format}
-          />
-        </li>
-      );
-    } else {
-      return null;
-    }
+    return '';
   }
 };
 
+const Download: FunctionComponent<{
+  canvas: TransformedCanvas | undefined;
+  item: (ContentResource | CustomContentResource | ChoiceBody) & {
+    format?: string;
+  };
+}> = ({ canvas, item }) => {
+  // If there is a choice then we only show the first one
+  const displayItem = (isChoiceBody(item) ? item.items[0] : item) as Body & {
+    format?: string;
+  };
+  const itemLabel = getLabel(displayItem);
+  const fileSize = canvas && getFileSize(canvas);
+
+  if (typeof displayItem !== 'string') {
+    return (
+      <li key={displayItem.id}>
+        <FileLink
+          canvasLabel={canvas?.label}
+          itemLabel={itemLabel}
+          fileUri={displayItem.id}
+          format={displayItem.format}
+          fileSize={fileSize}
+        />
+      </li>
+    );
+  } else {
+    return null;
+  }
+};
+
+const Downloads: FunctionComponent<{
+  canvas: TransformedCanvas | Canvas;
+  canvases: TransformedCanvas[];
+}> = ({ canvas, canvases }) => {
+  const transformedCanvas = isTransformedCanvas(canvas)
+    ? canvas
+    : canvases?.find(transformedCanvas => canvas.id === transformedCanvas.id);
+  const downloads = transformedCanvas
+    ? getOriginalFiles(transformedCanvas)
+    : [];
+  return (
+    <>
+      {downloads.map(item => {
+        return (
+          <Download key={item.id} canvas={transformedCanvas} item={item} />
+        );
+      })}
+    </>
+  );
+};
+
 const DownloadList: FunctionComponent<{
-  structures: (TransformedRange | TransformedCanvas)[];
+  structures: TransformedCanvas[] | Manifest['structures'];
   includeOuterUl?: boolean;
-}> = ({ structures, includeOuterUl = true }) => {
+  canvases: TransformedCanvas[];
+}> = ({ structures, includeOuterUl = true, canvases }) => {
   return (
     <>
       <ConditionalWrapper
         condition={includeOuterUl}
         wrapper={children => <ul>{children}</ul>}
       >
-        {structures?.map((range, i) => {
-          const rangeItems = isTransformedRange(range) ? range.items || [] : [];
+        {structures?.map((range: TransformedCanvas | Range, i: number) => {
+          const rangeItems = isRange(range) ? range.items : [];
           return (
             <li key={i}>
-              {isTransformedRange(range) && getLabelString(range.label)}
-              {isTransformedCanvas(range) && (
-                <>
-                  {range.downloadData.map(data => {
-                    return (
-                      <DownloadData key={data.id} canvas={range} data={data} />
-                    );
-                  })}
-                </>
+              {isRange(range) && getLabelString(range.label)}
+              {isCanvas(range) && (
+                <Downloads canvas={range} canvases={canvases} />
               )}
-              {rangeItems.length > 0 && (
+              {rangeItems && rangeItems.length > 0 && (
                 <ul>
                   {rangeItems.map((item, i) => {
-                    if (isTransformedCanvas(item)) {
-                      return item.downloadData.map(data => {
-                        return (
-                          <DownloadData
-                            key={data.id}
-                            canvas={item}
-                            data={data}
-                          />
-                        );
-                      });
-                    } else if (isTransformedRange(item)) {
+                    if (isCanvas(item)) {
+                      return (
+                        <Downloads
+                          key={item.id}
+                          canvas={item}
+                          canvases={canvases}
+                        />
+                      );
+                    } else if (isRange(item)) {
                       return (
                         <DownloadList
                           key={i}
                           structures={[item]}
                           includeOuterUl={false}
+                          canvases={canvases}
                         />
                       );
                     } else {

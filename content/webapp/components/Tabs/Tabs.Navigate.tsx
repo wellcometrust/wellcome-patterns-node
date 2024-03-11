@@ -28,16 +28,11 @@ const TabsNavigate: FunctionComponent<Props> = ({
   isWhite,
 }: Props) => {
   return (
-    <TabsContainer data-test-id="sub-nav-tab-container" aria-label={label}>
+    <TabsContainer aria-label={label}>
       {items.map(item => {
         const isSelected = currentSection === item.id;
         return (
-          <Tab
-            key={item.id}
-            data-test-id={item.id}
-            $selected={isSelected}
-            $hideBorder={hideBorder}
-          >
+          <Tab key={item.id} $selected={isSelected} $hideBorder={hideBorder}>
             <Link
               scroll={false}
               passHref

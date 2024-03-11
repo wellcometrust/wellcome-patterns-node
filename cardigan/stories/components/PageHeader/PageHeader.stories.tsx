@@ -268,6 +268,9 @@ shortFilm.args = {
     />
   ),
 };
+shortFilm.parameters = {
+  chromatic: { diffThreshold: 0.2 },
+};
 
 export const event = Template.bind({});
 event.args = {
@@ -329,4 +332,7 @@ book.args = {
       </Layout>
     </Space>
   ),
+};
+book.parameters = {
+  chromatic: { diffThreshold: 0.2 },
 };

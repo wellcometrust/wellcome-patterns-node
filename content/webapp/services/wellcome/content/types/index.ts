@@ -1,6 +1,6 @@
-import { ArticleAggregations } from './api';
+import { ArticleAggregations, EventAggregations } from './api';
 
-export type { ArticleAggregations };
+export type { ArticleAggregations, EventAggregations };
 
 // Response objects
 export type ContentApiError = {

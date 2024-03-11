@@ -92,6 +92,14 @@ const toggles = {
         'This will allow various pieces of work around consent, tracking and cookies to happen; e.g. testing in production.',
       type: 'experimental',
     },
+    {
+      id: 'sliceMachine',
+      title: 'Prismic Slice Machine',
+      initialValue: false,
+      description:
+        'This will render content using Prismic Slice Machine slices instead of legacy slices',
+      type: 'experimental',
+    },
   ] as const,
   tests: [] as ABTest[],
 };

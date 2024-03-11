@@ -1,21 +1,18 @@
-import { Audio, Video } from '@weco/content/services/iiif/types/manifest/v3';
 import {
   BornDigitalStatus,
   DownloadOption,
   TransformedCanvas,
   AuthClickThroughServiceWithPossibleServiceArray,
-  TransformedRange,
   CustomSpecificationBehaviors,
+  CustomContentResource,
 } from '@weco/content/types/manifest';
 import {
   Annotation,
-  AnnotationPage,
   AnnotationBody,
   ChoiceBody,
   ContentResource,
-  ExternalWebResource,
-  IIIFExternalWebResource,
   Manifest,
+  Collection,
   MetadataItem,
   Service,
   InternationalString,
@@ -25,8 +22,9 @@ import {
   Range,
   RangeItems,
   TechnicalProperties,
+  CollectionItems,
 } from '@iiif/presentation-3';
-import { isNotUndefined, isString } from '@weco/common/utils/type-guards';
+import { isString } from '@weco/common/utils/type-guards';
 import { getThumbnailImage, getOriginal } from './canvas';
 
 // The label we want to use to distinguish between parts of a multi-volume work
@@ -78,44 +76,12 @@ export type BornDigitalManifest = Omit<Manifest, 'items'> & {
   items?: Canvas[];
 };
 
-export function getAudio(manifest: Manifest | BornDigitalManifest): Audio {
-  const canvases = manifest.items?.filter(item => item.type === 'Canvas');
-  const firstEnCanvas = canvases?.find(c => c?.label?.en);
-  const title = firstEnCanvas?.label
-    ? getEnFromInternationalString(firstEnCanvas.label)
-    : '';
-  const audioTypes = ['Audio', 'Sound'];
-  const sounds =
-    (canvases
-      ?.map(c => {
-        const title = c?.label && getEnFromInternationalString(c.label);
-        const annotationPage = c?.items?.find(i => i.type === 'AnnotationPage');
-        const annotation = annotationPage?.items?.find(
-          i => i.type === 'Annotation'
-        );
-        const sound =
-          audioTypes.includes(
-            (annotation?.body as ContentResource)?.type || ''
-          ) && annotation?.body;
-        return { sound, title };
-      })
-      .filter(s => Boolean(s.sound) && isNotUndefined(s.sound)) as {
-      title?: string;
-      sound: IIIFExternalWebResource;
-    }[]) || [];
-
-  const placeholderCanvasItems = manifest.placeholderCanvas?.items?.find(
-    i => i.type === 'AnnotationPage'
-  );
-  const placeholderCanvasAnnotation = placeholderCanvasItems?.items?.find(
-    i => i.type === 'Annotation'
-  );
-  const thumbnail = placeholderCanvasAnnotation?.body as ContentResource;
-  const transcript = manifest.rendering?.find(
-    i => i?.['format'] === 'application/pdf' //eslint-disable-line
-  );
-
-  return { title, sounds, thumbnail, transcript };
+function convertToDownloadOption(item): DownloadOption {
+  return {
+    id: item.id,
+    label: transformLabel(item.label) || 'Download file',
+    format: item.format || '',
+  };
 }
 
 type Rendering = {
@@ -124,15 +90,15 @@ type Rendering = {
   label?: string | InternationalString;
 };
 
-export function getDownloadOptionsFromManifest(
-  iiifManifest: Manifest
+export function getDownloadOptionsFromManifestRendering(
+  manifestRendering: Manifest['rendering']
 ): DownloadOption[] {
   // The ContentResource type on the Manifest, which applies to the iiifManifest.rendering seems incorrect
   // Temporarily adding this until it is fixed.
-  const rendering = (iiifManifest.rendering as Rendering[]) || [];
+  const rendering = (manifestRendering as Rendering[]) || [];
   return rendering
     .filter(({ id, format }) => {
-      // I'm removing application/zip (for now?) as we haven't had these before
+      // Removing application/zip (for now?) as we haven't had these before
       // and the example I've seen is 404ing:
       // (Work) https://wellcomecollection.org/works/mg56yqa4 ->
       // (Catalogue response) https://api.wellcomecollection.org/catalogue/v2/works/mg56yqa4?include=items ->
@@ -141,53 +107,15 @@ export function getDownloadOptionsFromManifest(
       // For details of why we remove text/plain see https://github.com/wellcomecollection/wellcomecollection.org/issues/7592
       return id && format !== 'application/zip' && format !== 'text/plain';
     })
-    .map(({ id, format, label }) => {
-      return {
-        id,
-        label: transformLabel(label) || 'Download file',
-        format,
-      } as DownloadOption;
-    });
+    .map(item => convertToDownloadOption(item));
 }
 
-export function getPdf(
-  iiifManifest: Manifest | BornDigitalManifest
-): DownloadOption | undefined {
-  // There are two different ways to find PDFs in a manifest:
-  //
-  //    - Before the DLCS image server upgrades in May 2023, the manifests has
-  //      PDF resources at `items[0].annotations[0].items[0].body`
-  //    - After the DLCS image server upgrades, new manifests will have the
-  //      PDFs at `items[0].rendering[0]`.
-  //
-  // See discussion here: https://wellcome.slack.com/archives/CBT40CMKQ/p1683121718005049
-  //
-  const renderingFromItem = iiifManifest.items
-    ?.flatMap(item => item.rendering)
-    .filter(isNotUndefined)
-    .find(r => r.type === 'Text' && r.format === 'application/pdf');
-
-  const renderingFromAnnotations = iiifManifest.items
-    ?.flatMap(item => item.annotations)
-    .flatMap(annotation => annotation?.items)
-    .filter(isNotUndefined)
-    .map(
-      item => (Array.isArray(item.body) ? item.body[0] : item.body) as Rendering
-    )
-    .find(body => body?.format === 'application/pdf');
-
-  const rendering = renderingFromItem || renderingFromAnnotations || {};
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { id, label, format } = rendering as any;
-
-  if (id) {
-    return {
-      id,
-      label: transformLabel(label) || 'Download file',
-      format: format || '',
-    };
-  }
+export function getDownloadOptionsFromCanvasRenderingAndSupplementing(
+  canvas: TransformedCanvas
+): DownloadOption[] {
+  return [...(canvas.original || []), ...(canvas.supplementing || [])].map(
+    item => convertToDownloadOption(item)
+  );
 }
 
 export function getTitle(
@@ -200,8 +128,9 @@ export function getTitle(
 }
 
 export function getTransformedCanvases(
-  iiifManifest: Manifest
+  iiifManifest: Manifest | Collection
 ): TransformedCanvas[] {
+  if (isCollection(iiifManifest)) return [];
   const canvases = iiifManifest.items?.filter(
     canvas => canvas.type === 'Canvas'
   );
@@ -235,10 +164,10 @@ function getCanvasTextServiceId(canvas: Canvas): string | undefined {
   return textAnnotation?.id;
 }
 
-// Temporary type until iiif3 types are correct
-type BodyService = {
-  '@type': string;
-  service: Service | Service[];
+export const isChoiceBody = (
+  item: ContentResource | ChoiceBody
+): item is ChoiceBody => {
+  return typeof item !== 'string' && 'type' in item && item.type === 'Choice';
 };
 
 // Temporary types, as the provided AnnotationBody doesn't seem to be correct
@@ -250,7 +179,11 @@ function getImageService(canvas: Canvas): BodyService | undefined {
   const items = canvas?.items;
   const AnnotationPages = items?.[0].items;
   const AnnotationBodies = AnnotationPages?.map(
-    annotationPage => annotationPage.body as AnnotationPageBody
+    annotationPage =>
+      annotationPage.body as
+        | AnnotationPageBody
+        | AnnotationPageBody[]
+        | undefined
   ).flat();
   const BodiesServices = AnnotationBodies?.map(body => body?.service).flat();
   const imageService = BodiesServices?.find(
@@ -265,14 +198,20 @@ function getImageServiceId(
   return imageService?.['@id'];
 }
 
+// Temporary type until iiif3 types are correct
+type BodyService = {
+  '@type': string;
+  service: Service | Service[];
+};
+
 function getImageAuthCookieService(
   imageService: BodyService | undefined
 ): Service | undefined {
   return Array.isArray(imageService?.service)
     ? imageService?.service?.find(s => s['@type'] === 'AuthCookieService1')
     : imageService?.service?.['@type'] === 'AuthCookieService1'
-    ? imageService?.service
-    : undefined;
+      ? imageService?.service
+      : undefined;
 }
 
 // We don't know at the top-level of a manifest whether any of the canvases contain images that are open access.
@@ -289,7 +228,7 @@ export function checkIsAnyImageOpen(
 }
 
 export function getIIIFMetadata(
-  manifest: Manifest,
+  manifest: Manifest | Collection,
   label: string
 ): MetadataItem | undefined {
   return (manifest.metadata || []).find(
@@ -298,7 +237,7 @@ export function getIIIFMetadata(
 }
 
 export function getIIIFPresentationCredit(
-  manifest: Manifest
+  manifest: Manifest | Collection
 ): string | undefined {
   const attribution = getIIIFMetadata(manifest, 'Attribution and usage');
   const maybeValueWithBrTags =
@@ -307,84 +246,24 @@ export function getIIIFPresentationCredit(
   return maybeValueWithBrTags?.split('<br />')[0];
 }
 
-function getChoiceBody(
-  body?: AnnotationBody | AnnotationBody[]
-): ChoiceBody | undefined {
-  const isChoiceBody =
-    typeof body !== 'string' && !Array.isArray(body) && body?.type === 'Choice';
-
-  return isChoiceBody ? body : undefined;
-}
-
-function getExternalWebResourceBody(
-  body?: AnnotationBody | AnnotationBody[]
-): ExternalWebResource | undefined {
-  const isExternalWebResource =
-    typeof body !== 'string' &&
-    !Array.isArray(body) &&
-    (body?.type === 'Video' ||
-      body?.type === 'Sound' ||
-      body?.type === 'Image' ||
-      body?.type === 'Text');
-  return isExternalWebResource ? body : undefined;
-}
-
-export function getVideo(manifest: Manifest): Video | undefined {
-  const body = manifest.items?.[0]?.items?.[0]?.items?.[0]?.body;
-
-  const videoChoiceBody = getChoiceBody(body);
-
-  // A video can appear in the "body" in two ways:
-  //
-  //    - As a ChoiceBody with multiple items, for example if the video is
-  //      available in multiple formats or resolutions.
-  //    - As an ExternalWebResource with type "Video", if the video is only
-  //      available in a single format/resolution.
-  //
-  // See the test cases for this function for examples of both.
-  const maybeVideo = videoChoiceBody
-    ? getExternalWebResourceBody(videoChoiceBody.items?.[0])
-    : getExternalWebResourceBody(body);
-
-  const thumbnailImageResourceBody = getExternalWebResourceBody(
-    manifest.placeholderCanvas?.items?.[0]?.items?.[0]?.body
-  );
-  const thumbnail = thumbnailImageResourceBody?.id;
-  const annotationPage = manifest.items?.[0]?.annotations?.[0].items?.[0]?.body;
-  const annotations = getExternalWebResourceBody(annotationPage);
-
-  return maybeVideo?.type === 'Video'
-    ? { ...maybeVideo, thumbnail, annotations }
-    : undefined;
-}
-
-export function getSearchService(manifest: Manifest): Service | undefined {
+export function getSearchService(
+  manifest: Manifest | Collection
+): Service | undefined {
   return manifest.service?.find(
     service => service?.['@type'] === 'SearchService1'
   );
 }
 
 export function getFirstCollectionManifestLocation(
-  iiifManifest: Manifest
+  iiifManifest: Manifest | Collection
 ): string | undefined {
-  return iiifManifest.items?.filter(c => c.type === 'Manifest')?.find(m => m.id)
-    ?.id;
-}
-
-export function hasPdfDownload(manifest: Manifest): boolean {
-  // e.g. https://iiif.wellcomecollection.org/presentation/v3/b21466154_0001 We
-  // have to check `type === 'Text'` to narrow the type enough for TS to know
-  // that `format` will be a `string`
-  return (
-    Boolean(getPdf(manifest)) ||
-    !!manifest.rendering?.find(
-      r => r.type === 'Text' && r.format === 'application/pdf'
-    )
-  );
+  if (isCollection(iiifManifest)) {
+    return iiifManifest.items?.find(c => c.type === 'Manifest')?.id;
+  }
 }
 
 export function getClickThroughService(
-  manifest: Manifest
+  manifest: Manifest | Collection
 ): AuthClickThroughServiceWithPossibleServiceArray | undefined {
   return manifest.services?.find(
     s => s.profile === 'http://iiif.io/api/auth/1/clickthrough'
@@ -405,7 +284,7 @@ function isImageRestricted(canvas: Canvas): boolean {
 }
 
 export function getRestrictedLoginService(
-  manifest: Manifest
+  manifest: Manifest | Collection
 ): AuthExternalService | undefined {
   return manifest.services?.find(service => {
     const typedService = service as AuthExternalService;
@@ -453,7 +332,7 @@ export function checkIsTotallyRestricted(
   return Boolean(restrictedAuthService && !isAnyImageOpen);
 }
 
-function getAnnotationsOfMotivation(
+export function getAnnotationsOfMotivation(
   items: Canvas['items'],
   motivation: TechnicalProperties['motivation']
 ): Annotation[] {
@@ -479,7 +358,7 @@ function convertAnnotationBodyToArray(
   }
 }
 
-function getDisplayData(
+export function getDisplayData(
   annotation: Annotation
 ): (ChoiceBody | ContentResource)[] {
   const annotationBodyArray = convertAnnotationBodyToArray(annotation?.body);
@@ -488,58 +367,41 @@ function getDisplayData(
       if (typeof body === 'object' && 'type' in body) {
         return body;
       } else {
-        return undefined; // Do we need to handle any of these cases? What sort of things are they?
+        return undefined;
       }
     })
     .filter(Boolean) as (ChoiceBody | ContentResource)[];
 }
 export function transformCanvas(canvas: Canvas): TransformedCanvas {
   const imageService = getImageService(canvas);
-  const imageServiceId = getImageServiceId(imageService);
+  const imageServiceId = getImageServiceId(imageService); // TODO if/when we use IIIFItem to render images we should get this from the painting - shouldn't really be at canvas level
   const hasRestrictedImage = isImageRestricted(canvas);
   const label = getCanvasLabel(canvas);
   const textServiceId = getCanvasTextServiceId(canvas);
   const thumbnailImage = getThumbnailImage(canvas);
-  const { id, type, width, height } = canvas;
-  // We get the downloadData, which we display in the WorkDetails.DownloadList component from 3 potential sources:
-  // First we use AnnotationPages with a motivation of 'painting'.
-  // N.B. Resources associated with a Canvas by an Annotation that has the motivation value painting
+  const { id, type, width, height } = canvas; // TODO if/when we use IIIFItem to render images, we should get width/height from each painting
+
+  // Resources associated with a Canvas by an Annotation that has the motivation value painting
   // must be presented to the user as the representation of the Canvas.
-  // This gives us the url of the file, the label and format etc.
-  const painting = getAnnotationsOfMotivation(canvas.items || [], 'painting');
-  const paintingDisplayData = painting.map(getDisplayData).flat();
-  // Second we look for a rendering item with a behavior value that includes 'original'.
-  // This will be present when something is Born Digital,
-  // in which case we will want to use the url of the file etc. from here, as the canvas item only provides placeholder data
-  // see: https://github.com/wellcomecollection/docs/blob/main/rfcs/046-born-digital-iiif/README.md
+  // This is what we use for displayData.
+  const paintings = getAnnotationsOfMotivation(canvas.items || [], 'painting');
+  const painting = paintings.map(getDisplayData).flat();
+  // A rendering item with a behavior value that includes 'original'
+  // will be present when something is considered Born Digital, this is what we'll need
+  // in order to offer a download of the original file.
   const original = getOriginal(canvas.rendering || []);
-  // Lastly, we look for annotations with a motivation of 'supplementing'.
-  // N.B. Resources associated with a Canvas by an Annotation that has the motivation value supplementing
+  // Resources associated with a Canvas by an Annotation that has the motivation value supplementing
   // may be presented to the user as part of the representation of the Canvas, or
   // may be presented in a different part of the user interface.
-  // We need to do this to find the pdfs that were added to manifests before DLCS changes, which took place in May 2023.
-  // After this time the pdfs follow the Born Digital pattern.
-  const supplementing = getAnnotationsOfMotivation(
+  // We need to do this for two reasons:
+  // 1) to find the pdfs that were added to manifests before DLCS changes, which took place in May 2023.
+  // (N.B. after this time the pdfs follow the Born Digital pattern)
+  // 2) they can provide alternative content such as transcriptions for Videos
+  const supplementings = getAnnotationsOfMotivation(
     canvas.annotations || [],
     'supplementing'
   );
-  const supplementingDisplayData = supplementing.map(getDisplayData).flat();
-
-  // If the canvas has a behavior which includes 'placeholder'
-  // we know it is Born digital: https://github.com/wellcomecollection/docs/blob/main/rfcs/046-born-digital-iiif/README.md
-  // in which case we use original to provide the downloadData
-  const behavior = canvas?.behavior as
-    | CustomSpecificationBehaviors[]
-    | undefined;
-  const isPlaceholder = behavior?.includes('placeholder') || false;
-  // If it's not a placeholder we use the paintingsDisplayData if we have it
-  // and then fallback to the supplementingDisplayData
-  const displayData =
-    paintingDisplayData.length > 0
-      ? paintingDisplayData
-      : supplementingDisplayData;
-
-  const downloadData = isPlaceholder && original ? [original] : displayData;
+  const supplementing = supplementings.map(getDisplayData).flat();
 
   return {
     id,
@@ -551,7 +413,10 @@ export function transformCanvas(canvas: Canvas): TransformedCanvas {
     label,
     textServiceId,
     thumbnailImage,
-    downloadData,
+    painting,
+    original,
+    supplementing,
+    metadata: canvas.metadata || [],
   };
 }
 
@@ -609,75 +474,117 @@ export function groupRanges(
   ).groupedArray;
 }
 
-export const isCanvas = (rangeItem: RangeItems): rangeItem is Canvas => {
+export const isCanvas = (
+  rangeItem: TransformedCanvas | RangeItems
+): rangeItem is TransformedCanvas | Canvas => {
   return typeof rangeItem === 'object' && rangeItem.type === 'Canvas';
 };
 
-export const isRange = (rangeItem: RangeItems): rangeItem is Range => {
+export const isRange = (
+  rangeItem: TransformedCanvas | RangeItems
+): rangeItem is Range => {
   return typeof rangeItem === 'object' && rangeItem.type === 'Range';
 };
 
 export const isTransformedCanvas = (
-  rangeItem: TransformedRange | TransformedCanvas
-): rangeItem is TransformedCanvas => {
-  return typeof rangeItem === 'object' && rangeItem.type === 'Canvas';
+  canvas: TransformedCanvas | Canvas
+): canvas is TransformedCanvas => {
+  return Boolean(canvas && 'painting' in canvas);
 };
 
-export const isTransformedRange = (
-  rangeItem: TransformedRange | TransformedCanvas
-): rangeItem is TransformedRange => {
-  return typeof rangeItem === 'object' && rangeItem.type === 'Range';
-};
-
-// We want to display the structure from the iiif-manifest
-// But we want to include links, which requires data from the Canvas in the items array
-// So we augment the canvas contained in the structure
-// with the necessary data from the matching canvas item
-export function augmentStructuresCanvasData(
-  structures: RangeItems[],
-  canvases: TransformedCanvas[]
-): TransformedRange[] {
-  return structures?.filter(isRange).map(range => {
-    const rangeItems = range?.items
-      ?.map(item => {
-        if (isCanvas(item)) {
-          const matchingCanvas = canvases?.find(
-            canvas => canvas.id === item.id
-          );
-          return {
-            ...item,
-            label: matchingCanvas?.label,
-            downloadData: matchingCanvas?.downloadData,
-          };
-        } else if (isRange(item)) {
-          return augmentStructuresCanvasData([item] || [], canvases)[0];
+export function hasItemType(
+  canvases: TransformedCanvas[] | undefined,
+  type: string
+): boolean {
+  return (
+    canvases?.some(canvas => {
+      return canvas.painting.some(item => {
+        if (isChoiceBody(item)) {
+          return item.items.some(item => {
+            if (typeof item !== 'string') {
+              return item.type === type;
+            } else {
+              return false;
+            }
+          });
         } else {
-          return undefined;
+          return item.type === type;
         }
-      })
-      .filter(Boolean) as TransformedRange[];
-    return {
-      ...range,
-      items: rangeItems,
-    };
-  });
+      });
+    }) || false
+  );
 }
 
-export function getCollectionManifests(manifest: Manifest): Canvas[] {
-  const firstLevelManifests =
-    manifest.items?.filter(c => c.type === 'Manifest') || [];
-  const collections =
-    manifest.items?.filter(c => c.type === 'Collection') || [];
-  const collectionManifests = collections
-    .map(collection => {
-      return (
-        collection.items?.filter(
-          c => c.type === ('Manifest' as AnnotationPage & { type: 'Manifest' })
-        ) || []
-      );
-    })
-    .flat();
-  return [...firstLevelManifests, ...collectionManifests] as Canvas[];
+export function hasOriginalPdf(
+  canvases: TransformedCanvas[] | undefined
+): boolean {
+  return (
+    canvases?.some(canvas => {
+      return canvas.original.some(item => {
+        return 'format' in item && item.format === 'application/pdf';
+      });
+    }) || false
+  );
+}
+
+export function isCollection(
+  manifest: Manifest | Collection
+): manifest is Collection {
+  return manifest.type === 'Collection';
+}
+
+// We sometimes want to offer the original file for download.
+// There are 3 potential sources for this.
+// 1) the rendering property of the item with a behavior value that includes 'original'.
+// This will exist if the canvas is for a 'Born Digital'
+// see: https://github.com/wellcomecollection/docs/blob/main/rfcs/046-born-digital-iiif/README.md
+// 2) the Annotations with a motivation of 'painting'.
+// which is the thing we would normally display to the user.
+// 3) the Annotations with a motivation of 'supplementing'.
+// We do this to find pdfs that were added to manifests before DLCS changes, which took place in May 2023.
+// (N.B. after this time the pdfs follow the Born Digital pattern)
+export function getOriginalFiles(
+  canvas: TransformedCanvas
+): (ContentResource | CustomContentResource | ChoiceBody)[] {
+  const downloadData =
+    canvas.original.length > 0
+      ? canvas.original
+      : canvas.painting.length > 0
+        ? canvas.painting
+        : canvas.supplementing;
+  return downloadData || [];
+}
+
+// If we have a files size, it is found in the metadata array of the canvas
+export function getFileSize(canvas: TransformedCanvas): string | undefined {
+  const fileSizeMeta = canvas.metadata.find(
+    metadata => getLabelString(metadata.label) === 'File size'
+  );
+  return fileSizeMeta ? getLabelString(fileSizeMeta.value) : undefined;
+}
+
+type CollectionItemsWithItems = CollectionItems & {
+  items: CollectionItemsWithItems[];
+};
+export function getCollectionManifests(
+  manifest:
+    | Manifest
+    | Collection
+    | (CollectionItems & { items: CollectionItemsWithItems[] })
+): CollectionItems[] {
+  if (manifest.type === 'Collection') {
+    return manifest.items
+      .map(item => {
+        if (item.type === 'Manifest') {
+          return item;
+        } else {
+          return getCollectionManifests(item);
+        }
+      })
+      .flat(Infinity);
+  } else {
+    return [];
+  }
 }
 
 // Whether something is born digital or not is determined at the canvas level within a iiifManifest
@@ -686,7 +593,9 @@ export function getCollectionManifests(manifest: Manifest): Canvas[] {
 // - no born digital items
 // - a mix of the two.
 // We need to know which we have to determine the required UI.
-export function getBornDigitalStatus(manifest: Manifest): BornDigitalStatus {
+export function getBornDigitalStatus(
+  manifest: Manifest | Collection
+): BornDigitalStatus {
   const hasBornDigital = manifest?.items.some(canvas => {
     const behavior = canvas?.behavior as
       | CustomSpecificationBehaviors[]
@@ -707,5 +616,30 @@ export function getBornDigitalStatus(manifest: Manifest): BornDigitalStatus {
     return 'mixedBornDigital';
   } else {
     return 'noBornDigital';
+  }
+}
+
+export function getFormatString(format: string): string | undefined {
+  switch (format) {
+    case 'application/pdf':
+      return 'PDF';
+    case 'text/plain':
+      return 'PLAIN';
+    case 'image/jpeg':
+      return 'JPG';
+    case 'video/mp4':
+      return 'MP4';
+    case 'audio/mp3':
+      return 'MP3';
+    default:
+      return 'unknown format';
+  }
+}
+
+export function getStructures(manifest: Manifest | Collection): Range[] {
+  if (isCollection(manifest)) {
+    return [];
+  } else {
+    return manifest.structures || [];
   }
 }

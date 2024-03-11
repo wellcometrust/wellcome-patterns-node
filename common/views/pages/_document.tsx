@@ -13,16 +13,15 @@ import { Toggles } from '@weco/toggles';
 import {
   Ga4DataLayer,
   GoogleTagManager,
-  GoogleTagManagerNoScript,
   GaDimensions,
-} from '../../services/app/google-analytics';
+} from '@weco/common/services/app/google-analytics';
 
 const {
   ANALYTICS_WRITE_KEY = '78Czn5jNSaMSVrBq2J9K4yJjWxh6fyRI',
   NODE_ENV = 'development',
 } = process.env;
 
-function renderSegmentSnippet() {
+export function renderSegmentSnippet() {
   const opts = {
     apiKey: ANALYTICS_WRITE_KEY,
     page: false,
@@ -37,6 +36,7 @@ function renderSegmentSnippet() {
 
 type DocumentInitialPropsWithTogglesAndGa = DocumentInitialProps & {
   toggles: Toggles;
+  hasAnalyticsConsent: boolean;
   gaDimensions?: GaDimensions;
 };
 class WecoDoc extends Document<DocumentInitialPropsWithTogglesAndGa> {
@@ -61,6 +61,7 @@ class WecoDoc extends Document<DocumentInitialPropsWithTogglesAndGa> {
         ...initialProps,
         toggles: pageProps.serverData?.toggles,
         gaDimensions: pageProps.gaDimensions,
+        hasAnalyticsConsent: pageProps.serverData?.hasAnalyticsConsent,
         styles: (
           <>
             {initialProps.styles}
@@ -77,19 +78,28 @@ class WecoDoc extends Document<DocumentInitialPropsWithTogglesAndGa> {
     return (
       <Html lang="en">
         <Head>
-          {/* Adding toggles etc. to the datalayer so they are available to events in Google Tag Manager */}
-          <Ga4DataLayer
-            data={{
-              toggles: this.props.toggles,
-            }}
-          />
-          <GoogleTagManager />
-          <script
-            dangerouslySetInnerHTML={{ __html: renderSegmentSnippet() }}
-          />
+          <>
+            {/* Adding toggles etc. to the datalayer so they are available to events in Google Tag Manager */}
+            <Ga4DataLayer
+              hasAnalyticsConsent={this.props.hasAnalyticsConsent}
+              data={{
+                toggles: this.props.toggles,
+              }}
+            />
+
+            {/* Removing/readding this script on consent changes causes issues with meta tag duplicates
+            https://github.com/wellcomecollection/wellcomecollection.org/pull/10685#discussion_r1516298683 
+            Let's keep an eye on this issue and consider moving it next to the Segment script when it's fixed */}
+            <GoogleTagManager />
+
+            {!this.props.toggles?.cookiesWork?.value && (
+              <script
+                dangerouslySetInnerHTML={{ __html: renderSegmentSnippet() }}
+              />
+            )}
+          </>
         </Head>
         <body>
-          <GoogleTagManagerNoScript />
           <div id="top">
             <Main />
           </div>

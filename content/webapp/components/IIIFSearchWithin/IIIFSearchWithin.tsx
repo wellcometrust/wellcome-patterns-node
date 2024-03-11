@@ -215,6 +215,7 @@ const IIIFSearchWithin: FunctionComponent = () => {
           <TextInput
             id="searchWithin"
             label={searchWithinLabel}
+            type="search"
             name="query"
             value={value}
             setValue={setValue}
@@ -243,7 +244,7 @@ const IIIFSearchWithin: FunctionComponent = () => {
         )}
         {searchResults &&
           Boolean(searchResults?.within?.total && query.query) && (
-            <ResultsHeader data-test-id="results-header" aria-live="assertive">
+            <ResultsHeader aria-live="assertive">
               {pluralize(searchResults.within.total ?? 0, 'result')}
             </ResultsHeader>
           )}

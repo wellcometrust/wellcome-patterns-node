@@ -7,8 +7,8 @@ import Space from '@weco/common/views/components/styled/Space';
 import styled from 'styled-components';
 import {
   getEnFromInternationalString,
-  isTransformedRange,
-  isTransformedCanvas,
+  isCanvas,
+  isRange,
 } from '@weco/content/utils/iiif/v3';
 import PlainList from '@weco/common/views/components/styled/PlainList';
 import { toLink as itemLink } from '@weco/content/components/ItemLink';
@@ -19,11 +19,9 @@ import {
   Work,
   WorkBasic,
 } from '@weco/content/services/wellcome/catalogue/types';
-import {
-  TransformedCanvas,
-  TransformedRange,
-} from '@weco/content/types/manifest';
 import ConditionalWrapper from '@weco/common/views/components/ConditionalWrapper/ConditionalWrapper';
+import { Manifest } from '@iiif/presentation-3';
+import { TransformedCanvas } from '@weco/content/types/manifest';
 
 export const List = styled(PlainList)`
   border-left: 1px solid ${props => props.theme.color('neutral.600')};
@@ -55,8 +53,8 @@ export const Item = styled(Space).attrs({
 `;
 
 type Props = {
-  ranges: TransformedRange[];
-  canvases: TransformedCanvas[] | undefined;
+  ranges: Manifest['structures'];
+  canvases: TransformedCanvas[];
   currentCanvasIndex: number;
   setIsMobileSidebarActive: (v: boolean) => void;
   query: Query;
@@ -74,15 +72,17 @@ const Structures: FunctionComponent<Props> = ({
   work,
   query,
 }) => {
-  return ranges.length > 0 ? (
+  return ranges && ranges.length > 0 ? (
     <List>
       {ranges.map((range, i) => {
-        const rangeCanvases = range?.items?.filter(isTransformedCanvas) || [];
+        const rangeCanvases = range?.items?.filter(isCanvas) || [];
         const firstCanvasInRange = rangeCanvases[0];
+        const firstCanvasInRangeId =
+          typeof firstCanvasInRange !== 'string' ? firstCanvasInRange?.id : '';
         const canvasIndex =
-          canvases?.findIndex(canvas => canvas.id === firstCanvasInRange?.id) ||
+          canvases?.findIndex(canvas => canvas.id === firstCanvasInRangeId) ||
           0;
-        const nestedRanges = range?.items?.filter(isTransformedRange) || [];
+        const nestedRanges = range?.items?.filter(isRange) || [];
         return (
           <Item
             key={i}
@@ -151,7 +151,7 @@ const ViewerStructures: FunctionComponent = () => {
   return (
     <Structures
       ranges={ranges || []}
-      canvases={canvases}
+      canvases={canvases || []}
       currentCanvasIndex={canvas}
       setIsMobileSidebarActive={setIsMobileSidebarActive}
       work={work}

@@ -4,14 +4,15 @@ import {
   Range,
   AuthClickThroughService,
   AuthAccessTokenService,
-  Canvas,
+  CollectionItems,
   InternationalString,
   SpecificationBehaviors,
   ChoiceBody,
   ContentResource,
   ResourceType,
+  Manifest,
+  MetadataItem,
 } from '@iiif/presentation-3';
-import { Audio, Video } from '@weco/content/services/iiif/types/manifest/v3';
 
 export type ThumbnailImage = { url: string; width: number };
 
@@ -31,7 +32,10 @@ export type TransformedCanvas = {
   label: string | undefined;
   textServiceId: string | undefined;
   thumbnailImage: ThumbnailImage | undefined;
-  downloadData: (CustomContentResource | ChoiceBody | ContentResource)[];
+  painting: (ChoiceBody | ContentResource)[];
+  original: CustomContentResource[];
+  supplementing: (ChoiceBody | ContentResource)[];
+  metadata: MetadataItem[];
 };
 
 export type DownloadOption = {
@@ -60,16 +64,11 @@ export type TransformedRange = Omit<Range, 'items'> & {
 };
 
 export type TransformedManifest = {
-  downloadEnabled?: boolean;
   firstCollectionManifestLocation?: string;
   bornDigitalStatus: BornDigitalStatus;
   title: string;
   id: string;
-  audio: Audio | undefined;
-  video?: Video;
   services: Service[];
-  downloadOptions: DownloadOption[];
-  pdf: DownloadOption | undefined;
   canvases: TransformedCanvas[];
   canvasCount: number;
   collectionManifestsCount: number;
@@ -81,12 +80,14 @@ export type TransformedManifest = {
   needsModal: boolean;
   restrictedService: AuthExternalService | undefined;
   searchService: Service | undefined;
-  structures: TransformedRange[];
-  manifests: Canvas[];
+  structures: Manifest['structures'];
+  manifests: CollectionItems[];
   clickThroughService:
     | AuthClickThroughServiceWithPossibleServiceArray
     | undefined;
   tokenService: AuthAccessTokenService | undefined;
+  placeholderId: string | undefined;
+  rendering: ContentResource[];
 };
 
 export type CustomSpecificationBehaviors =
@@ -94,5 +95,5 @@ export type CustomSpecificationBehaviors =
   | 'placeholder';
 
 export type CustomContentResource = ContentResource & {
-  behavior: 'original' | undefined;
-};
+  behavior: 'original';
+} & { type?: string };

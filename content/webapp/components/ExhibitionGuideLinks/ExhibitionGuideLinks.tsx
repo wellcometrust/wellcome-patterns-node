@@ -81,8 +81,7 @@ const ExhibitionGuideLinks: FunctionComponent<Props> = ({
         <TypeOption
           url={`/${pathname}/captions-and-transcripts`}
           title="Read captions and transcripts"
-          text="All the wall and label texts from the gallery, and images of the
-                  objects, great for those without headphones."
+          text="All the wall and label texts from the gallery, plus audio transcripts – great for those without headphones."
           backgroundColor="accent.lightGreen"
           icon={speechToText}
           onClick={() => {

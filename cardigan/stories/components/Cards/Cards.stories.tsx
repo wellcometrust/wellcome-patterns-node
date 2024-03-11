@@ -22,7 +22,7 @@ const primaryLabelList = [{ text: 'Study day' }, { text: 'Schools' }];
 const secondaryLabelList = [{ text: 'Speech-to-text' }];
 const imageProps = squareImage();
 const sharedParameters = {
-  chromatic: { diffThreshold: 0.2 },
+  chromatic: { diffThreshold: 0.2, delay: 1000 },
 };
 
 const CompactCardTemplate = args => <CompactCard {...args} />;

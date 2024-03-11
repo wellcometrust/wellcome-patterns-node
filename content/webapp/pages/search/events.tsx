@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { getSearchLayout } from '@weco/content/components/SearchPageLayout/SearchPageLayout';
 import Pagination from '@weco/content/components/Pagination/Pagination';
 import SearchNoResults from '@weco/content/components/SearchNoResults/SearchNoResults';
+import Sort from '@weco/content/components/Sort/Sort';
 import PaginationWrapper from '@weco/common/views/components/styled/PaginationWrapper';
 import Space from '@weco/common/views/components/styled/Space';
 import { Container } from '@weco/common/views/components/styled/Container';
@@ -15,6 +16,7 @@ import { Pageview } from '@weco/common/services/conversion/track';
 import { pluralize } from '@weco/common/utils/grammar';
 import {
   getQueryPropertyValue,
+  linkResolver,
   SEARCH_PAGES_FORM_ID,
 } from '@weco/common/utils/search';
 import { cacheTTL, setCacheControl } from '@weco/content/utils/setCacheControl';
@@ -30,8 +32,11 @@ import {
   fromQuery,
   EventsProps,
 } from '@weco/content/components/SearchPagesLink/Events';
-import { getEvents } from 'services/wellcome/content/events';
-import EventsSearchResults from 'components/EventsSearchResults';
+import { getEvents } from '@weco/content/services/wellcome/content/events';
+import EventsSearchResults from '@weco/content/components/EventsSearchResults';
+import SearchFilters from '@weco/content/components/SearchFilters';
+import { hasFilters } from '@weco/content/utils/search';
+import { eventsFilters } from '@weco/content/services/wellcome/catalogue/filters';
 
 type Props = {
   eventResponseList: ContentResultsList<EventDocument>;
@@ -55,13 +60,50 @@ const SortPaginationWrapper = styled.div`
 export const EventsSearchPage: NextPageWithLayout<Props> = ({
   eventResponseList,
   query,
+  eventsRouteProps,
 }) => {
   const { query: queryString } = query;
 
+  const filters = eventsFilters({
+    events: eventResponseList,
+    props: eventsRouteProps,
+  });
+
   const hasNoResults = eventResponseList.totalResults === 0;
+  const hasActiveFilters = hasFilters({
+    filters: filters.map(f => f.id),
+    queryParams: query,
+  });
 
   return (
     <Space $v={{ size: 'l', properties: ['padding-bottom'] }}>
+      {(!hasNoResults || (hasNoResults && hasActiveFilters)) && (
+        <Container>
+          <Space
+            $v={{ size: 'l', properties: ['padding-top', 'padding-bottom'] }}
+          >
+            <SearchFilters
+              query={queryString}
+              linkResolver={params =>
+                linkResolver({ params, pathname: '/search/events' })
+              }
+              searchFormId={SEARCH_PAGES_FORM_ID}
+              changeHandler={() => {
+                const form = document.getElementById(SEARCH_PAGES_FORM_ID);
+                form &&
+                  form.dispatchEvent(
+                    new window.Event('submit', {
+                      cancelable: true,
+                      bubbles: true,
+                    })
+                  );
+              }}
+              filters={filters}
+              hasNoResults={hasNoResults}
+            />
+          </Space>
+        </Container>
+      )}
       {eventResponseList && (
         <>
           {hasNoResults ? (
@@ -76,22 +118,21 @@ export const EventsSearchPage: NextPageWithLayout<Props> = ({
                 </span>
 
                 <SortPaginationWrapper>
-                  {/* TODO re-add when sorting works in Content API */}
-                  {/* https://github.com/wellcomecollection/wellcomecollection.org/issues/10554 */}
-                  {/* <Sort
+                  <Sort
                     formId={SEARCH_PAGES_FORM_ID}
                     options={[
                       // Default value to be left empty as to not be reflected in URL query
+                      // TODO: 'oldest to newest' and 'newest to oldest' should be changed / option to sort should be better reflected
                       {
                         value: '',
                         text: 'Relevance',
                       },
                       {
-                        value: 'publicationDate.asc',
+                        value: 'times.startDateTime.asc',
                         text: 'Oldest to newest',
                       },
                       {
-                        value: 'publicationDate.desc',
+                        value: 'times.startDateTime.desc',
                         text: 'Newest to oldest',
                       },
                     ]}
@@ -102,8 +143,8 @@ export const EventsSearchPage: NextPageWithLayout<Props> = ({
                           text: 'Relevance',
                         },
                         {
-                          value: 'publicationDate',
-                          text: 'Publication date',
+                          value: 'times.startDateTime',
+                          text: 'Event date',
                         },
                       ],
                       sortOrder: [
@@ -115,7 +156,7 @@ export const EventsSearchPage: NextPageWithLayout<Props> = ({
                       sort: query.sort,
                       sortOrder: query.sortOrder,
                     }}
-                  /> */}
+                  />
                   <Pagination
                     formId={SEARCH_PAGES_FORM_ID}
                     totalPages={eventResponseList.totalPages}
@@ -157,9 +198,9 @@ export const getServerSideProps: GetServerSideProps<
   if (!eventsSearch.value) {
     return { notFound: true };
   }
-
   const query = context.query;
   const params = fromQuery(query);
+
   const defaultProps = serialiseProps({
     eventsRouteProps: params,
     serverData,
@@ -199,9 +240,10 @@ export const getServerSideProps: GetServerSideProps<
   const eventResponseList = await getEvents({
     params: {
       ...restOfQuery,
-      // sort: getQueryPropertyValue(query.sort),
-      // sortOrder: getQueryPropertyValue(query.sortOrder),
+      sort: getQueryPropertyValue(query.sort),
+      sortOrder: getQueryPropertyValue(query.sortOrder),
       ...(pageNumber && { page: Number(pageNumber) }),
+      aggregations: ['format', 'audience', 'interpretation'],
     },
     pageSize: 24,
     toggles: serverData.toggles,

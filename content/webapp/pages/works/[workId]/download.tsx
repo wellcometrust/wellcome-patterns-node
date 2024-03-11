@@ -5,14 +5,12 @@ import {
   toWorkBasic,
 } from '@weco/content/services/wellcome/catalogue/types';
 import { font } from '@weco/common/utils/classnames';
-import {
-  getDownloadOptionsFromImageUrl,
-  getDigitalLocationOfType,
-} from '@weco/content/utils/works';
+import { getDigitalLocationOfType } from '@weco/content/utils/works';
 import {
   getCatalogueLicenseData,
   LicenseData,
 } from '@weco/common/utils/licenses';
+import { DigitalLocation } from '@weco/common/model/catalogue';
 import { TransformedManifest } from '@weco/content/types/manifest';
 import { getWork } from '@weco/content/services/wellcome/catalogue/works';
 import PageLayout from '@weco/common/views/components/PageLayout/PageLayout';
@@ -31,6 +29,10 @@ import { fetchIIIFPresentationManifest } from '@weco/content/services/iiif/fetch
 import { transformManifest } from '@weco/content/services/iiif/transformers/manifest';
 import { setCacheControl } from '@weco/content/utils/setCacheControl';
 import { removeTrailingFullStop } from '@weco/content/utils/string';
+import {
+  getDownloadOptionsFromManifestRendering,
+  getDownloadOptionsFromCanvasRenderingAndSupplementing,
+} from '@weco/content/utils/iiif/v3';
 
 type CreditProps = {
   workId: string;
@@ -70,13 +72,13 @@ const Credit: FunctionComponent<CreditProps> = ({
 type Props = {
   transformedManifest?: Pick<
     TransformedManifest,
-    'title' | 'downloadEnabled' | 'downloadOptions' | 'iiifCredit'
+    'title' | 'iiifCredit' | 'canvases' | 'rendering'
   >;
   work: WorkBasic & Pick<Work, 'items'>;
 };
 
 const DownloadPage: NextPage<Props> = ({ transformedManifest, work }) => {
-  const { title, downloadEnabled, downloadOptions, iiifCredit } = {
+  const { title, iiifCredit, canvases, rendering } = {
     ...transformedManifest,
   };
   const displayTitle = title || work.title || '';
@@ -85,27 +87,30 @@ const DownloadPage: NextPage<Props> = ({ transformedManifest, work }) => {
     work,
     'iiif-presentation'
   );
-  const digitalLocation = iiifImageLocation || iiifPresentationLocation; // TODO here we favour imageLocation over manifestLocation
+
+  // Determine digital location. If the work has a iiif-presentation location and a iiif-image location
+  // we use the former
+  const digitalLocation: DigitalLocation | undefined =
+    iiifPresentationLocation || iiifImageLocation;
+
   const license =
     digitalLocation?.license &&
     getCatalogueLicenseData(digitalLocation.license);
 
-  const iiifImageLocationUrl =
-    iiifImageLocation &&
-    iiifImageLocation.type === 'DigitalLocation' &&
-    iiifImageLocation.url;
+  const manifestDownloadOptions =
+    getDownloadOptionsFromManifestRendering(rendering);
 
-  const iiifImageDownloadOptions = iiifImageLocationUrl
-    ? getDownloadOptionsFromImageUrl({
-        url: iiifImageLocationUrl,
-        width: undefined,
-        height: undefined,
-      })
-    : [];
+  // We need this for old style pdfs that appear on supplementing
+  const canvasDownloadOptions =
+    canvases
+      ?.map(canvas =>
+        getDownloadOptionsFromCanvasRenderingAndSupplementing(canvas)
+      )
+      .flat() || [];
 
   const allDownloadOptions = [
-    ...iiifImageDownloadOptions,
-    ...(downloadOptions || []),
+    ...canvasDownloadOptions,
+    ...manifestDownloadOptions,
   ];
 
   const credit = (iiifImageLocation && iiifImageLocation.credit) || iiifCredit;
@@ -133,7 +138,7 @@ const DownloadPage: NextPage<Props> = ({ transformedManifest, work }) => {
             </Space>
           </SpacingComponent>
           <SpacingComponent>
-            {downloadEnabled && allDownloadOptions.length !== 0 ? (
+            {allDownloadOptions.length !== 0 ? (
               <Download
                 ariaControlsId="itemDownloads"
                 downloadOptions={allDownloadOptions}
@@ -213,9 +218,9 @@ export const getServerSideProps: GetServerSideProps<
       serverData,
       transformedManifest: transformedManifest && {
         title: transformedManifest.title,
-        downloadEnabled: transformedManifest.downloadEnabled,
-        downloadOptions: transformedManifest.downloadOptions,
         iiifCredit: transformedManifest.iiifCredit,
+        canvases: transformedManifest.canvases,
+        rendering: transformedManifest.rendering,
       },
       work: {
         ...toWorkBasic(work),
