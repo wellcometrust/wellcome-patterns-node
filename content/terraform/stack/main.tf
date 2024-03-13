@@ -38,6 +38,8 @@ module "content-service-17092020" {
     items_api_key_prod  = "catalogue_api/items/prod/api_key"
     items_api_key_stage = "catalogue_api/items/stage/api_key"
 
+    NEXT_PUBLIC_CIVICUK_API_KEY = "civicuk/api_key"
+
     PRISMIC_ACCESS_TOKEN = "prismic-model/prod/access-token"
   }
 

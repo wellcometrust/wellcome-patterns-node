@@ -32,7 +32,11 @@ const statement = {
   updated: '25/05/2018',
 };
 
-const CivicUK = () => (
+type Props = {
+  apiKey: string;
+};
+
+const CivicUK = (props: Props) => (
   <>
     <script
       src="https://cc.cdn.civiccomputing.com/9/cookieControl-9.x.min.js"
@@ -42,7 +46,7 @@ const CivicUK = () => (
       dangerouslySetInnerHTML={{
         __html: `CookieControl.load({
             product: 'COMMUNITY',
-            apiKey: '5a1b492f47fac442240976a4f991ad92278ef15a',
+            apiKey: '${props.apiKey}',
             product: 'pro',
             initialState: 'notify',
             layout: 'popup',

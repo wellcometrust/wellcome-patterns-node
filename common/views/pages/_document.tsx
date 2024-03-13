@@ -78,6 +78,9 @@ class WecoDoc extends Document<DocumentInitialPropsWithTogglesAndGa> {
   render(): ReactElement<DocumentInitialProps> {
     const cookiesWork = this.props.toggles?.cookiesWork?.value;
 
+    const shouldRenderAnalytics =
+      !cookiesWork || (cookiesWork && this.props.hasAnalyticsConsent);
+
     return (
       <Html lang="en">
         <Head>
@@ -93,8 +96,7 @@ class WecoDoc extends Document<DocumentInitialPropsWithTogglesAndGa> {
             Let's keep an eye on this issue and consider moving it next to the Segment script when it's fixed */}
             <GoogleTagManager />
 
-            {(!cookiesWork ||
-              (cookiesWork && this.props.hasAnalyticsConsent)) && (
+            {shouldRenderAnalytics && (
               <script
                 dangerouslySetInnerHTML={{ __html: renderSegmentSnippet() }}
               />

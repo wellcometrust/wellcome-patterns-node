@@ -131,7 +131,8 @@ function trackSegmentEvent({
 
 function track(conversion: Conversion) {
   const hasAnalyticsConsent = getAnalyticsConsentState();
-  if (!hasAnalyticsConsent) return;
+  // if we don't have consent or the analytics object isn't available, don't track
+  if (!hasAnalyticsConsent || !window.analytics) return;
 
   const debug = Boolean(getCookie(cookies.analyticsDebug));
   // We make toggles available of the dataLayer for GTM, so can use them here too

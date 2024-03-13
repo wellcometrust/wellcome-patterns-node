@@ -44,6 +44,7 @@ function isErrorPage(route: string): boolean {
 }
 
 const dev = process.env.NODE_ENV !== 'production';
+const civicUkApiKey = process.env.NEXT_PUBLIC_CIVICUK_API_KEY;
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactElement;
@@ -143,9 +144,10 @@ const WecoApp: FunctionComponent<WecoAppProps> = ({
                   />
                   <LoadingIndicator />
 
-                  {pageProps.serverData?.toggles?.cookiesWork?.value && (
-                    <CivicUK />
-                  )}
+                  {civicUkApiKey &&
+                    pageProps.serverData?.toggles?.cookiesWork?.value && (
+                      <CivicUK apiKey={civicUkApiKey} />
+                    )}
 
                   {!pageProps.err &&
                     getLayout(<Component {...deserialiseProps(pageProps)} />)}

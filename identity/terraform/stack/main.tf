@@ -22,6 +22,8 @@ module "identity-service-18012021" {
   env_vars = merge({
     PROD_SUBDOMAIN  = var.subdomain
     APM_ENVIRONMENT = var.env_suffix
+
+    NEXT_PUBLIC_CIVICUK_API_KEY = "civicuk/api_key"
   }, var.env_vars)
 
   secret_env_vars = merge({
