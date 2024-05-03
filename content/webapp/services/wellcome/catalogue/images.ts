@@ -86,7 +86,7 @@ export async function getImage({
 
   const url = `${
     rootUris[apiOptions.env]
-  }/v2/images/${id}?${searchParams.toString()}`;
+  }/images/${id}?${searchParams.toString()}`;
 
   const res = await wellcomeApiFetch(url);
 

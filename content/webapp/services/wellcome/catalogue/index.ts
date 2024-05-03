@@ -12,7 +12,7 @@ import {
 } from '..';
 
 export const rootUris = {
-  prod: 'https://api.wellcomecollection.org/catalogue',
+  prod: 'http://localhost:8080',
   stage: 'https://api-stage.wellcomecollection.org/catalogue',
 };
 
@@ -38,7 +38,7 @@ export async function catalogueQuery<Params, Result extends ResultType>(
     propsToQuery(extendedParams)
   ).toString();
 
-  const url = `${rootUris[apiOptions.env]}/v2/${endpoint}?${searchParams}`;
+  const url = `${rootUris[apiOptions.env]}/${endpoint}?${searchParams}`;
 
   return wellcomeApiQuery(url) as unknown as
     | CatalogueResultsList<Result>

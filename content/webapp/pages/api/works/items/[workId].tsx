@@ -12,7 +12,7 @@ import {
 } from '@weco/content/services/wellcome';
 
 function getApiUrl(apiOptions: GlobalApiOptions, workId: string): string {
-  return `${rootUris[apiOptions.env]}/v2/works/${workId}/items`;
+  return `${rootUris[apiOptions.env]}/works/${workId}/items`;
 }
 
 function getApiKey(apiOptions: GlobalApiOptions): string {

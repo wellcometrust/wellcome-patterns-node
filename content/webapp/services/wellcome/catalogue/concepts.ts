@@ -30,7 +30,7 @@ export async function getConcept({
 
   const apiOptions = globalApiOptions(toggles);
 
-  const url = `${rootUris[apiOptions.env]}/v2/concepts/${id}`;
+  const url = `${rootUris[apiOptions.env]}/concepts/${id}`;
 
   const res = await wellcomeApiFetch(url, { redirect: 'manual' });
 

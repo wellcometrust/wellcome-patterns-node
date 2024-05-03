@@ -116,7 +116,7 @@ export async function getWork({
   };
 
   const searchParams = new URLSearchParams(propsToQuery(params)).toString();
-  const url = `${rootUris[apiOptions.env]}/v2/works/${id}?${searchParams}`;
+  const url = `${rootUris[apiOptions.env]}/works/${id}?${searchParams}`;
 
   const res = await wellcomeApiFetch(url, { redirect: 'manual' });
 
