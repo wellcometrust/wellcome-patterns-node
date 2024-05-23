@@ -7,7 +7,7 @@ import {
   useEffect,
   useContext,
 } from 'react';
-import { FixedSizeList, areEqual } from 'react-window';
+import { FixedSizeList, areEqual, VariableSizeList } from 'react-window';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components';
 import LL from '@weco/common/views/components/styled/LL';
@@ -26,6 +26,54 @@ import { fetchCanvasOcr } from '@weco/content/services/iiif/fetch/canvasOcr';
 import { transformCanvasOcr } from '@weco/content/services/iiif/transformers/canvasOcr';
 import { AuthExternalService } from '@iiif/presentation-3';
 import { queryParamToArrayIndex } from '.';
+import IIIFItem from '@weco/content/components/IIIFItem/IIIFItem';
+
+// TODO temporary styling
+// TODO don't really want to use this if poss.
+// Can we use VariableSizeList instead?
+// TODO pdf iframe viewer has spacing above it
+const ItemWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  /* right: 20px; */
+  right: 0;
+  padding: 0;
+
+  img,
+  figure,
+  .video {
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 80%;
+    max-height: 95%;
+  }
+
+  iframe {
+    /* TODO prevent the weird scrolling */
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .video {
+    /* TODO get rid of this wrapping div and class if possible */
+    video {
+      width: 100%;
+    }
+  }
+
+  img {
+    overflow: scroll; /* for alt text, which can be long */
+  }
+`;
 
 type OverlayPositionData = {
   canvasNumber: number;
@@ -81,6 +129,7 @@ type ItemRendererProps = {
     rotatedImages: RotatedImage[];
     errorHandler?: () => void;
     restrictedService: AuthExternalService | undefined;
+    placeholderId: string | undefined;
   };
 };
 
@@ -206,6 +255,7 @@ function getPositionData({
   });
   return highlightsPositioningData || [];
 }
+
 const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
   const { scrollVelocity, canvases, restrictedService } = data;
   const [mainLoaded, setMainLoaded] = useState(false);
@@ -266,6 +316,11 @@ const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
     }
   }, [imageRect, imageContainerRect, currentCanvas, searchResults]);
 
+  const displayItems =
+    currentCanvas.painting.length > 0
+      ? currentCanvas.painting
+      : currentCanvas.supplementing; // We fall back to supplementing for some of the pdfs
+
   return (
     <div style={style}>
       {scrollVelocity === 3 ? (
@@ -285,24 +340,41 @@ const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
       ) : (
         <>
           {!mainLoaded && <LL $lighten={true} />}
-          {(imageType === 'main' || mainLoaded) &&
+          {/* {(imageType === 'main' || mainLoaded) &&
             urlTemplateMain &&
-            infoUrl && (
-              <>
-                {overlayPositionData &&
-                  overlayPositionData.map((item, i) => {
-                    return (
-                      <SearchTermHighlight
-                        key={i}
-                        $top={item.overlayTop}
-                        $left={item.overlayLeft}
-                        $width={item.highlight.w}
-                        $height={item.highlight.h}
-                        $rotation={item.rotation}
-                      />
-                    );
-                  })}
-                <ImageViewer
+            infoUrl && ( */}
+          <>
+            {/* // TODO could rotated images just live on in MainViewer? */}
+            {overlayPositionData &&
+              overlayPositionData.map((item, i) => {
+                return (
+                  <SearchTermHighlight
+                    key={i}
+                    $top={item.overlayTop}
+                    $left={item.overlayLeft}
+                    $width={item.highlight.w}
+                    $height={item.highlight.h}
+                    $rotation={item.rotation}
+                  />
+                );
+              })}
+            {displayItems.map((item, i) => {
+              // TODO if it's a behavior placeholder, should we render text rather than the placeholder image?
+              // How could we know if it's a placeholder?
+              return (
+                <ItemWrapper key={i}>
+                  <IIIFItem
+                    placeholderId={data.placeholderId}
+                    item={item}
+                    canvas={currentCanvas}
+                    i={i}
+                    exclude={[]}
+                  />
+                </ItemWrapper>
+              );
+            })}
+            {/* //TODO replicate the other properties and what they're used for they should be on a wrapping component not the IIIFItem itself as much as possible */}
+            {/* <ImageViewer
                   id="item-page"
                   infoUrl={infoUrl}
                   width={currentCanvas.width || 0}
@@ -315,9 +387,9 @@ const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
                   }}
                   setImageRect={setImageRect}
                   setImageContainerRect={setImageContainerRect}
-                />
-              </>
-            )}
+                /> */}
+          </>
+          {/* )} */}
         </>
       )}
     </div>
@@ -342,6 +414,7 @@ function scrollViewer({
       ? currentCanvas.width > currentCanvas.height
       : false;
 
+  // TODO will VariableSizeList be better for this?
   // If an image is landscape, it will tend to appear too low in the viewport
   // on account of the FixedSizedList necessarily being comprised of square items.
   // To circumvent this, if the image is landscape
@@ -388,21 +461,26 @@ const MainViewer: FunctionComponent = () => {
   const debounceHandleOnItemsRendered = useRef(
     debounce(handleOnItemsRendered, 500)
   );
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
-  const { canvases, restrictedService } = { ...transformedManifest };
+  // const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const { canvases, restrictedService, placeholderId } = {
+    ...transformedManifest,
+  };
 
+  // TODO setShowControls elsewhere, where we determine the canvas index to display
   // We hide the zoom and rotation controls while the user is scrolling
-  function handleOnScroll({ scrollOffset }) {
-    timer.current && clearTimeout(timer.current);
-    setShowControls(false);
-    setNewScrollOffset(scrollOffset);
+  // TODO - PUT BACK?
+  // function handleOnScroll({ scrollOffset }) {
+  //   timer.current && clearTimeout(timer.current);
+  //   setShowControls(false);
+  //   setNewScrollOffset(scrollOffset);
 
-    timer.current = setTimeout(() => {
-      setShowControls(true);
-    }, 500);
-  }
+  //   timer.current = setTimeout(() => {
+  //     // TODO only if current canvas has image service
+  //     setShowControls(true);
+  //   }, 500);
+  // }
 
-  // We display the canvas indicated by the canvas when the page first loads
+  // We display the canvas indicated by the canvas (index) when the page first loads
   function handleOnItemsRendered() {
     let currentCanvas: TransformedCanvas | undefined;
     if (firstRenderRef.current) {
@@ -410,7 +488,8 @@ const MainViewer: FunctionComponent = () => {
       const viewer = mainViewerRef?.current;
       scrollViewer({ currentCanvas, canvas, viewer, mainAreaWidth });
       setFirstRender(false);
-      setShowControls(true);
+      // TODO if canvas has imageService then show controls
+      // setShowControls(true);
     }
   }
 
@@ -430,6 +509,28 @@ const MainViewer: FunctionComponent = () => {
 
   return (
     <div data-testid="main-viewer">
+      {/* // TODO use VariableSizeList row heights should be based on content */}
+      {/* <VariableSizeList
+        height={75}
+        itemCount={1000}
+        itemSize={() => mainAreaWidth}
+        layout="horizontal"
+        width={300}
+        itemData={{
+          scrollVelocity,
+          canvases: canvases || [],
+          setShowZoomed,
+          rotatedImages,
+          errorHandler,
+          restrictedService,
+          canvas,
+        }}
+        onItemsRendered={debounceHandleOnItemsRendered.current}
+        onScroll={handleOnScroll}
+        ref={mainViewerRef}
+      >
+        {ItemRenderer}
+      </VariableSizeList> */}
       <FixedSizeList
         width={mainAreaWidth}
         style={{ width: `${mainAreaWidth}px`, margin: '0 auto' }}
@@ -443,6 +544,7 @@ const MainViewer: FunctionComponent = () => {
           errorHandler,
           restrictedService,
           canvas,
+          placeholderId,
         }}
         itemSize={mainAreaWidth}
         onItemsRendered={debounceHandleOnItemsRendered.current}

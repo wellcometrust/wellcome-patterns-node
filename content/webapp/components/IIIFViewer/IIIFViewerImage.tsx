@@ -2,14 +2,18 @@ import { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { convertIiifImageUri } from '@weco/common/utils/convert-image-uri';
 import { convertRequestUriToInfoUri } from '@weco/content/utils/convert-iiif-uri';
+
+// ?? TODO only use this for thumbnails once IIIFItem is working and possibly simplify
+// TODO used for iiifImageLocation?
+
 async function getImageMax(url: string): Promise<number> {
   try {
     const infoUrl = convertRequestUriToInfoUri(url);
-    const resp = await fetch(infoUrl + 'll');
+    const resp = await fetch(infoUrl);
     const info = await resp.json();
     // N.B property is called maxWidth, but it is actually the max allowed for the longest side, see https://wellcome.slack.com/archives/CBT40CMKQ/p1702897884100559
     const max = info.profile?.find(item => item.maxWidth)?.maxWidth || 1000;
-    return max || 1001;
+    return max;
   } catch {
     return 1000;
   }
@@ -78,6 +82,7 @@ const IIIFViewerImage = (
           clickHandler && clickHandler();
         }
       }}
+      // TODO move this into IIIFItem
       onError={async ({ currentTarget }) => {
         // Hack/workaround
         // If the image fails to load it may be because of a size limit,

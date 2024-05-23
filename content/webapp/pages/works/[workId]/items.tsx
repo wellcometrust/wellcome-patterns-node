@@ -207,7 +207,7 @@ const ItemPage: NextPage<Props> = ({
       If it has one we show the IIIFItemList
       */}
 
-      {(!hasImage || hasPdf) && showViewer && (
+      {/* {(!hasImage || hasPdf) && showViewer && (
         <Layout gridSizes={gridSize12()}>
           <Space
             className="body-text"
@@ -220,7 +220,7 @@ const ItemPage: NextPage<Props> = ({
             />
           </Space>
         </Layout>
-      )}
+      )} */}
 
       <Modal
         id="auth-modal"
@@ -268,23 +268,23 @@ const ItemPage: NextPage<Props> = ({
         </div>
       </Modal>
 
-      {showViewer &&
-        ((mainImageService && currentCanvas) || iiifImageLocation) && (
-          <IIIFViewer
-            work={work}
-            transformedManifest={transformedManifest}
-            canvasOcr={canvasOcr}
-            iiifImageLocation={iiifImageLocation}
-            iiifPresentationLocation={iiifPresentationLocation}
-            handleImageError={() => {
-              // If the image fails to load, we check to see if it's because the cookie is missing/no longer valid
-              reloadAuthIframe(document, iframeId);
-            }}
-            searchResults={searchResults}
-            setSearchResults={setSearchResults}
-            parentManifest={parentManifest}
-          />
-        )}
+      {/* {showViewer &&
+        ((mainImageService && currentCanvas) || iiifImageLocation) && ( */}
+      <IIIFViewer
+        work={work}
+        transformedManifest={transformedManifest}
+        canvasOcr={canvasOcr}
+        iiifImageLocation={iiifImageLocation}
+        iiifPresentationLocation={iiifPresentationLocation}
+        handleImageError={() => {
+          // If the image fails to load, we check to see if it's because the cookie is missing/no longer valid
+          reloadAuthIframe(document, iframeId);
+        }}
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
+        parentManifest={parentManifest}
+      />
+      {/* )} */}
     </CataloguePageLayout>
   );
 };

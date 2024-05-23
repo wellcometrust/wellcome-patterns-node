@@ -342,6 +342,7 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
           $isFullSupportBrowser={isFullSupportBrowser}
         >
           <DelayVisibility>
+            {/* TODO need only show these on images - should they be moved to image */}
             {!showZoomed && <ImageViewerControls />}
             {hasIiifImage && !hasImageService && isFullSupportBrowser && (
               <ImageViewer
@@ -361,9 +362,9 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
             )}
 
             {/* If we hide the MainViewer when resizing the browser, it will then rerender with the correct canvas displayed */}
-            {hasImageService && !isResizing && isFullSupportBrowser && (
-              <MainViewer />
-            )}
+            {/* {hasImageService && !isResizing && isFullSupportBrowser && ( */}
+            <MainViewer />
+            {/* )} */}
           </DelayVisibility>
         </Main>
         {showZoomed && isFullSupportBrowser && (

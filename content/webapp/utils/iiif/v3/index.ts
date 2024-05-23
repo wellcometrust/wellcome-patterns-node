@@ -23,6 +23,7 @@ import {
   RangeItems,
   TechnicalProperties,
   CollectionItems,
+  ImageService,
 } from '@iiif/presentation-3';
 import { isString } from '@weco/common/utils/type-guards';
 import { getThumbnailImage, getOriginal } from './canvas';
@@ -77,9 +78,10 @@ export type BornDigitalManifest = Omit<Manifest, 'items'> & {
 };
 
 function convertToDownloadOption(item): DownloadOption {
+  // TODO type this
   return {
     id: item.id,
-    label: transformLabel(item.label) || 'Download file',
+    label: transformLabel(item.label) || 'Download file', // TODO only place this is used - do we need it?
     format: item.format || '',
   };
 }
@@ -174,6 +176,12 @@ export const isChoiceBody = (
 type AnnotationPageBody = {
   service: BodyService;
 };
+
+export function getImageService2( // TODO types remove 2 when replace getImageService
+  item: ContentResource | CustomContentResource
+): ImageService | undefined {
+  return item.service?.find(s => s['@type'] === 'ImageService2');
+}
 
 function getImageService(canvas: Canvas): BodyService | undefined {
   const items = canvas?.items;

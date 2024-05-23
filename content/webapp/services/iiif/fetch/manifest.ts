@@ -25,6 +25,10 @@ export async function fetchIIIFPresentationManifest(
   // we'll want the catalogue API to return v3, then we can stop doing the following
   const v3Location = location.replace('/v2/', '/v3/');
 
+  // const v3Location =
+  //   'https://iiif-stage.wellcomecollection.org/presentation/PPKIN/B/2/5/3';
+  // const v3Location =
+  //   'https://iiif-stage.wellcomecollection.org/presentation/SAWFO/J/4';
   const iiifManifest = await getIIIFManifest(v3Location);
 
   return iiifManifest;

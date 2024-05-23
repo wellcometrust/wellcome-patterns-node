@@ -23,7 +23,10 @@ import { getDownloadOptionsFromImageUrl } from '@weco/content/utils/works';
 import {
   getDownloadOptionsFromCanvasRenderingAndSupplementing,
   getDownloadOptionsFromManifestRendering,
+  getImageService2,
+  isChoiceBody,
 } from '@weco/content/utils/iiif/v3';
+import { ImageService } from '@iiif/presentation-3';
 import useTransformedIIIFImage from '@weco/content/hooks/useTransformedIIIFImage';
 import { OptionalToUndefined } from '@weco/common/utils/utility-types';
 
@@ -214,10 +217,19 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
     viewerRef,
   } = useContext(ItemViewerContext);
   const { canvas } = query;
-  const { canvases, rendering } = { ...transformedManifest };
+  const { canvases, rendering } = { ...transformedManifest }; // TODO what is rendering again?
   const currentCanvas = canvases?.[queryParamToArrayIndex(query.canvas)];
-  const mainImageService = { '@id': currentCanvas?.imageServiceId };
   const transformedIIIFImage = useTransformedIIIFImage(work);
+  const imageServices = (currentCanvas?.painting
+    .map(p => {
+      if (isChoiceBody(p)) {
+        return p.items.map(getImageService2);
+      } else {
+        return getImageService2(p);
+      }
+    })
+    .flat()
+    .filter(Boolean) || []) as ImageService[];
 
   // Works can have a DigitalLocation of type iiif-presentation and/or iiif-image.
   // For a iiif-presentation DigitalLocation we get the download options from the manifest to which it points.
@@ -238,17 +250,22 @@ const ViewerTopBar: FunctionComponent<ViewerTopBarProps> = ({
 
   // We also want to offer download options for each canvas image
   // in the iiif-presentation manifest when it is being viewed.
-  const canvasImageDownloads = mainImageService['@id']
-    ? getDownloadOptionsFromImageUrl({
-        url: mainImageService['@id'],
-        // TODO the dimensions should really be from the painting width and height, not the canvas
-        // it is coincidental that the canvas width and height are the same as the painting width and height
-        // Fix this if/when we remove imageServiceId from the TransformedCanvas
-        // in favour of using the painting property to find the image/image service
-        width: currentCanvas && currentCanvas.width,
-        height: currentCanvas && currentCanvas.height,
-      })
-    : [];
+  const canvasImageDownloads = imageServices
+    .map(imageService => {
+      if (imageService['@id']) {
+        return getDownloadOptionsFromImageUrl({
+          url: imageService['@id'],
+          width: imageService.width || undefined,
+          height: imageService.height || undefined,
+        });
+      } else {
+        return [];
+      }
+    })
+    .flat()
+    .filter(Boolean);
+
+  console.log(canvasImageDownloads);
 
   const canvasDownloadOptions = currentCanvas
     ? getDownloadOptionsFromCanvasRenderingAndSupplementing(currentCanvas)

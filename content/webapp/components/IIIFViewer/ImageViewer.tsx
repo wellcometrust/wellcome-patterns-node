@@ -116,6 +116,7 @@ const ImageViewer: FunctionComponent<ImageViewerProps> = ({
 
   // If the visible canvas changes because it is scrolled into view
   // we update the canvas param to match
+  // TODO put this in iiifItem and use to showControls?
   useSkipInitialEffect(() => {
     if (isOnScreen && transformedManifest) {
       const link = itemLink({

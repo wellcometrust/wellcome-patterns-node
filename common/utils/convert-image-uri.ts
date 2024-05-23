@@ -2,6 +2,7 @@ import urlTemplate from 'url-template';
 
 const prismicBaseUri = 'https://images.prismic.io/wellcomecollection';
 const iiifImageUri = 'https://iiif.wellcomecollection.org/image/';
+const iiifImageStageUri = 'https://iiif-stage.wellcomecollection.org/image/'; // TODO temporary
 
 function determineSrc(url: string): string {
   if (url.startsWith(prismicBaseUri)) {
@@ -103,17 +104,27 @@ export function convertIiifImageUri(
   requiredSize: number | 'full',
   sizeByHeight?: boolean
 ): string {
-  if (determineIfGif(originalUri) || !originalUri.startsWith(iiifImageUri)) {
+  if (
+    determineIfGif(originalUri) ||
+    (!originalUri.startsWith(iiifImageUri) &&
+      !originalUri.startsWith(iiifImageStageUri))
+  ) {
     return originalUri;
   } else {
-    const imageIdentifier = originalUri.split(iiifImageUri)[1].split('/', 2)[0];
+    const imageIdentifier = originalUri.startsWith(iiifImageUri)
+      ? originalUri.split(iiifImageUri)[1].split('/', 2)[0]
+      : originalUri.split(iiifImageStageUri)[1].split('/', 2)[0];
 
     const size = sizeByHeight ? `,${requiredSize}` : `${requiredSize},`;
     const params = {
       size: requiredSize === 'full' ? 'full' : `${size}`,
       format: determineFinalFormat(originalUri),
     };
-    return iiifImageTemplate(`${iiifImageUri}${imageIdentifier}`)(params);
+    return iiifImageTemplate(
+      `${
+        originalUri.startsWith(iiifImageUri) ? iiifImageUri : iiifImageStageUri
+      }${imageIdentifier}`
+    )(params);
   }
 }
 
