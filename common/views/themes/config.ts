@@ -1,5 +1,23 @@
 import { keyframes } from 'styled-components';
 import { ButtonColors } from '@weco/common/views/components/Buttons';
+import { tokens } from 'wellcome-design-system';
+
+// TODO: there's definitely a better way to get unitless values out of
+// Tokens Studio/Style Dictionary instead of doing this
+function removeUnit(obj, unit) {
+  const unitlessObj = {};
+
+  const unitLength = unit.length;
+  Object.keys(obj).forEach(key => {
+    const value = obj[key];
+    const noUnit = value.slice(0, -unitLength);
+    unitlessObj[key] = noUnit;
+  });
+
+  return unitlessObj;
+}
+
+const unitlessSpace = removeUnit(tokens.space.scale, 'px');
 
 export type ColumnKey =
   | 's'
@@ -71,16 +89,16 @@ const grid: GridConfig = {
 };
 
 export const spacingUnits = {
-  '1': 4,
-  '2': 6,
-  '3': 8,
-  '4': 12,
-  '5': 16,
-  '6': 24,
-  '7': 30,
-  '8': 32,
-  '9': 46,
-  '10': 64,
+  '1': unitlessSpace['050'],
+  '2': unitlessSpace['050'], // was 6, now 4 (duplicate)
+  '3': unitlessSpace['100'],
+  '4': unitlessSpace['150'],
+  '5': unitlessSpace['200'],
+  '6': unitlessSpace['300'],
+  '7': unitlessSpace['400'], // was 30, now 32 (duplicate)
+  '8': unitlessSpace['400'],
+  '9': unitlessSpace['600'],
+  '10': unitlessSpace['800'],
 };
 
 // suggested new colors

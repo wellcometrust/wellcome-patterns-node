@@ -15,9 +15,6 @@ import { fonts } from './base/fonts';
 import { themeValues, spacingUnits, Size } from './config';
 import { grid } from './grid';
 import { Toggles } from '@weco/toggles';
-import { tokens } from 'wellcome-design-system';
-
-console.log(tokens); // TODO: do something with these!
 
 type SpaceSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 type SpaceProperty =
