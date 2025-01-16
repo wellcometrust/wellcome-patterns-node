@@ -133,7 +133,8 @@ const Accordion: FunctionComponent<Props> = ({
             <SummaryInner>
               {item.summary}{' '}
               <span style={{ display: 'flex' }}>
-                <ShowHide></ShowHide>
+                {/* Changing the pseudo text from 'show' to 'hide' based on the presence of the `open` attribute prevents some screenreaders from announcing the change of state from 'collapsed' to 'expanded'. Hiding this text with `aria-hidden` fixes the issue. */}
+                <ShowHide aria-hidden="true"></ShowHide>
                 <Icon icon={chevron} />
               </span>
             </SummaryInner>
