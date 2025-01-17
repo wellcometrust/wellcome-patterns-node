@@ -36,27 +36,27 @@ const linkKeys = {
 
 const keysById = {
   worksAbout: {
-    filters: ['subjects', 'subjects.concepts'],
+    filters: ['subjects'],
     fields: ['id', 'sameAs'],
   },
   worksBy: {
-    filters: ['contributors.agent', 'contributors.concepts'],
+    filters: ['contributors.agent'],
     fields: ['id', 'sameAs'],
   },
   imagesAbout: {
-    filters: ['source.subjects', 'source.subjects.concepts'],
+    filters: ['source.subjects'],
     fields: ['id', 'sameAs'],
   },
   imagesBy: {
-    filters: ['source.contributors.agent', 'source.contributors.concepts'],
+    filters: ['source.contributors.agent'],
     fields: ['id', 'sameAs'],
   },
   worksIn: {
-    filters: ['genres', 'genres.concepts'],
+    filters: ['genres'],
     fields: ['id', 'sameAs'],
   },
   imagesIn: {
-    filters: ['source.genres', 'source.genres.concepts'],
+    filters: ['source.genres'],
     fields: ['id', 'sameAs'],
   },
 };

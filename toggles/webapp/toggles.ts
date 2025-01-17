@@ -96,10 +96,10 @@ const toggles = {
     },
     {
       id: 'conceptsById',
-      title: 'Concept Pages by ID',
+      title: 'Concepts Improvements',
       initialValue: false,
       description:
-        'Use the new concept ID filters & aggregatiuons in the search API to query for works & images by ID rather than label.',
+        'Use the new concept ID filters & aggregations in the search API to query for works & images by ID rather than label.',
       type: 'experimental',
     },
     {
