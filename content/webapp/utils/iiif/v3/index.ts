@@ -13,6 +13,7 @@ import {
   Collection,
   CollectionItems,
   ContentResource,
+  ImageService,
   InternationalString,
   Manifest,
   MetadataItem,
@@ -23,6 +24,7 @@ import {
 } from '@iiif/presentation-3';
 
 import { isString } from '@weco/common/utils/type-guards';
+import { IIIFItemProps } from '@weco/content/components/IIIFItem/IIIFItem';
 import {
   Auth,
   AuthClickThroughServiceWithPossibleServiceArray,
@@ -170,9 +172,7 @@ function getCanvasTextServiceId(canvas: Canvas): string | undefined {
   return textAnnotation?.id;
 }
 
-export const isChoiceBody = (
-  item: ContentResource | ChoiceBody
-): item is ChoiceBody => {
+export const isChoiceBody = (item: IIIFItemProps): item is ChoiceBody => {
   return typeof item !== 'string' && 'type' in item && item.type === 'Choice';
 };
 
@@ -181,7 +181,17 @@ type AnnotationPageBody = {
   service: BodyService;
 };
 
-function getImageService(canvas: Canvas): BodyService | undefined {
+export function getImageServiceFromItem(
+  item: IIIFItemProps
+): ImageService | undefined {
+  if ('service' in item) {
+    return item.service?.find(
+      s => s['@type'] === 'ImageService2'
+    ) as ImageService;
+  }
+}
+
+function getImageServiceFromCanvas(canvas: Canvas): BodyService | undefined {
   const items = canvas?.items;
   const AnnotationPages = items?.[0].items;
   const AnnotationBodies = AnnotationPages?.map(
@@ -299,7 +309,7 @@ const restrictedAuthServiceUrls = [
 // We want to move to using v2, but can't guarantee all manifests will include them (they need to be recently generated to have the v2 services).
 // Therefore we check for both. When all manifests have V2 we can remove the V1 code.
 function isImageRestricted(canvas: Canvas): boolean {
-  const imageService = getImageService(canvas);
+  const imageService = getImageServiceFromCanvas(canvas);
   const imageAuthCookieService = getImageAuthCookieService(imageService); // V1 service
   const v2Services = imageService?.service as BodyService2;
   const imageAuthProbeService = getImageAuthProbeService(v2Services || []); // V2 service
@@ -474,7 +484,7 @@ export function getDisplayData(
     .filter(Boolean) as (ChoiceBody | ContentResource)[];
 }
 export function transformCanvas(canvas: Canvas): TransformedCanvas {
-  const imageService = getImageService(canvas);
+  const imageService = getImageServiceFromCanvas(canvas);
   const imageServiceId = getImageServiceId(imageService);
   const hasRestrictedImage = isImageRestricted(canvas);
   const label = getCanvasLabel(canvas);
@@ -652,7 +662,7 @@ export function getOriginalFiles(
   return downloadData || [];
 }
 
-// If we have a files size, it is found in the metadata array of the canvas
+// If we have a file size, it is found in the metadata array of the canvas
 export function getFileSize(canvas: TransformedCanvas): string | undefined {
   const fileSizeMeta = canvas.metadata.find(
     metadata => getLabelString(metadata.label) === 'File size'

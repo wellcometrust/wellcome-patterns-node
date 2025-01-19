@@ -1,3 +1,4 @@
+import { AuthExternalService } from '@iiif/presentation-3';
 import debounce from 'lodash.debounce';
 import {
   CSSProperties,
@@ -12,23 +13,60 @@ import { areEqual, FixedSizeList } from 'react-window';
 import styled from 'styled-components';
 
 import { font } from '@weco/common/utils/classnames';
-import { iiifImageTemplate } from '@weco/common/utils/convert-image-uri';
 import LL from '@weco/common/views/components/styled/LL';
 import { useUser } from '@weco/common/views/components/UserProvider/UserProvider';
+import IIIFItem from '@weco/content/components/IIIFItem/IIIFItem';
 import ItemViewerContext, {
   RotatedImage,
 } from '@weco/content/components/ItemViewerContext/ItemViewerContext';
 import useScrollVelocity from '@weco/content/hooks/useScrollVelocity';
-import { fetchCanvasOcr } from '@weco/content/services/iiif/fetch/canvasOcr';
-import { transformCanvasOcr } from '@weco/content/services/iiif/transformers/canvasOcr';
 import { SearchResults } from '@weco/content/services/iiif/types/search/v3';
-import { missingAltTextMessage } from '@weco/content/services/wellcome/catalogue/works';
 import { TransformedCanvas } from '@weco/content/types/manifest';
-import { convertRequestUriToInfoUri } from '@weco/content/utils/iiif/convert-iiif-uri';
 import { TransformedAuthService } from '@weco/content/utils/iiif/v3';
 
 import { queryParamToArrayIndex } from '.';
-import ImageViewer from './ImageViewer';
+
+// Temporary styling for viewer to display audio, video and pdfs
+// will be tidied up in future work
+const ItemWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  right: 0;
+  padding: 0;
+
+  figure,
+  .video {
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 80%;
+    max-height: 95%;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .video {
+    video {
+      width: 100%;
+    }
+  }
+
+  img {
+    overflow: scroll; /* for alt text, which can be long */
+  }
+`;
+
 type OverlayPositionData = {
   canvasNumber: number;
   overlayTop: number;
@@ -84,6 +122,8 @@ type ItemRendererProps = {
     errorHandler?: () => void;
     externalAccessService: TransformedAuthService | undefined;
     accessToken?: string;
+    restrictedService: AuthExternalService | undefined;
+    placeholderId: string | undefined;
   };
 };
 
@@ -167,7 +207,7 @@ function getPositionData({
   canvases: TransformedCanvas[];
   rotatedImages: RotatedImage[];
 }): OverlayPositionData[] {
-  const highlightsPositioningData = searchResults?.resources.map(resource => {
+  const searchHitsPositioningData = searchResults?.resources.map(resource => {
     // on: "https://wellcomelibrary.org/iiif/b30330002/canvas/c55#xywh=2301,662,157,47"
     // OR
     // on: https://iiif.wellcomecollection.org/presentation/b29338062/canvases/b29338062_0031.jp2#xywh=148,2277,259,59"
@@ -207,50 +247,34 @@ function getPositionData({
       rotation: matchingRotation?.rotation || 0,
     };
   });
-  return highlightsPositioningData || [];
+  return searchHitsPositioningData || [];
 }
+
 const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
-  const { scrollVelocity, canvases, externalAccessService } = data;
-  const [mainLoaded, setMainLoaded] = useState(false);
+  const { scrollVelocity, canvases, externalAccessService, placeholderId } =
+    data;
   const currentCanvas = canvases[index];
   const { userIsStaffWithRestricted } = useUser();
-  const urlTemplateMain = currentCanvas.imageServiceId
-    ? iiifImageTemplate(currentCanvas.imageServiceId)
-    : undefined;
-  const infoUrl =
-    currentCanvas.imageServiceId &&
-    convertRequestUriToInfoUri(currentCanvas.imageServiceId);
-  const imageType = scrollVelocity >= 1 ? 'none' : 'main';
   const isRestricted = currentCanvas.hasRestrictedImage;
   const { searchResults, rotatedImages } = useContext(ItemViewerContext);
   const [imageRect, setImageRect] = useState<DOMRect | undefined>();
   const [imageContainerRect, setImageContainerRect] = useState<
     DOMRect | undefined
   >();
-  const [ocrText, setOcrText] = useState(missingAltTextMessage);
 
   const [overlayPositionData, setOverlayPositionData] = useState<
     OverlayPositionData[]
   >([]);
-
-  useEffect(() => {
-    const fetchOcr = async () => {
-      const ocrText = await fetchCanvasOcr(canvases[index]);
-      const ocrString = transformCanvasOcr(ocrText);
-      setOcrText(ocrString || missingAltTextMessage);
-    };
-    fetchOcr();
-  }, []);
-
   useEffect(() => {
     // The search hit dimensions and coordinates are given relative to the full size image.
-    // The highlights are positioned relative to the image container.
-    // Therefore, in order to display the highlights correctly over the search hits,
+    // The highlight overlays are positioned relative to the image container.
+    // Therefore, in order to display the highlight overlays correctly over the search hits,
     // we need to get the position of the image relative to the container and the display scale of the image relative to the full size.
-    // We then need to calculate the position of the highlight factoring in the orientation of the image.
+    // We then need to calculate the position of the highlight overlays factoring in the orientation of the image.
     // This needs to be recalculated whenever the image changes size or orientation.
-    const highlightsPositioningData =
+    const searchHitsPositioningData =
       imageContainerRect &&
+
       imageRect &&
       getPositionData({
         imageContainerRect,
@@ -260,14 +284,19 @@ const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
         canvases,
         rotatedImages,
       });
-    if (highlightsPositioningData) {
+    if (searchHitsPositioningData) {
       setOverlayPositionData(
-        highlightsPositioningData.filter(item => {
+        searchHitsPositioningData.filter(item => {
           return item.canvasNumber === index;
         })
       );
     }
   }, [imageRect, imageContainerRect, currentCanvas, searchResults]);
+
+  const displayItems =
+    currentCanvas.painting.length > 0
+      ? currentCanvas.painting
+      : currentCanvas.supplementing; // We fall back to supplementing for some of the pdfs
 
   return (
     <div style={style}>
@@ -292,40 +321,57 @@ const ItemRenderer = memo(({ style, index, data }: ItemRendererProps) => {
         </MessageContainer>
       ) : (
         <>
-          {!mainLoaded && <LL $lighten={true} />}
-          {(imageType === 'main' || mainLoaded) &&
-            urlTemplateMain &&
-            infoUrl && (
-              <>
-                {overlayPositionData &&
-                  overlayPositionData.map((item, i) => {
+          {overlayPositionData &&
+            overlayPositionData.map((item, i) => {
+              return (
+                <SearchTermHighlight
+                  key={i}
+                  $top={item.overlayTop}
+                  $left={item.overlayLeft}
+                  $width={item.highlight.w}
+                  $height={item.highlight.h}
+                  $rotation={item.rotation}
+                />
+              );
+            })}
+
+          {displayItems.map((item, i) => {
+            return (
+              <ItemWrapper key={i}>
+                {currentCanvas.painting.length > 0 &&
+                  currentCanvas.painting.map((item, i) => {
                     return (
-                      <SearchTermHighlight
+                      <IIIFItem
                         key={i}
-                        $top={item.overlayTop}
-                        $left={item.overlayLeft}
-                        $width={item.highlight.w}
-                        $height={item.highlight.h}
-                        $rotation={item.rotation}
+                        placeholderId={placeholderId}
+                        item={item}
+                        canvas={currentCanvas}
+                        i={index}
+                        exclude={[]}
+                        setImageRect={setImageRect}
+                        setImageContainerRect={setImageContainerRect}
                       />
                     );
                   })}
-                <ImageViewer
-                  id="item-page"
-                  infoUrl={infoUrl}
-                  width={currentCanvas.width || 0}
-                  height={currentCanvas.height || 0}
-                  alt={ocrText}
-                  urlTemplate={urlTemplateMain}
-                  index={index}
-                  loadHandler={() => {
-                    setMainLoaded(true);
-                  }}
-                  setImageRect={setImageRect}
-                  setImageContainerRect={setImageContainerRect}
-                />
-              </>
-            )}
+                {/* Pdfs added to manifests before the DLCS changes, that took place in May 2023, are available from the supplementing property */}
+                {currentCanvas.painting.length === 0 &&
+                  currentCanvas.supplementing.map((item, i) => {
+                    return (
+                      <IIIFItem
+                        key={i}
+                        placeholderId={placeholderId}
+                        item={item}
+                        canvas={currentCanvas}
+                        i={index}
+                        exclude={[]}
+                        setImageRect={setImageRect}
+                        setImageContainerRect={setImageContainerRect}
+                      />
+                    );
+                  })}
+              </ItemWrapper>
+            );
+          })}
         </>
       )}
     </div>
@@ -398,7 +444,7 @@ const MainViewer: FunctionComponent = () => {
     debounce(handleOnItemsRendered, 500)
   );
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
-  const { canvases, auth } = {
+  const { canvases, auth, placeholderId } = {
     ...transformedManifest,
   };
 
@@ -417,7 +463,7 @@ const MainViewer: FunctionComponent = () => {
     }, 500);
   }
 
-  // We display the canvas indicated by the canvas when the page first loads
+  // We display the canvas indicated by the canvas (index) when the page first loads
   function handleOnItemsRendered() {
     let currentCanvas: TransformedCanvas | undefined;
     if (firstRenderRef.current) {
@@ -425,7 +471,6 @@ const MainViewer: FunctionComponent = () => {
       const viewer = mainViewerRef?.current;
       scrollViewer({ currentCanvas, canvas, viewer, mainAreaWidth });
       setFirstRender(false);
-      setShowControls(true);
     }
   }
 
@@ -459,6 +504,7 @@ const MainViewer: FunctionComponent = () => {
           externalAccessService,
           canvas,
           accessToken,
+          placeholderId,
         }}
         itemSize={mainAreaWidth}
         onItemsRendered={debounceHandleOnItemsRendered.current}

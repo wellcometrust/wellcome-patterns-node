@@ -128,7 +128,7 @@ const ItemPage: NextPage<Props> = ({
 }) => {
   useHotjar(true);
   const { userIsStaffWithRestricted } = useUser();
-  const { authV2 } = useToggles();
+  const { authV2, extendedViewer } = useToggles();
   const transformedManifest =
     compressedTransformedManifest &&
     fromCompressedManifest(compressedTransformedManifest);
@@ -266,10 +266,9 @@ const ItemPage: NextPage<Props> = ({
       will have a hasImage value of true.
       However, we don't show the viewer for these items,
       so we check for the presence of a pdf in the original property of the canvas.
-      If it has one we show the IIIFItemList
+      If it has one we show the IIIFItemList, unless we are using the extended viewer.
       */}
-
-      {(!hasImage || hasPdf) && showViewer && (
+      {(!hasImage || hasPdf) && showViewer && !extendedViewer && (
         <ContaineredLayout gridSizes={gridSize12()}>
           <Space
             className="body-text"
@@ -331,7 +330,9 @@ const ItemPage: NextPage<Props> = ({
       </Modal>
 
       {showViewer &&
-        ((mainImageService && currentCanvas) || iiifImageLocation) && (
+        ((mainImageService && currentCanvas) ||
+          iiifImageLocation ||
+          extendedViewer) && (
           <IIIFViewer
             work={work}
             transformedManifest={transformedManifest}

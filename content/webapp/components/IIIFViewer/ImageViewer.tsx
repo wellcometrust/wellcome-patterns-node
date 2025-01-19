@@ -49,8 +49,8 @@ type ImageViewerProps = {
   urlTemplate: (v: IIIFUriProps) => string;
   loadHandler?: () => void;
   index: number;
-  setImageRect: (v: DOMRect) => void;
-  setImageContainerRect: (v: DOMRect) => void;
+  setImageRect?: (v: DOMRect) => void;
+  setImageContainerRect?: (v: DOMRect) => void;
 };
 
 const ImageViewer: FunctionComponent<ImageViewerProps> = ({
@@ -73,11 +73,11 @@ const ImageViewer: FunctionComponent<ImageViewerProps> = ({
     rotatedImages,
     transformedManifest,
   } = useContext(ItemViewerContext);
-  const imageViewer = useRef<HTMLDivElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen({
     root: mainAreaRef?.current || undefined,
-    ref: imageViewer || undefined,
+    ref: imageWrapperRef || undefined,
     threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
   });
   const [imageSrc, setImageSrc] = useState(urlTemplate({ size: '640,' }));
@@ -100,12 +100,13 @@ const ImageViewer: FunctionComponent<ImageViewerProps> = ({
 
   function updateImagePosition() {
     const imageRect = imageRef?.current?.getBoundingClientRect();
-    const imageContainerRect = imageViewer?.current?.getBoundingClientRect();
+    const imageContainerRect =
+      imageWrapperRef?.current?.getBoundingClientRect();
     if (imageRect) {
-      setImageRect(imageRect);
+      setImageRect && setImageRect(imageRect);
     }
     if (imageContainerRect) {
-      setImageContainerRect(imageContainerRect);
+      setImageContainerRect && setImageContainerRect(imageContainerRect);
     }
   }
 
@@ -163,7 +164,7 @@ const ImageViewer: FunctionComponent<ImageViewerProps> = ({
   }, []);
 
   return (
-    <ImageWrapper onLoad={loadHandler} ref={imageViewer}>
+    <ImageWrapper onLoad={loadHandler} ref={imageWrapperRef}>
       <IIIFViewerImage
         index={index}
         ref={imageRef}

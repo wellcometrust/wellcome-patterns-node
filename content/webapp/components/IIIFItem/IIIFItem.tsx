@@ -3,10 +3,11 @@ import {
   ContentResource,
   InternationalString,
 } from '@iiif/presentation-3';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { unavailableContentMessage } from '@weco/common/data/microcopy';
+import { iiifImageTemplate } from '@weco/common/utils/convert-image-uri';
 import {
   ContaineredLayout,
   gridSize12,
@@ -14,20 +15,27 @@ import {
 import Space from '@weco/common/views/components/styled/Space';
 import AudioPlayer from '@weco/content/components/AudioPlayer/AudioPlayer';
 import BetaMessage from '@weco/content/components/BetaMessage/BetaMessage';
+import ImageViewer from '@weco/content/components/IIIFViewer/ImageViewer';
 import VideoPlayer from '@weco/content/components/VideoPlayer/VideoPlayer';
 import VideoTranscript from '@weco/content/components/VideoTranscript/VideoTranscript';
+import { fetchCanvasOcr } from '@weco/content/services/iiif/fetch/canvasOcr';
+import { transformCanvasOcr } from '@weco/content/services/iiif/transformers/canvasOcr';
+import { missingAltTextMessage } from '@weco/content/services/wellcome/catalogue/works';
 import {
   CustomContentResource,
   TransformedCanvas,
 } from '@weco/content/types/manifest';
-import { getLabelString } from '@weco/content/utils/iiif/v3';
+import { convertRequestUriToInfoUri } from '@weco/content/utils/iiif/convert-iiif-uri';
+import {
+  getImageServiceFromItem,
+  getLabelString,
+} from '@weco/content/utils/iiif/v3';
 
 const IframePdfViewer = styled(Space)`
   width: 90vw;
   height: 90vh;
   display: block;
   border: 0;
-  margin-top: 98px;
   margin-left: auto;
   margin-right: auto;
 `;
@@ -57,19 +65,62 @@ const Choice: FunctionComponent<
   return null;
 };
 
+const IIIFImage: FunctionComponent<{
+  index: number;
+  item: ItemProps['item'];
+  canvas: TransformedCanvas;
+  setImageRect?: (v: DOMRect) => void;
+  setImageContainerRect?: (v: DOMRect) => void;
+}> = ({ index, item, canvas, setImageRect, setImageContainerRect }) => {
+  const [ocrText, setOcrText] = useState(missingAltTextMessage);
+  const imageService = getImageServiceFromItem(item);
+  const imageUrl = imageService?.['@id'] || '';
+  const infoUrl = convertRequestUriToInfoUri(imageUrl);
+  const urlTemplate = imageUrl ? iiifImageTemplate(imageUrl) : undefined;
+  useEffect(() => {
+    const fetchOcr = async () => {
+      const ocrText = await fetchCanvasOcr(canvas);
+      const ocrString = transformCanvasOcr(ocrText);
+      setOcrText(ocrString || missingAltTextMessage);
+    };
+    fetchOcr();
+  }, []);
+
+  if (urlTemplate) {
+    return (
+      <ImageViewer
+        infoUrl={infoUrl}
+        id={imageUrl}
+        width={canvas.width || 0}
+        height={canvas.height || 0}
+        index={index}
+        alt={ocrText}
+        urlTemplate={urlTemplate}
+        setImageRect={setImageRect}
+        setImageContainerRect={setImageContainerRect}
+      />
+    );
+  } else {
+    return <img src={item.id} alt={ocrText} />;
+  }
+};
+
+// Some of our ContentResources can have a type of 'Audio':
+// https://iiif.wellcomecollection.org/presentation/v3/b17276342
+export type IIIFItemProps =
+  | (Omit<ContentResource, 'type'> & {
+      type: ContentResource['type'] | 'Audio';
+    })
+  | CustomContentResource
+  | ChoiceBody;
 type ItemProps = {
   canvas: TransformedCanvas;
-  // Some of our ContentResources can have a type of 'Audio':
-  // https://iiif.wellcomecollection.org/presentation/v3/b17276342
-  item:
-    | (Omit<ContentResource, 'type'> & {
-        type: ContentResource['type'] | 'Audio';
-      })
-    | CustomContentResource
-    | ChoiceBody;
+  item: IIIFItemProps;
   placeholderId: string | undefined;
   i: number;
-  exclude: (ContentResource['type'] | 'Audio' | ChoiceBody['type'])[]; // allows us to exclude certain types from being rendered
+  exclude: (ContentResource['type'] | 'Audio' | ChoiceBody['type'])[]; // Allows us to prevent specific types being rendered
+  setImageRect?: (v: DOMRect) => void;
+  setImageContainerRect?: (v: DOMRect) => void;
 };
 
 // This component will be useful for the IIIFViewer if we want to make that render video, audio, pdfs and Born Digital files in addition to images.
@@ -81,6 +132,8 @@ const IIIFItem: FunctionComponent<ItemProps> = ({
   placeholderId,
   i,
   exclude,
+  setImageRect,
+  setImageContainerRect,
 }) => {
   switch (true) {
     case item.type === 'Choice' && !exclude.includes('Choice'):
@@ -93,6 +146,8 @@ const IIIFItem: FunctionComponent<ItemProps> = ({
           i={i}
           RenderItem={IIIFItem}
           exclude={exclude}
+          setImageRect={setImageRect}
+          setImageContainerRect={setImageContainerRect}
         />
       );
     case ((item.type === 'Sound' && !exclude.includes('Sound')) ||
@@ -106,14 +161,14 @@ const IIIFItem: FunctionComponent<ItemProps> = ({
       );
     case item.type === 'Video' && !exclude.includes('Video'):
       return (
-        <>
+        <div className="video">
           <VideoPlayer
-            video={item}
             placeholderId={placeholderId}
+            video={item}
             showDownloadOptions={true}
           />
           <VideoTranscript supplementing={canvas.supplementing} />
-        </>
+        </div>
       );
     case item.type === 'Text' && !exclude.includes('Text'):
       if ('label' in item) {
@@ -122,33 +177,27 @@ const IIIFItem: FunctionComponent<ItemProps> = ({
           : '';
         return (
           <IframePdfViewer
-            $v={{
-              size: 'l',
-              properties: ['margin-bottom'],
-            }}
             as="iframe"
             title={`PDF: ${itemLabel}`}
             src={item.id}
           />
         );
       } else {
-        return (
-          <IframePdfViewer
-            $v={{
-              size: 'l',
-              properties: ['margin-bottom'],
-            }}
-            as="iframe"
-            title="PDF"
-            src={item.id}
-          />
-        );
+        return <IframePdfViewer as="iframe" title="PDF" src={item.id} />;
       }
     case item.type === 'Image' && !exclude.includes('Image'):
-      return <p>Image goes here</p>; // This will be needed if this Item component is to be used to render an Image in the IIIFViewer
+      return (
+        <IIIFImage
+          index={i}
+          item={item}
+          canvas={canvas}
+          setImageRect={setImageRect}
+          setImageContainerRect={setImageContainerRect}
+        />
+      );
     default: // There are other types we don't do anything with at present, e.g. Dataset
-      if (exclude.length === 0) {
-        // If we have exclusions, we don't want to fall back to the BetaMessage
+      if (!exclude.includes(item.type)) {
+        // If the item hasn't been purposefully excluded then we should show a message
         return (
           <ContaineredLayout gridSizes={gridSize12()}>
             <Space $v={{ size: 'l', properties: ['margin-bottom'] }}>

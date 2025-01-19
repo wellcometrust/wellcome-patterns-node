@@ -2,6 +2,7 @@ import { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { convertIiifImageUri } from '@weco/common/utils/convert-image-uri';
+import LL from '@weco/common/views/components/styled/LL';
 import { convertRequestUriToInfoUri } from '@weco/content/utils/iiif/convert-iiif-uri';
 async function getImageMax(url: string): Promise<number> {
   try {
@@ -61,50 +62,57 @@ const IIIFViewerImage = (
   ref
 ) => {
   const [tryLoadingSmallerImg, setTryLoadingSmallerImg] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
   return (
-    <Image
-      data-testid={index !== undefined ? `image-${index}` : null}
-      ref={ref}
-      tabIndex={tabIndex}
-      lang={lang}
-      width={width}
-      height={height}
-      className="image"
-      $zoomOnClick={zoomOnClick}
-      $highlightImage={highlightImage}
-      onLoad={loadHandler}
-      onClick={clickHandler}
-      onKeyDown={({ key, keyCode }) => {
-        if (key === 'Enter' || keyCode === 13) {
-          clickHandler && clickHandler();
-        }
-      }}
-      onError={async ({ currentTarget }) => {
-        // Hack/workaround
-        // If the image fails to load it may be because of a size limit,
-        // see: https://wellcome.slack.com/archives/CBT40CMKQ/p1691050149722109,
-        // so first off we try a smaller image
-        if (tryLoadingSmallerImg) {
-          setTryLoadingSmallerImg(false); // prevent looping if image fails to load again
-          // we need to know the max size of the longest side first
-          const imageMax = await getImageMax(currentTarget.src);
-          const isPortrait = Boolean(height && height > width);
-          const newSrc = isPortrait
-            ? convertIiifImageUri(currentTarget.src, imageMax, true)
-            : convertIiifImageUri(currentTarget.src, imageMax);
-          currentTarget.src = newSrc;
-          currentTarget.removeAttribute('srcset');
-          currentTarget.removeAttribute('sizes');
-        } else {
-          // If the image still fails to load, we check to see if it's because the authorisation cookie is missing/no longer valid
-          errorHandler && errorHandler();
-        }
-      }}
-      src={src}
-      srcSet={srcSet}
-      sizes={sizes}
-      alt={alt}
-    />
+    <>
+      {!hasLoaded && <LL $lighten={true} />}
+      <Image
+        data-testid={index !== undefined ? `image-${index}` : null}
+        ref={ref}
+        tabIndex={tabIndex}
+        lang={lang}
+        width={width}
+        height={height}
+        className="image"
+        $zoomOnClick={zoomOnClick}
+        $highlightImage={highlightImage}
+        onLoad={() => {
+          loadHandler && loadHandler();
+          setHasLoaded(true);
+        }}
+        onClick={clickHandler}
+        onKeyDown={({ key, keyCode }) => {
+          if (key === 'Enter' || keyCode === 13) {
+            clickHandler && clickHandler();
+          }
+        }}
+        onError={async ({ currentTarget }) => {
+          // Hack/workaround
+          // If the image fails to load it may be because of a size limit,
+          // see: https://wellcome.slack.com/archives/CBT40CMKQ/p1691050149722109,
+          // so first off we try a smaller image
+          if (tryLoadingSmallerImg) {
+            setTryLoadingSmallerImg(false); // prevent looping if image fails to load again
+            // we need to know the max size of the longest side first
+            const imageMax = await getImageMax(currentTarget.src);
+            const isPortrait = Boolean(height && height > width);
+            const newSrc = isPortrait
+              ? convertIiifImageUri(currentTarget.src, imageMax, true)
+              : convertIiifImageUri(currentTarget.src, imageMax);
+            currentTarget.src = newSrc;
+            currentTarget.removeAttribute('srcset');
+            currentTarget.removeAttribute('sizes');
+          } else {
+            // If the image still fails to load, we check to see if it's because the authorisation cookie is missing/no longer valid
+            errorHandler && errorHandler();
+          }
+        }}
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt={alt}
+      />
+    </>
   );
 };
 

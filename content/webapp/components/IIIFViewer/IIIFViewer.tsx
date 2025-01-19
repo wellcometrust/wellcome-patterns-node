@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components';
 
 import { DigitalLocation } from '@weco/common/model/catalogue';
+import { useToggles } from '@weco/common/server-data/Context';
 import { iiifImageTemplate } from '@weco/common/utils/convert-image-uri';
 import { AppContext } from '@weco/common/views/components/AppContext/AppContext';
 import LL from '@weco/common/views/components/styled/LL';
@@ -218,6 +219,7 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
     shouldScrollToCanvas = true,
     query = '',
   } = fromQuery(router.query);
+  const { extendedViewer } = useToggles();
   const [gridVisible, setGridVisible] = useState(false);
   const { isFullSupportBrowser } = useContext(AppContext);
   const viewerRef = useRef<HTMLDivElement>(null);
@@ -349,8 +351,6 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
                 index={0}
                 alt={work?.description || work?.title || ''}
                 urlTemplate={urlTemplate}
-                setImageRect={() => undefined}
-                setImageContainerRect={() => undefined}
               />
             )}
 
@@ -359,9 +359,9 @@ const IIIFViewer: FunctionComponent<IIIFViewerProps> = ({
             )}
 
             {/* If we hide the MainViewer when resizing the browser, it will then rerender with the correct canvas displayed */}
-            {hasImageService && !isResizing && isFullSupportBrowser && (
-              <MainViewer />
-            )}
+            {(hasImageService || extendedViewer) &&
+              !isResizing &&
+              isFullSupportBrowser && <MainViewer />}
           </DelayVisibility>
         </Main>
         {showZoomed && isFullSupportBrowser && (

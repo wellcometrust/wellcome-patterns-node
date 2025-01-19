@@ -35,11 +35,6 @@ const VideoPlayer: FunctionComponent<Props> = ({
       controls
       preload="none"
       poster={placeholderId}
-      style={{
-        maxWidth: '100%',
-        maxHeight: '260px',
-        display: 'inline-block',
-      }}
     >
       <source src={video.id} type={video.format} />
       {`Sorry, your browser doesn't support embedded video.`}
